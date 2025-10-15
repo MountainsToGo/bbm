@@ -832,7 +832,14 @@
             
             // Then load configuration with cache-busting
             const cacheBuster = new Date().getTime();
-            fetch(`bogus_basin_config.json?v=${cacheBuster}`)
+            fetch(`bogus_basin_config.json?v=${cacheBuster}`, {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Could not load JSON file');
@@ -841,7 +848,8 @@
                 })
                 .then(config => {
                     locations = config.locations;
-                    console.log('Loaded locations:', locations.length);
+                    console.log('RAW CONFIG LOADED - Total locations in JSON:', config.locations.length);
+                    console.log('Locations array assigned:', locations.length);
                     if (locations.length === 0) {
                         alert('No locations found in configuration file!');
                         return;
@@ -890,7 +898,9 @@
             }
             
             // Keep locations in alphabetical order
+            console.log('BEFORE SORT:', locations.length, 'locations');
             locations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
+            console.log('AFTER SORT:', locations.length, 'locations');
             
             console.log('Initialized with', locations.length, 'locations');
             console.log('First location:', locations[0]);
@@ -1243,7 +1253,7 @@
         }
 
         function zoomIn() {
-            zoomLevel = Math.min(5.0, zoomLevel + 0.25);
+            zoomLevel = Math.min(10.0, zoomLevel + 0.25);
             applyZoom();
         }
 
@@ -1380,8 +1390,8 @@
                     const scale = currentDistance / initialPinchDistance;
                     const newZoom = initialZoomLevel * scale;
                     
-                    // Clamp between 0.5x and 5x
-                    zoomLevel = Math.max(0.5, Math.min(5.0, newZoom));
+                    // Clamp between 0.5x and 10x (1000%)
+                    zoomLevel = Math.max(0.5, Math.min(10.0, newZoom));
                     
                     document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
                     applyZoom();
