@@ -753,9 +753,9 @@
                     </div>
 
                     <div class="controls" style="flex-direction: column; gap: 8px; flex-shrink: 0;">
-                        <button class="btn btn-warning" onclick="showAnswer()">💡 Show Answer</button>
-                        <button class="btn btn-secondary" onclick="skipCurrent()">⏭️ Skip</button>
-                        <button class="btn btn-danger" onclick="resetPractice()">🔄 Reset</button>
+                        <button class="btn btn-warning" onclick="showAnswer()" title="Reveal the correct location on the map">💡 Show Answer</button>
+                        <button class="btn btn-secondary" onclick="skipCurrent()" title="Skip this location and move to the next one">⏭️ Skip</button>
+                        <button class="btn btn-danger" onclick="resetPractice()" title="Start over from the beginning with a fresh session">🔄 Reset</button>
                     </div>
 
                     <h2>Location List <span style="font-size: 0.7em; color: #64748b; font-weight: normal;">(click any to select)</span></h2>
@@ -771,14 +771,14 @@
                     </div>
 
                     <div class="controls map-controls">
-                        <button class="btn btn-secondary" onclick="toggleAutoZoom()" id="autoZoomBtn">� Auto-Zoom: OFF</button>
-                        <button class="btn btn-secondary" onclick="toggleLabels()">�️ Labels</button>
-                        <button class="btn btn-secondary" onclick="zoomIn()">🔍+ Zoom In</button>
-                        <button class="btn btn-secondary" onclick="zoomOut()">🔍- Zoom Out</button>
-                        <button class="btn btn-secondary" onclick="resetZoom()">↺ Reset</button>
-                        <button class="btn btn-secondary" onclick="changeCursor('skis')">⛷️</button>
-                        <button class="btn btn-secondary" onclick="changeCursor('snowboard')">🏂</button>
-                        <button class="btn btn-secondary" onclick="changeCursor('crosshair')">➕</button>
+                        <button class="btn btn-secondary" onclick="toggleAutoZoom()" id="autoZoomBtn" title="Automatically zoom to the current location when selected">� Auto-Zoom: OFF</button>
+                        <button class="btn btn-secondary" onclick="toggleLabels()" title="Show or hide location labels on the map">�️ Labels</button>
+                        <button class="btn btn-secondary" onclick="zoomIn()" title="Zoom in on the map (up to 1000%)">🔍+ Zoom In</button>
+                        <button class="btn btn-secondary" onclick="zoomOut()" title="Zoom out on the map">🔍- Zoom Out</button>
+                        <button class="btn btn-secondary" onclick="resetZoom()" title="Reset zoom level back to 100%">↺ Reset</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('skis')" title="Change cursor to ski icon">⛷️</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('snowboard')" title="Change cursor to snowboard icon">🏂</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('crosshair')" title="Change cursor to crosshair (default)">➕</button>
                     </div>
                     
                     <div style="background: #f0f9ff; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
