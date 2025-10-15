@@ -213,7 +213,7 @@
             min-height: 1100px; /* Ensure tall map box */
             overflow: auto; /* Auto scrollbars for better Mac compatibility */
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-x pan-y; /* Allow panning in both directions */
+            touch-action: manipulation; /* Allow pinch-zoom and panning */
         }
         .map-wrapper:active {
             cursor: grabbing; /* Grabbing when mouse down */
@@ -579,7 +579,8 @@
             
             .map-wrapper {
                 min-height: 300px !important;
-                max-height: 600px !important;
+                max-height: none !important; /* Allow pinch zoom to expand */
+                touch-action: manipulation !important; /* Ensure pinch-zoom works */
             }
             
             /* Sidebar buttons - full width, larger */
