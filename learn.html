@@ -225,16 +225,16 @@
             background: #764ba2;
         }
         .map-wrapper.skis {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">⛷️</text></svg>') 16 16, grab;
+            cursor: grab;
         }
         .map-wrapper.skis:active {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">⛷️</text></svg>') 16 16, grabbing;
+            cursor: grabbing;
         }
         .map-wrapper.snowboard {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">🏂</text></svg>') 16 16, grab;
+            cursor: grab;
         }
         .map-wrapper.snowboard:active {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">🏂</text></svg>') 16 16, grabbing;
+            cursor: grabbing;
         }
         #mapCanvas {
             display: block;
@@ -792,9 +792,9 @@
                         <button class="btn btn-secondary" onclick="zoomIn()" title="Zoom in on the map (up to 1000%)">🔍+ Zoom In</button>
                         <button class="btn btn-secondary" onclick="zoomOut()" title="Zoom out on the map">🔍- Zoom Out</button>
                         <button class="btn btn-secondary" onclick="resetZoom()" title="Reset zoom level back to 100%">↺ Reset</button>
-                        <button class="btn btn-secondary" onclick="changeCursor('skis')" title="Change cursor to ski icon">⛷️</button>
-                        <button class="btn btn-secondary" onclick="changeCursor('snowboard')" title="Change cursor to snowboard icon">🏂</button>
-                        <button class="btn btn-secondary" onclick="changeCursor('crosshair')" title="Change cursor to crosshair (default)">➕</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('skis')" title="Skier cursor theme">⛷️</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('snowboard')" title="Snowboarder cursor theme">🏂</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('default')" title="Default cursor (pointer finger)">👆</button>
                     </div>
                     
                     <div style="background: #f0f9ff; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
@@ -1417,17 +1417,17 @@
             // Remove all cursor classes
             mapWrapper.classList.remove('skis', 'snowboard');
             
-            // Add the selected cursor class
+            // Add the selected cursor class (all use grab/grabbing now)
             if (type === 'skis') {
                 mapWrapper.classList.add('skis');
-                document.getElementById('cursorType').textContent = 'Skis ⛷️';
+                document.getElementById('cursorType').textContent = 'Skier ⛷️';
             } else if (type === 'snowboard') {
                 mapWrapper.classList.add('snowboard');
-                document.getElementById('cursorType').textContent = 'Snowboard 🏂';
+                document.getElementById('cursorType').textContent = 'Snowboarder 🏂';
             } else {
-                // Default to grab cursor
+                // Default to grab cursor (pointer finger style)
                 mapWrapper.style.cursor = 'grab';
-                document.getElementById('cursorType').textContent = 'Default';
+                document.getElementById('cursorType').textContent = 'Pointer 👆';
             }
         }
 
