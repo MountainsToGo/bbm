@@ -997,9 +997,12 @@
             if (currentMode !== 'practice' || currentIndex >= locations.length) return;
 
             const rect = canvas.getBoundingClientRect();
-            // Convert click coordinates to canvas coordinates accounting for zoom and scale
-            const clickX = (e.clientX - rect.left) / (zoomLevel * canvasScale);
-            const clickY = (e.clientY - rect.top) / (zoomLevel * canvasScale);
+            // Convert click coordinates to canvas coordinates
+            // Scale from screen pixels to canvas pixels
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clickX = (e.clientX - rect.left) * scaleX;
+            const clickY = (e.clientY - rect.top) * scaleY;
 
             const tolerance = 80; // Increased tolerance for easier clicking
             
