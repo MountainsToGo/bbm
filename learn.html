@@ -122,7 +122,8 @@
             font-weight: bold;
         }
         .name-list-container {
-            flex: 1 1 auto;
+            flex: 0 1 auto;
+            max-height: 600px; /* Make list scrollable at 600px */
             min-height: 0; /* Safari flexbox fix */
             overflow-y: auto;
             -webkit-overflow-scrolling: touch; /* Safari smooth scrolling */
@@ -567,6 +568,17 @@
             
             .name-list-container {
                 min-height: 200px;
+                max-height: none; /* Remove desktop scrollable constraint */
+            }
+            
+            /* Reset map area to mobile-friendly sizes */
+            .map-area {
+                min-height: 400px !important;
+            }
+            
+            .map-wrapper {
+                min-height: 300px !important;
+                max-height: 600px !important;
             }
             
             /* Sidebar buttons - full width, larger */
