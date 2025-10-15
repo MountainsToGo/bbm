@@ -201,14 +201,15 @@
         .map-wrapper {
             position: relative;
             display: block;
-            cursor: crosshair;
+            cursor: grab; /* Default grab cursor */
             width: 100%;
             max-height: calc(100vh - 400px);
-            overflow: scroll; /* Force scrollbars */
-            overflow-x: scroll; /* Explicit horizontal scroll for iOS */
-            overflow-y: scroll; /* Explicit vertical scroll for iOS */
+            overflow: auto; /* Auto scrollbars for better Mac compatibility */
             -webkit-overflow-scrolling: touch;
             touch-action: pan-x pan-y; /* Allow panning in both directions */
+        }
+        .map-wrapper:active {
+            cursor: grabbing; /* Grabbing when mouse down */
         }
         .map-wrapper::-webkit-scrollbar {
             width: 12px;
@@ -1128,8 +1129,8 @@
             scrollStartX = mapWrapper.scrollLeft;
             scrollStartY = mapWrapper.scrollTop;
             
-            mapWrapper.style.cursor = 'grabbing';
-            e.preventDefault(); // Prevent text selection while dragging
+            // Don't prevent default immediately - let Mac trackpad scroll work
+            // Only prevent when actual dragging starts
         });
 
         mapWrapper.addEventListener('mousemove', function(e) {
@@ -1142,28 +1143,40 @@
             const dragDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             if (dragDistance > MIN_DRAG_DISTANCE) {
                 hasDragged = true;
+                mapWrapper.style.cursor = 'grabbing';
             }
             
-            mapWrapper.scrollLeft = scrollStartX + deltaX;
-            mapWrapper.scrollTop = scrollStartY + deltaY;
+            // Only do manual scrolling if actually dragging (not just clicked)
+            if (hasDragged) {
+                mapWrapper.scrollLeft = scrollStartX + deltaX;
+                mapWrapper.scrollTop = scrollStartY + deltaY;
+            }
         });
 
         mapWrapper.addEventListener('mouseup', function(e) {
             if (isPanning) {
                 isPanning = false;
-                mapWrapper.style.cursor = 'grab';
+                // Reset cursor - changeCursor will set the right one
+                updateMapCursor();
             }
         });
 
         mapWrapper.addEventListener('mouseleave', function() {
             if (isPanning) {
                 isPanning = false;
-                mapWrapper.style.cursor = 'grab';
+                updateMapCursor();
             }
         });
-
-        // Set initial cursor to grab
-        mapWrapper.style.cursor = 'grab';
+        
+        // Helper function to update cursor based on current selection
+        function updateMapCursor() {
+            if (currentCursorType === 'skis' || currentCursorType === 'snowboard') {
+                // Keep the class-based cursor
+                mapWrapper.style.cursor = '';
+            } else {
+                mapWrapper.style.cursor = 'grab';
+            }
+        }
 
         function showFeedback(correct) {
             const popup = document.createElement('div');
@@ -1441,12 +1454,14 @@
                 document.querySelector('[onclick="changeCursor(\'snowboard\')"]').classList.add('btn-primary');
             } else {
                 // Default to grab cursor (pointer finger style)
-                mapWrapper.style.cursor = 'grab';
                 document.getElementById('cursorType').textContent = 'Pointer 👆';
                 // Highlight the default button
                 document.querySelector('[onclick="changeCursor(\'default\')"]').classList.remove('btn-secondary');
                 document.querySelector('[onclick="changeCursor(\'default\')"]').classList.add('btn-primary');
             }
+            
+            // Update the cursor
+            updateMapCursor();
         }
         
         // Set default cursor on load
