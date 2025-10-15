@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Manager - Bogus Basin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+        .sidebar h2 {
+            color: #667eea;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #334155;
+        }
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .location-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 0;
+        }
+        .location-list::-webkit-scrollbar {
+            width: 10px;
+        }
+        .location-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .location-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+        .location-list::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+        .location-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            background: #f8fafc;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .location-item:hover {
+            background: #f1f5f9;
+        }
+        .location-name {
+            font-weight: 600;
+            color: #334155;
+        }
+        .location-coords {
+            font-size: 0.85em;
+            color: #64748b;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        .map-area {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .map-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: crosshair;
+        }
+        #mapCanvas {
+            display: block;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        .instruction {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: none;
+        }
+        .status-message.show {
+            display: block;
+        }
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #22c55e;
+        }
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+        .click-mode-box {
+            background: #e0e7ff;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            flex-shrink: 0;
+        }
+        .click-mode-box.active {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        
+        /* Mobile & Tablet Responsive Styles */
+        @media screen and (max-width: 1024px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                height: auto;
+                max-height: none;
+                order: 2;
+            }
+            
+            .map-area {
+                order: 1;
+                height: auto;
+            }
+            
+            .map-wrapper {
+                height: 60vh;
+                max-height: 600px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .stat-value {
+                font-size: 1.8em;
+            }
+            
+            .location-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Phone-specific styles */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.2em;
+            }
+            
+            .sidebar {
+                padding: 15px;
+            }
+            
+            .sidebar h2 {
+                font-size: 1.1em;
+            }
+            
+            .map-wrapper {
+                height: 50vh;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
+                min-width: auto;
+            }
+            
+            .stats {
+                gap: 6px;
+            }
+            
+            .stat-box {
+                padding: 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.4em;
+            }
+            
+            .stat-label {
+                font-size: 0.8em;
+            }
+            
+            .form-group input {
+                padding: 8px;
+                font-size: 0.95em;
+            }
+            
+            .location-item {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            
+            .click-mode-box {
+                padding: 12px;
+                font-size: 0.9em;
+            }
+            
+            /* Make buttons easier to tap */
+            button, .btn {
+                min-height: 44px;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.1em;
+            }
+            
+            .sidebar {
+                max-height: none;
+            }
+            
+            .map-wrapper {
+                height: calc(100vh - 150px);
+                max-height: none;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            /* Better touch targets */
+            button, .btn, .location-item {
+                min-height: 44px;
+            }
+            
+            /* Prevent double-tap zoom */
+            * {
+                touch-action: manipulation;
+            }
+            
+            /* Remove hover effects on touch devices */
+            .btn:hover,
+            .location-item:hover {
+                transform: none;
+            }
+            
+            /* Add active/pressed state instead */
+            .btn:active {
+                transform: scale(0.95);
+            }
+            
+            .location-item:active {
+                background: #e0e7ff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Location Manager - Bogus Basin</h1>
+            <p>Add, edit, and manage trail map locations</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <h2>Add New Location</h2>
+                
+                <div class="form-group">
+                    <label for="locationName">Location Name:</label>
+                    <input type="text" id="locationName" placeholder="Enter location name...">
+                </div>
+
+                <div class="click-mode-box" id="clickModeBox">
+                    <strong>📍 Click Mode:</strong>
+                    <p id="clickModeText">Enter a name above, then click on the map to set coordinates</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Selected Coordinates:</label>
+                    <input type="text" id="coordsDisplay" readonly placeholder="Click on map after entering name">
+                </div>
+
+                <button class="btn btn-primary" onclick="addLocation()" id="addButton" disabled>
+                    ➕ Add Location
+                </button>
+
+                <hr style="border: 1px solid #e2e8f0;">
+
+                <h2>Current Locations</h2>
+                
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalLocations">0</div>
+                        <div class="stat-label">Total Locations</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="enabledLocations">0</div>
+                        <div class="stat-label">Enabled</div>
+                    </div>
+                </div>
+
+                <div class="location-list" id="locationList">
+                    <p style="color: #64748b; text-align: center;">Loading locations...</p>
+                </div>
+
+                <button class="btn btn-success" onclick="saveToFile()">
+                    💾 Save All Changes
+                </button>
+
+                <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                    ← Back to Learning App
+                </button>
+            </div>
+
+            <div class="map-area">
+                <div class="status-message" id="statusMessage"></div>
+
+                <div class="instruction">
+                    👆 <strong>Instructions:</strong> Type a location name, then click on the map to place it. Click "Add Location" to save.
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="toggleLabels()">🏷️ Toggle Labels</button>
+                    <button class="btn btn-primary" onclick="zoomIn()">🔍 Zoom In</button>
+                    <button class="btn btn-primary" onclick="zoomOut()">🔍 Zoom Out</button>
+                    <button class="btn btn-primary" onclick="resetZoom()">↺ Reset Zoom</button>
+                </div>
+                
+                <div style="background: #f0f9ff; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    <strong>Zoom Level:</strong> <span id="zoomLevel">100%</span> | 
+                    <strong>Tip:</strong> Use Ctrl+Scroll to zoom
+                </div>
+
+                <div class="map-wrapper">
+                    <canvas id="mapCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let locations = [];
+        let showLabels = true;
+        let canvasScale = 1;
+        let zoomLevel = 1.0;
+        let pendingCoords = null;
+
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        // Load image first
+        img.onload = function() {
+            canvasScale = 1;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            // Then load configuration with cache-busting
+            const cacheBuster = new Date().getTime();
+            fetch(`bogus_basin_config.json?v=${cacheBuster}`)
+                .then(response => response.json())
+                .then(config => {
+                    locations = config.locations || [];
+                    console.log('Loaded locations:', locations.length);
+                    updateLocationList();
+                    updateStats();
+                    drawMap();
+                })
+                .catch(err => {
+                    console.error('Error loading config:', err);
+                    showStatus('Could not load configuration file. Starting with empty list.', 'error');
+                    locations = [];
+                    updateLocationList();
+                    drawMap();
+                });
+        };
+        img.src = 'trail_map.png';
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Draw all existing locations
+            locations.forEach((loc, index) => {
+                if (loc.enabled === false) return;
+                
+                // Draw marker
+                ctx.fillStyle = '#667eea';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                if (showLabels) {
+                    ctx.fillStyle = 'white';
+                    ctx.strokeStyle = '#667eea';
+                    ctx.lineWidth = 3;
+                    ctx.font = 'bold 12px Arial';
+                    const text = loc.name;
+                    ctx.strokeText(text, loc.x * canvasScale + 12, loc.y * canvasScale + 4);
+                    ctx.fillText(text, loc.x * canvasScale + 12, loc.y * canvasScale + 4);
+                }
+            });
+
+            // Draw pending location (preview)
+            if (pendingCoords) {
+                ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
+                ctx.strokeStyle = '#22c55e';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.arc(pendingCoords.x, pendingCoords.y, 12, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw crosshair
+                ctx.strokeStyle = '#22c55e';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(pendingCoords.x - 20, pendingCoords.y);
+                ctx.lineTo(pendingCoords.x + 20, pendingCoords.y);
+                ctx.moveTo(pendingCoords.x, pendingCoords.y - 20);
+                ctx.lineTo(pendingCoords.x, pendingCoords.y + 20);
+                ctx.stroke();
+            }
+        }
+
+        canvas.addEventListener('click', function(e) {
+            const name = document.getElementById('locationName').value.trim();
+            if (!name) {
+                showStatus('Please enter a location name first!', 'error');
+                return;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+
+            pendingCoords = { x, y };
+            document.getElementById('coordsDisplay').value = `X: ${x}, Y: ${y}`;
+            document.getElementById('addButton').disabled = false;
+            document.getElementById('clickModeBox').classList.add('active');
+            document.getElementById('clickModeText').textContent = `Coordinates set! Click "Add Location" to save.`;
+            
+            drawMap();
+        });
+
+        function addLocation() {
+            const name = document.getElementById('locationName').value.trim();
+            if (!name || !pendingCoords) {
+                showStatus('Please enter a name and click on the map!', 'error');
+                return;
+            }
+
+            // Check for duplicate name
+            if (locations.some(loc => loc.name.toLowerCase() === name.toLowerCase())) {
+                showStatus(`Location "${name}" already exists!`, 'error');
+                return;
+            }
+
+            const newLocation = {
+                name: name,
+                x: pendingCoords.x,
+                y: pendingCoords.y,
+                enabled: true
+            };
+
+            locations.push(newLocation);
+            locations.sort((a, b) => a.name.localeCompare(b.name));
+
+            showStatus(`✓ Location "${name}" added successfully! Don't forget to save.`, 'success');
+            
+            // Reset form
+            document.getElementById('locationName').value = '';
+            document.getElementById('coordsDisplay').value = '';
+            document.getElementById('addButton').disabled = true;
+            document.getElementById('clickModeBox').classList.remove('active');
+            document.getElementById('clickModeText').textContent = 'Enter a name above, then click on the map to set coordinates';
+            pendingCoords = null;
+
+            updateLocationList();
+            updateStats();
+            drawMap();
+        }
+
+        function updateLocationList() {
+            const list = document.getElementById('locationList');
+            if (locations.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No locations yet. Add one!</p>';
+                return;
+            }
+
+            list.innerHTML = '';
+            locations.forEach((loc, index) => {
+                const item = document.createElement('div');
+                item.className = 'location-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="location-name">${loc.name}</div>
+                        <div class="location-coords">X: ${loc.x}, Y: ${loc.y}</div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="deleteLocation(${index})">🗑️</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function deleteLocation(index) {
+            const loc = locations[index];
+            if (confirm(`Delete "${loc.name}"?`)) {
+                locations.splice(index, 1);
+                showStatus(`Deleted "${loc.name}". Don't forget to save!`, 'info');
+                updateLocationList();
+                updateStats();
+                drawMap();
+            }
+        }
+
+        function updateStats() {
+            const total = locations.length;
+            const enabled = locations.filter(loc => loc.enabled !== false).length;
+            document.getElementById('totalLocations').textContent = total;
+            document.getElementById('enabledLocations').textContent = enabled;
+        }
+
+        function saveToFile() {
+            const config = {
+                mapImageSrc: "trail_map.png",
+                imageWidth: img.width,
+                imageHeight: img.height,
+                locations: locations
+            };
+
+            const jsonString = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'bogus_basin_config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showStatus('✓ Configuration file downloaded! Replace the old file with this one.', 'success');
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message show ${type}`;
+            setTimeout(() => {
+                statusEl.classList.remove('show');
+            }, 5000);
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            drawMap();
+        }
+
+        function zoomIn() {
+            zoomLevel = Math.min(3.0, zoomLevel + 0.25);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            zoomLevel = Math.max(0.5, zoomLevel - 0.25);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            zoomLevel = 1.0;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            canvas.style.transform = `scale(${zoomLevel})`;
+            canvas.style.transformOrigin = 'top left';
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+        }
+
+        canvas.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        }, { passive: false });
+
+        // Enable add button when name is typed and coords are set
+        document.getElementById('locationName').addEventListener('input', function() {
+            const hasName = this.value.trim().length > 0;
+            document.getElementById('addButton').disabled = !hasName || !pendingCoords;
+        });
+    </script>
+</body>
+</html>

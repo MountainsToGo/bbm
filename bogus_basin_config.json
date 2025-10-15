@@ -1,0 +1,560 @@
+{
+  "mapImageSrc": "trail_map.png",
+  "imageWidth": 3131,
+  "imageHeight": 1999,
+  "locations": [
+    {
+      "name": "Alpine",
+      "x": 1827,
+      "y": 329
+    },
+    {
+      "name": "B-2",
+      "x": 2834,
+      "y": 1365
+    },
+    {
+      "name": "B-3",
+      "x": 2921,
+      "y": 1431
+    },
+    {
+      "name": "Bear Paw",
+      "x": 2682,
+      "y": 1500
+    },
+    {
+      "name": "Bitterroot #5",
+      "x": 2570,
+      "y": 1440
+    },
+    {
+      "name": "Bitterroot Base",
+      "x": 2786,
+      "y": 1708
+    },
+    {
+      "name": "Bitterroot Basin",
+      "x": 2825,
+      "y": 1464
+    },
+    {
+      "name": "Bogus Creek Trail",
+      "x": 2049,
+      "y": 813
+    },
+    {
+      "name": "Bonanza",
+      "x": 1547,
+      "y": 1203
+    },
+    {
+      "name": "Bowl",
+      "x": 2471,
+      "y": 716,
+      "enabled": true
+    },
+    {
+      "name": "Buckhorn",
+      "x": 244,
+      "y": 1294
+    },
+    {
+      "name": "Buttercup Trail",
+      "x": 3008,
+      "y": 1447
+    },
+    {
+      "name": "Cabin Traverse",
+      "x": 1359,
+      "y": 571
+    },
+    {
+      "name": "Cascade",
+      "x": 1862,
+      "y": 576
+    },
+    {
+      "name": "Coach #7",
+      "x": 2588,
+      "y": 790
+    },
+    {
+      "name": "Coach's Corner",
+      "x": 2784,
+      "y": 803
+    },
+    {
+      "name": "Comeback",
+      "x": 1753,
+      "y": 1760
+    },
+    {
+      "name": "Condominiums",
+      "x": 2562,
+      "y": 1236
+    },
+    {
+      "name": "Corn Patch",
+      "x": 1577,
+      "y": 570
+    },
+    {
+      "name": "Deadwood",
+      "x": 556,
+      "y": 1036
+    },
+    {
+      "name": "Deer Point",
+      "x": 2142,
+      "y": 113
+    },
+    {
+      "name": "Deer Point Express #1",
+      "x": 2334,
+      "y": 525
+    },
+    {
+      "name": "Easy Rider",
+      "x": 2629,
+      "y": 935
+    },
+    {
+      "name": "Easy Way Down",
+      "x": 137,
+      "y": 1363
+    },
+    {
+      "name": "Eureka",
+      "x": 401,
+      "y": 1128
+    },
+    {
+      "name": "Explorer",
+      "x": 2527,
+      "y": 954,
+      "enabled": true
+    },
+    {
+      "name": "Frontier Point Lodge",
+      "x": 2949,
+      "y": 1262
+    },
+    {
+      "name": "Good Enough",
+      "x": 448,
+      "y": 1634
+    },
+    {
+      "name": "Greenie's Run",
+      "x": 1959,
+      "y": 1081
+    },
+    {
+      "name": "Grooming Trail",
+      "x": 1420,
+      "y": 1722
+    },
+    {
+      "name": "Hogsback",
+      "x": 2240,
+      "y": 1044
+    },
+    {
+      "name": "Ida Belle",
+      "x": 2709,
+      "y": 661
+    },
+    {
+      "name": "Independance",
+      "x": 1620,
+      "y": 672
+    },
+    {
+      "name": "J.R. Simplot Lodge",
+      "x": 2561,
+      "y": 999
+    },
+    {
+      "name": "Jason Harper Training Center",
+      "x": 2473,
+      "y": 1230
+    },
+    {
+      "name": "Lando's Mojo",
+      "x": 2242,
+      "y": 627
+    },
+    {
+      "name": "Last Chance",
+      "x": 1623,
+      "y": 865
+    },
+    {
+      "name": "Lazy Mary",
+      "x": 2555,
+      "y": 1291
+    },
+    {
+      "name": "Liberty",
+      "x": 1374,
+      "y": 809
+    },
+    {
+      "name": "Lightning",
+      "x": 1024,
+      "y": 1069
+    },
+    {
+      "name": "Lower Bonanza",
+      "x": 1479,
+      "y": 1551
+    },
+    {
+      "name": "Lower Majestic",
+      "x": 1461,
+      "y": 1692
+    },
+    {
+      "name": "Lower Nugget",
+      "x": 477,
+      "y": 1122
+    },
+    {
+      "name": "Lower Paradise",
+      "x": 453,
+      "y": 1501
+    },
+    {
+      "name": "Lower Ridge",
+      "x": 2386,
+      "y": 816
+    },
+    {
+      "name": "Lucky Friday",
+      "x": 761,
+      "y": 1354
+    },
+    {
+      "name": "LuLu",
+      "x": 2358,
+      "y": 1103
+    },
+    {
+      "name": "Majestic",
+      "x": 1452,
+      "y": 1082
+    },
+    {
+      "name": "Mambo Meadows",
+      "x": 1922,
+      "y": 688
+    },
+    {
+      "name": "Mary's Ridge",
+      "x": 637,
+      "y": 961,
+      "enabled": true
+    },
+    {
+      "name": "Matchless",
+      "x": 1780,
+      "y": 1405
+    },
+    {
+      "name": "Mid-Paradise",
+      "x": 1226,
+      "y": 1293
+    },
+    {
+      "name": "Mike's Mambo",
+      "x": 1946,
+      "y": 599
+    },
+    {
+      "name": "Morning Star",
+      "x": 2163,
+      "y": 1093
+    },
+    {
+      "name": "Morning Star Express #2",
+      "x": 2380,
+      "y": 982
+    },
+    {
+      "name": "Mother Lode",
+      "x": 532,
+      "y": 1473
+    },
+    {
+      "name": "Night Hawk",
+      "x": 1635,
+      "y": 1148
+    },
+    {
+      "name": "Nitro",
+      "x": 2674,
+      "y": 1315
+    },
+    {
+      "name": "Northslope",
+      "x": 2065,
+      "y": 580
+    },
+    {
+      "name": "Nugget Bowls",
+      "x": 1066,
+      "y": 582
+    },
+    {
+      "name": "Nugget Cat Track",
+      "x": 1368,
+      "y": 472
+    },
+    {
+      "name": "Omar's Inspiration",
+      "x": 1793,
+      "y": 980
+    },
+    {
+      "name": "Paradise",
+      "x": 921,
+      "y": 1468
+    },
+    {
+      "name": "Paradise Cat Track",
+      "x": 1075,
+      "y": 1537
+    },
+    {
+      "name": "Pine Creek Base",
+      "x": 330,
+      "y": 1433
+    },
+    {
+      "name": "Pine Creek Bowl",
+      "x": 1170,
+      "y": 1093
+    },
+    {
+      "name": "Pine Creek Express #6",
+      "x": 841,
+      "y": 1197
+    },
+    {
+      "name": "Pioneer Lodge",
+      "x": 2349,
+      "y": 1177
+    },
+    {
+      "name": "Pioneer Lodge Cat Track",
+      "x": 1874,
+      "y": 1268
+    },
+    {
+      "name": "Pioneer Trail",
+      "x": 1999,
+      "y": 857
+    },
+    {
+      "name": "Playground",
+      "x": 2101,
+      "y": 358
+    },
+    {
+      "name": "Power Line",
+      "x": 1715,
+      "y": 930
+    },
+    {
+      "name": "Second Chance",
+      "x": 316,
+      "y": 1149
+    },
+    {
+      "name": "Shafer Butte",
+      "x": 1466,
+      "y": 897
+    },
+    {
+      "name": "Shaker Ridge",
+      "x": 2030,
+      "y": 350
+    },
+    {
+      "name": "Shamrock",
+      "x": 2994,
+      "y": 1576
+    },
+    {
+      "name": "Shindig",
+      "x": 1450,
+      "y": 629
+    },
+    {
+      "name": "Showcase",
+      "x": 1844,
+      "y": 501
+    },
+    {
+      "name": "Showcase #4",
+      "x": 1981,
+      "y": 372
+    },
+    {
+      "name": "Silver Queen",
+      "x": 2394,
+      "y": 1086
+    },
+    {
+      "name": "Sleepy Connector",
+      "x": 2309,
+      "y": 1309
+    },
+    {
+      "name": "Sleepy Hollow",
+      "x": 2440,
+      "y": 1324
+    },
+    {
+      "name": "Smuggler",
+      "x": 2282,
+      "y": 1379
+    },
+    {
+      "name": "Smuggler Cut-Off",
+      "x": 2235,
+      "y": 1715
+    },
+    {
+      "name": "Snoozer",
+      "x": 2377,
+      "y": 1501
+    },
+    {
+      "name": "Sourdough",
+      "x": 2466,
+      "y": 565
+    },
+    {
+      "name": "Stewart's Bowl",
+      "x": 2552,
+      "y": 847
+    },
+    {
+      "name": "Stump Bowl",
+      "x": 1147,
+      "y": 1460
+    },
+    {
+      "name": "Sunbeam",
+      "x": 1912,
+      "y": 1565
+    },
+    {
+      "name": "Sunset",
+      "x": 1961,
+      "y": 739
+    },
+    {
+      "name": "Sunshine",
+      "x": 1806,
+      "y": 830
+    },
+    {
+      "name": "Superior",
+      "x": 1936,
+      "y": 1434
+    },
+    {
+      "name": "Superior Express #3",
+      "x": 2039,
+      "y": 1674
+    },
+    {
+      "name": "Tempest",
+      "x": 1998,
+      "y": 1150
+    },
+    {
+      "name": "The Beach",
+      "x": 350,
+      "y": 1412
+    },
+    {
+      "name": "The Triangle",
+      "x": 1258,
+      "y": 1242
+    },
+    {
+      "name": "The Triangle",
+      "x": 1175,
+      "y": 1384
+    },
+    {
+      "name": "Tiger",
+      "x": 1294,
+      "y": 727
+    },
+    {
+      "name": "Triumph",
+      "x": 1752,
+      "y": 1542
+    },
+    {
+      "name": "Tubing Hill",
+      "x": 2899,
+      "y": 1026
+    },
+    {
+      "name": "Uphill Skin Track",
+      "x": 2786,
+      "y": 592
+    },
+    {
+      "name": "Upper Nugget",
+      "x": 532,
+      "y": 799
+    },
+    {
+      "name": "Upper Paradise",
+      "x": 1210,
+      "y": 1236
+    },
+    {
+      "name": "Upper Ridge",
+      "x": 2326,
+      "y": 272
+    },
+    {
+      "name": "Upper Triumph",
+      "x": 1698,
+      "y": 1149
+    },
+    {
+      "name": "Wake Up Jim",
+      "x": 2422,
+      "y": 1602
+    },
+    {
+      "name": "War Eagle",
+      "x": 2132,
+      "y": 1345
+    },
+    {
+      "name": "War Eagle Cat Track",
+      "x": 2201,
+      "y": 1273
+    },
+    {
+      "name": "Widowmaker",
+      "x": 2304,
+      "y": 705
+    },
+    {
+      "name": "Wildcat",
+      "x": 878,
+      "y": 1044
+    }
+  ]
+}

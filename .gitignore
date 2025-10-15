@@ -1,0 +1,20 @@
+# Backups
+BACKUP_*/
+
+# Temporary files
+DEL_*
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.py
+
+# Development
+.vscode/
+.idea/

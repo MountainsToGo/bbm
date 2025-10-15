@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogus Basin Interactive Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+        }
+        .mode-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        .mode-btn:not(.active) {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        .mode-btn:hover:not(.active) {
+            background: #e2e8f0;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+        .sidebar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+        .sidebar h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        .current-name {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .current-name .label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+        .current-name .name {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .name-list-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 10px;
+            padding-right: 5px;
+        }
+        .name-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .name-list-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .name-list-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+        .name-list-container::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+        .name-list-item {
+            padding: 8px 10px;
+            margin: 3px 0;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            border-left: 4px solid transparent;
+        }
+        .name-list-item.completed {
+            background: #d1fae5;
+            border-left-color: #10b981;
+            color: #065f46;
+            cursor: default;
+        }
+        .name-list-item.current {
+            background: #ddd6fe;
+            border-left-color: #667eea;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .name-list-item.current:hover {
+            background: #c4b5fd;
+            transform: translateX(3px);
+        }
+        .name-list-item.pending {
+            cursor: pointer;
+        }
+        .name-list-item.pending:hover {
+            background: #e2e8f0;
+            transform: translateX(3px);
+            border-left-color: #94a3b8;
+        }
+        .name-list-item.incorrect {
+            background: #fee2e2;
+            border-left-color: #ef4444;
+            color: #991b1b;
+        }
+        .name-list-item.pending {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        .name-list-item:hover {
+            transform: translateX(5px);
+        }
+        .map-area {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .map-wrapper {
+            position: relative;
+            display: block;
+            cursor: crosshair;
+            width: 100%;
+            max-height: calc(100vh - 400px);
+            overflow: auto;
+        }
+        .map-wrapper::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .map-wrapper::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .map-wrapper::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 6px;
+        }
+        .map-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+        .map-wrapper.skis {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">⛷️</text></svg>') 16 16, crosshair;
+        }
+        .map-wrapper.snowboard {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">🏂</text></svg>') 16 16, crosshair;
+        }
+        #mapCanvas {
+            display: block;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        .instruction {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .sidebar .controls {
+            margin-bottom: 12px;
+            flex-direction: column;
+        }
+        .map-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        .sidebar .btn {
+            width: 100%;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #94a3b8;
+            color: white;
+        }
+        .btn-secondary.active {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .marker {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #ef4444;
+            border: 3px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        .marker.correct {
+            background: #22c55e;
+        }
+        .marker.incorrect {
+            background: #ef4444;
+        }
+        .marker-label {
+            position: absolute;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #334155;
+            white-space: nowrap;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid #cbd5e1;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        .stat-value {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-value.correct {
+            color: #22c55e;
+        }
+        .stat-value.incorrect {
+            color: #ef4444;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+        }
+        .result-message.show {
+            display: block;
+        }
+        .result-message.perfect {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #22c55e;
+        }
+        .result-message.good {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+        .result-message.try-again {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        .feedback-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 30px 50px;
+            border-radius: 15px;
+            font-size: 2em;
+            font-weight: bold;
+            z-index: 1000;
+            animation: popupFade 1s ease;
+            pointer-events: none;
+        }
+        .feedback-popup.correct {
+            background: #22c55e;
+            color: white;
+        }
+        .feedback-popup.incorrect {
+            background: #ef4444;
+            color: white;
+        }
+        @keyframes popupFade {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        }
+        
+        /* Mobile & Tablet Responsive Styles */
+        @media screen and (max-width: 1024px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 15px;
+            }
+            
+            .sidebar {
+                height: auto;
+                max-height: none;
+                min-height: 500px;
+                order: 2;
+            }
+            
+            .name-list-container {
+                min-height: 250px;
+            }
+            
+            .map-area {
+                order: 1;
+                height: auto;
+            }
+            
+            .map-wrapper {
+                height: 60vh !important;
+                max-height: 600px;
+            }
+            
+            .mode-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .mode-btn {
+                padding: 12px;
+                font-size: 0.95em;
+            }
+            
+            /* Tablet button layout - 3 columns */
+            .map-area .controls {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 12px 14px;
+                font-size: 0.88em;
+                min-height: 48px;
+            }
+            
+            /* Sidebar buttons stay full width */
+            .sidebar .controls {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .sidebar .btn {
+                width: 100%;
+                padding: 14px 16px;
+                font-size: 0.95em;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .stat-value {
+                font-size: 1.8em;
+            }
+            
+            .current-name {
+                padding: 15px;
+            }
+            
+            .current-name .name {
+                font-size: 1.5em;
+            }
+            
+            .instruction {
+                font-size: 0.95em;
+                padding: 12px;
+            }
+            
+            .feedback-popup {
+                font-size: 1.5em;
+                padding: 20px 35px;
+            }
+            
+            /* Better touch targets for mobile */
+            .name-item {
+                min-height: 50px;
+                padding: 12px;
+                font-size: 1em;
+            }
+            
+            .location-toggle label {
+                padding: 10px 15px;
+                font-size: 0.95em;
+            }
+        }
+        
+        /* Phone-specific styles */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.2em;
+                margin-bottom: 8px;
+            }
+            
+            .sidebar {
+                max-height: none;
+                min-height: 400px;
+                padding: 12px;
+            }
+            
+            .sidebar h2 {
+                font-size: 1em;
+            }
+            
+            .name-list-container {
+                min-height: 200px;
+            }
+            
+            .map-wrapper {
+                height: 50vh !important;
+            }
+            
+            /* Sidebar buttons - full width, larger */
+            .sidebar .controls {
+                gap: 10px;
+            }
+            
+            .sidebar .btn {
+                padding: 14px 16px;
+                font-size: 0.95em;
+                min-height: 50px;
+            }
+            
+            /* Map area controls - organized in rows */
+            .map-area .controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                justify-content: stretch;
+            }
+            
+            .map-area .btn {
+                padding: 12px 10px;
+                font-size: 0.8em;
+                min-height: 48px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            /* Cursor buttons - smaller, emoji only */
+            .map-area .controls button:nth-child(6),
+            .map-area .controls button:nth-child(7),
+            .map-area .controls button:nth-child(8) {
+                padding: 10px 8px;
+                font-size: 1.3em;
+            }
+            
+            .stats {
+                gap: 6px;
+            }
+            
+            .stat-box {
+                padding: 8px;
+            }
+            
+            .stat-value {
+                font-size: 1.4em;
+            }
+            
+            .stat-label {
+                font-size: 0.8em;
+            }
+            
+            .current-name {
+                padding: 12px;
+            }
+            
+            .current-name .label {
+                font-size: 0.9em;
+            }
+            
+            .current-name .name {
+                font-size: 1.3em;
+            }
+            
+            .instruction {
+                font-size: 0.85em;
+                padding: 10px;
+            }
+            
+            .progress-fill {
+                font-size: 0.85em;
+            }
+            
+            .name-item {
+                min-height: 48px;
+                padding: 10px;
+                font-size: 0.95em;
+            }
+            
+            .feedback-popup {
+                font-size: 1.2em;
+                padding: 15px 25px;
+            }
+            
+            /* Make buttons easier to tap */
+            button, .btn {
+                min-height: 44px;
+            }
+            
+            /* Adjust mode selector for smaller screens */
+            .mode-btn {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            
+            /* Compact layout adjustments */
+            .main-content {
+                gap: 10px;
+            }
+        }
+        
+        /* Landscape mobile orientation */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.1em;
+                margin-bottom: 5px;
+            }
+            
+            .mode-selector {
+                flex-direction: row;
+            }
+            
+            .sidebar {
+                max-height: none;
+                min-height: 300px;
+            }
+            
+            .name-list-container {
+                min-height: 150px;
+            }
+            
+            .map-wrapper {
+                height: calc(100vh - 200px) !important;
+                max-height: none;
+            }
+            
+            .progress-bar {
+                height: 20px;
+                margin-top: 8px;
+            }
+        }
+        
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            /* Better touch targets */
+            button, .btn, .name-item {
+                min-height: 44px;
+            }
+            
+            /* Prevent double-tap zoom */
+            * {
+                touch-action: manipulation;
+            }
+            
+            /* Remove hover effects on touch devices */
+            .btn:hover,
+            .mode-btn:hover:not(.active),
+            .name-item:hover {
+                transform: none;
+            }
+            
+            /* Add active/pressed state instead */
+            .btn:active {
+                transform: scale(0.95);
+            }
+            
+            .name-item:active {
+                background: #e0e7ff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⛷️ Bogus Basin Interactive Map</h1>
+            <p>Learn the locations of all lifts and runs at Bogus Basin!</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar">0 / 103</div>
+            </div>
+        </div>
+
+        <div id="practiceMode">
+            <div class="main-content">
+                <div class="sidebar">
+                    <div class="current-name" id="currentNameBox">
+                        <div class="label">Find this location:</div>
+                        <div class="name" id="currentName">Alpine</div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="completedCount">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="remainingCount">103</div>
+                            <div class="stat-label">Remaining</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="percentComplete">0%</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="streakCount">0</div>
+                            <div class="stat-label">Streak 🔥</div>
+                        </div>
+                    </div>
+
+                    <div class="controls" style="flex-direction: column; gap: 8px; flex-shrink: 0;">
+                        <button class="btn btn-warning" onclick="showAnswer()">💡 Show Answer</button>
+                        <button class="btn btn-secondary" onclick="skipCurrent()">⏭️ Skip</button>
+                        <button class="btn btn-danger" onclick="resetPractice()">🔄 Reset</button>
+                    </div>
+
+                    <h2>Location List <span style="font-size: 0.7em; color: #64748b; font-weight: normal;">(click any to select)</span></h2>
+                    <div class="name-list-container">
+                        <div id="namesList"></div>
+                    </div>
+                </div>
+
+                <div class="map-area">
+                    <div class="instruction">
+                        👆 <strong>Click on the map</strong> where "<span id="instructionName">Alpine</span>" is located
+                        <br><small style="opacity: 0.8;">💡 Tip: Click any location in the list to jump to it!</small>
+                    </div>
+
+                    <div class="controls map-controls">
+                        <button class="btn btn-secondary" onclick="toggleAutoZoom()" id="autoZoomBtn">� Auto-Zoom: OFF</button>
+                        <button class="btn btn-secondary" onclick="toggleLabels()">�️ Labels</button>
+                        <button class="btn btn-secondary" onclick="zoomIn()">🔍+ Zoom In</button>
+                        <button class="btn btn-secondary" onclick="zoomOut()">🔍- Zoom Out</button>
+                        <button class="btn btn-secondary" onclick="resetZoom()">↺ Reset</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('skis')">⛷️</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('snowboard')">🏂</button>
+                        <button class="btn btn-secondary" onclick="changeCursor('crosshair')">➕</button>
+                    </div>
+                    
+                    <div style="background: #f0f9ff; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                        <strong>Zoom Level:</strong> <span id="zoomLevel">100%</span> | 
+                        <strong>Cursor:</strong> <span id="cursorType">Default</span> | 
+                        <strong>Auto-Zoom:</strong> <span id="autoZoomStatus">OFF</span> | 
+                        <strong>Tip:</strong> Use Ctrl+Scroll to zoom
+                    </div>
+
+                    <div class="map-wrapper" id="practiceMapWrapper">
+                        <canvas id="mapCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="location_names.js"></script>
+    <script>
+        let currentMode = 'practice';
+        let currentIndex = 0;
+        let locations = [];
+        let showLabels = false;
+        let canvasScale = 1;
+        let zoomLevel = 1.0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let streak = 0;
+        let clickMarkers = []; // Store click markers for visual feedback
+        let completedIndices = new Set(); // Track which locations were actually completed (not skipped)
+        let skippedIndices = new Set(); // Track which locations were skipped
+        let autoZoomEnabled = false; // Toggle for auto-zoom to selected location
+        let highlightTimer = null; // Timer for temporary highlight
+        let highlightedLocationIndex = null; // Track which location to highlight (for viewing completed items)
+
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        // Load image first
+        img.onload = function() {
+            // Calculate scale to fit window
+            const mapWrapper = document.getElementById('practiceMapWrapper');
+            const maxWidth = mapWrapper.clientWidth || 1200;
+            const maxHeight = 600;
+            
+            const scaleX = maxWidth / img.width;
+            const scaleY = maxHeight / img.height;
+            canvasScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
+            
+            canvas.width = img.width * canvasScale;
+            canvas.height = img.height * canvasScale;
+            
+            // Then load configuration with cache-busting
+            const cacheBuster = new Date().getTime();
+            fetch(`bogus_basin_config.json?v=${cacheBuster}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Could not load JSON file');
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    locations = config.locations.filter(loc => loc.enabled !== false);
+                    console.log('Loaded locations:', locations.length);
+                    if (locations.length === 0) {
+                        alert('No locations found in configuration file!');
+                        return;
+                    }
+                    initializeMode();
+                })
+                .catch(err => {
+                    console.error('Error loading config:', err);
+                    
+                    // Show helpful error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; z-index: 10000;';
+                    errorDiv.innerHTML = `
+                        <h2 style="color: #ef4444; margin-top: 0;">⚠️ Cannot Load Configuration</h2>
+                        <p><strong>This app needs to run from a web server, not by opening the file directly.</strong></p>
+                        <h3>Quick Fix - Option 1 (Python):</h3>
+                        <ol>
+                            <li>Open PowerShell in this folder</li>
+                            <li>Run: <code style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">python -m http.server 8000</code></li>
+                            <li>Open browser to: <a href="http://localhost:8000/learn.html" target="_blank">http://localhost:8000/learn.html</a></li>
+                        </ol>
+                        <h3>Quick Fix - Option 2 (VS Code):</h3>
+                        <ol>
+                            <li>Install "Live Server" extension in VS Code</li>
+                            <li>Right-click learn.html and select "Open with Live Server"</li>
+                        </ol>
+                        <button onclick="this.parentElement.remove()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 15px;">Close</button>
+                    `;
+                    document.body.appendChild(errorDiv);
+                });
+        };
+        img.src = 'trail_map.png';
+
+        function initializeMode() {
+            currentIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            streak = 0;
+            clickMarkers = [];
+            completedIndices = new Set();
+            skippedIndices = new Set();
+            
+            if (locations.length === 0) {
+                console.error('No locations loaded!');
+                return;
+            }
+            
+            // Keep locations in alphabetical order
+            locations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
+            
+            console.log('Initialized with', locations.length, 'locations');
+            console.log('First location:', locations[0]);
+            
+            updateUI();
+            drawMap();
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Draw white boxes at all location coordinates
+            locations.forEach((loc, index) => {
+                // Draw white boxes for pending and skipped locations (not completed)
+                if (!completedIndices.has(index)) {
+                    const boxSize = 16;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.strokeStyle = '#667eea';
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(
+                        loc.x * canvasScale - boxSize/2,
+                        loc.y * canvasScale - boxSize/2,
+                        boxSize,
+                        boxSize
+                    );
+                    ctx.strokeRect(
+                        loc.x * canvasScale - boxSize/2,
+                        loc.y * canvasScale - boxSize/2,
+                        boxSize,
+                        boxSize
+                    );
+                }
+            });
+            
+            // Draw click markers (X marks for correct/incorrect)
+            clickMarkers.forEach(marker => {
+                const size = 20;
+                ctx.strokeStyle = marker.correct ? '#22c55e' : '#ef4444';
+                ctx.lineWidth = 4;
+                
+                // Draw X
+                ctx.beginPath();
+                ctx.moveTo(marker.x - size/2, marker.y - size/2);
+                ctx.lineTo(marker.x + size/2, marker.y + size/2);
+                ctx.moveTo(marker.x + size/2, marker.y - size/2);
+                ctx.lineTo(marker.x - size/2, marker.y + size/2);
+                ctx.stroke();
+                
+                // Draw circle around it
+                ctx.beginPath();
+                ctx.arc(marker.x, marker.y, size, 0, 2 * Math.PI);
+                ctx.stroke();
+            });
+            
+            // Draw completed locations as green dots (only truly completed, not skipped)
+            completedIndices.forEach(i => {
+                const loc = locations[i];
+                ctx.fillStyle = '#22c55e';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+
+                if (showLabels) {
+                    ctx.fillStyle = 'white';
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 3;
+                    ctx.font = 'bold 12px Arial';
+                    const text = loc.name;
+                    ctx.strokeText(text, loc.x * canvasScale + 12, loc.y * canvasScale + 4);
+                    ctx.fillText(text, loc.x * canvasScale + 12, loc.y * canvasScale + 4);
+                }
+            });
+            
+            // Draw red highlight circle for current location if auto-zoom is enabled
+            // OR for any highlighted location (including completed ones that were clicked)
+            if (autoZoomEnabled) {
+                const highlightIndex = highlightedLocationIndex !== null ? highlightedLocationIndex : currentIndex;
+                if (highlightIndex < locations.length) {
+                    const loc = locations[highlightIndex];
+                    ctx.save();
+                    
+                    // Bold, bright red circles - tighter around location
+                    ctx.strokeStyle = '#dc2626'; // Darker, bolder red
+                    ctx.lineWidth = 6; // Thicker lines
+                    ctx.setLineDash([8, 4]); // Shorter dashes for bolder look
+                    
+                    // Draw three tighter concentric circles for emphasis
+                    for (let i = 1; i <= 3; i++) {
+                        ctx.beginPath();
+                        // Tighter circles: 20px base + 8px increments (was 30px + 15px increments)
+                        ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 20 + (i * 8), 0, 2 * Math.PI);
+                        ctx.globalAlpha = 0.9 - (i * 0.15); // Higher opacity for bolder look
+                        ctx.stroke();
+                    }
+                    
+                    // Add a solid inner circle for maximum visibility
+                    ctx.setLineDash([]); // Solid line
+                    ctx.lineWidth = 4;
+                    ctx.globalAlpha = 1.0;
+                    ctx.beginPath();
+                    ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 15, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                }
+            }
+        }
+
+        canvas.addEventListener('click', function(e) {
+            if (currentMode !== 'practice' || currentIndex >= locations.length) return;
+
+            const rect = canvas.getBoundingClientRect();
+            // Convert click coordinates to canvas coordinates accounting for zoom and scale
+            const clickX = (e.clientX - rect.left) / (zoomLevel * canvasScale);
+            const clickY = (e.clientY - rect.top) / (zoomLevel * canvasScale);
+
+            const tolerance = 80; // Increased tolerance for easier clicking
+            
+            // Check if clicking on an already completed location (ignore it)
+            for (const i of completedIndices) {
+                const completedLoc = locations[i];
+                const distToCompleted = Math.sqrt(Math.pow(clickX - completedLoc.x, 2) + Math.pow(clickY - completedLoc.y, 2));
+                if (distToCompleted < tolerance) {
+                    console.log('Ignoring click on already completed location:', completedLoc.name);
+                    return; // Don't process clicks on completed locations
+                }
+            }
+
+            const correctLoc = locations[currentIndex];
+            const distance = Math.sqrt(Math.pow(clickX - correctLoc.x, 2) + Math.pow(clickY - correctLoc.y, 2));
+            
+            console.log('Click at:', clickX, clickY, 'Target:', correctLoc.x, correctLoc.y, 'Distance:', distance, 'Scale:', canvasScale, 'Zoom:', zoomLevel);
+
+            const isCorrect = distance < tolerance;
+
+            if (isCorrect) {
+                showFeedback(true);
+                correctCount++;
+                streak++;
+                
+                // Mark this index as completed (not skipped)
+                completedIndices.add(currentIndex);
+                
+                // Add ONE permanent green marker at the correct location
+                clickMarkers.push({
+                    x: correctLoc.x,
+                    y: correctLoc.y,
+                    correct: true,
+                    permanent: true
+                });
+                
+                currentIndex++;
+            } else {
+                showFeedback(false);
+                incorrectCount++;
+                streak = 0;
+                
+                // Add red marker temporarily
+                clickMarkers.push({
+                    x: clickX,
+                    y: clickY,
+                    correct: false
+                });
+                
+                // Remove the incorrect marker after showing feedback
+                setTimeout(() => {
+                    clickMarkers = clickMarkers.filter(m => m.correct);
+                    drawMap();
+                }, 1000);
+            }
+            
+            updateUI();
+            drawMap();
+        });
+
+        function showFeedback(correct) {
+            const popup = document.createElement('div');
+            popup.className = `feedback-popup ${correct ? 'correct' : 'incorrect'}`;
+            popup.textContent = correct ? '✓ Correct!' : '✗ Try Again';
+            document.body.appendChild(popup);
+            setTimeout(() => popup.remove(), 1000);
+        }
+
+        function updateUI() {
+            if (currentIndex < locations.length) {
+                document.getElementById('currentName').textContent = locations[currentIndex].name;
+                document.getElementById('instructionName').textContent = locations[currentIndex].name;
+            } else {
+                document.getElementById('currentName').textContent = '✓ Complete!';
+                document.getElementById('instructionName').textContent = 'All locations learned';
+                document.querySelector('.instruction').style.background = '#d1fae5';
+                document.querySelector('.instruction').style.borderColor = '#10b981';
+            }
+
+            const completed = completedIndices.size;
+            const remaining = locations.length - completed;
+            const percent = Math.round((completed / locations.length) * 100);
+
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('remainingCount').textContent = remaining;
+            document.getElementById('percentComplete').textContent = percent + '%';
+            document.getElementById('streakCount').textContent = streak;
+
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percent + '%';
+            progressBar.textContent = `${completed} / ${locations.length}`;
+
+            updateList();
+        }
+
+        function updateList() {
+            const list = document.getElementById('namesList');
+            list.innerHTML = '';
+            locations.forEach((loc, index) => {
+                const item = document.createElement('div');
+                item.className = 'name-list-item';
+                
+                if (completedIndices.has(index)) {
+                    // Completed (correctly answered) - NOW CLICKABLE to zoom/view
+                    item.classList.add('completed');
+                    item.innerHTML = `✓ ${loc.name}`;
+                    item.style.cursor = 'pointer';
+                    item.onclick = function() {
+                        // Allow clicking completed items to zoom to them
+                        highlightedLocationIndex = index; // Set which location to highlight
+                        if (autoZoomEnabled) {
+                            zoomToLocation(index);
+                        }
+                        // Don't change currentIndex, just zoom to view
+                        drawMap();
+                    };
+                } else if (skippedIndices.has(index)) {
+                    // Skipped - clickable to jump back to it
+                    item.classList.add('pending');
+                    item.innerHTML = `⏭️ ${loc.name}`;
+                    item.style.cursor = 'pointer';
+                    item.onclick = function() {
+                        highlightedLocationIndex = null; // Reset to use currentIndex
+                        currentIndex = index;
+                        skippedIndices.delete(index); // Remove from skipped when retrying
+                        if (autoZoomEnabled) {
+                            zoomToLocation(index);
+                        }
+                        updateUI();
+                        drawMap();
+                    };
+                } else if (index === currentIndex) {
+                    // Current - clickable to stay on it
+                    item.classList.add('current');
+                    item.innerHTML = `→ ${loc.name}`;
+                    item.style.cursor = 'pointer';
+                    item.onclick = function() {
+                        // Allow re-selecting current item
+                        highlightedLocationIndex = null; // Reset to use currentIndex
+                        if (autoZoomEnabled) {
+                            zoomToLocation(index);
+                        }
+                        updateUI();
+                        drawMap();
+                    };
+                } else {
+                    // Pending or not yet reached - make all clickable!
+                    item.classList.add('pending');
+                    item.innerHTML = loc.name;
+                    item.style.cursor = 'pointer';
+                    item.onclick = function() {
+                        highlightedLocationIndex = null; // Reset to use currentIndex
+                        currentIndex = index;
+                        if (autoZoomEnabled) {
+                            zoomToLocation(index);
+                        }
+                        updateUI();
+                        drawMap();
+                    };
+                }
+                
+                list.appendChild(item);
+            });
+        }
+
+        function showAnswer() {
+            if (currentIndex >= locations.length) return;
+            
+            const loc = locations[currentIndex];
+            
+            // Draw the map first
+            drawMap();
+            
+            // Draw a pulsing highlight on the correct location
+            ctx.save();
+            ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 4;
+            
+            // Draw large circle
+            ctx.beginPath();
+            ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Draw arrow pointing to location
+            ctx.fillStyle = '#22c55e';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.strokeText('↓', loc.x * canvasScale, loc.y * canvasScale - 50);
+            ctx.fillText('↓', loc.x * canvasScale, loc.y * canvasScale - 50);
+            
+            // Draw label
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 4;
+            const text = loc.name + ' is here!';
+            ctx.strokeText(text, loc.x * canvasScale, loc.y * canvasScale + 60);
+            ctx.fillText(text, loc.x * canvasScale, loc.y * canvasScale + 60);
+            
+            ctx.restore();
+            
+            setTimeout(() => drawMap(), 3000);
+        }
+
+        function skipCurrent() {
+            if (currentIndex < locations.length) {
+                skippedIndices.add(currentIndex);
+                currentIndex++;
+                streak = 0;
+                updateUI();
+                drawMap();
+            }
+        }
+
+        function resetPractice() {
+            if (confirm('Start over from the beginning?')) {
+                initializeMode();
+            }
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            drawMap();
+        }
+
+        function zoomIn() {
+            zoomLevel = Math.min(3.0, zoomLevel + 0.25);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            zoomLevel = Math.max(0.5, zoomLevel - 0.25);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            zoomLevel = 1.0;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            canvas.style.transform = `scale(${zoomLevel})`;
+            canvas.style.transformOrigin = 'top left';
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+        }
+
+        function toggleAutoZoom() {
+            autoZoomEnabled = !autoZoomEnabled;
+            const btn = document.getElementById('autoZoomBtn');
+            const status = document.getElementById('autoZoomStatus');
+            
+            if (autoZoomEnabled) {
+                btn.textContent = '🎯 Auto-Zoom: ON';
+                btn.classList.add('active');
+                status.textContent = 'ON';
+                status.style.color = '#22c55e';
+                status.style.fontWeight = 'bold';
+                // Immediately zoom to current location
+                zoomToLocation(currentIndex);
+            } else {
+                btn.textContent = '🎯 Auto-Zoom: OFF';
+                btn.classList.remove('active');
+                status.textContent = 'OFF';
+                status.style.color = '#64748b';
+                status.style.fontWeight = 'normal';
+                // Reset to normal view
+                zoomLevel = 1.0;
+                applyZoom();
+                const mapWrapper = document.getElementById('practiceMapWrapper');
+                mapWrapper.scrollLeft = 0;
+                mapWrapper.scrollTop = 0;
+                drawMap();
+            }
+        }
+
+        function zoomToLocation(index) {
+            if (index >= locations.length) return;
+            
+            const loc = locations[index];
+            const mapWrapper = document.getElementById('practiceMapWrapper');
+            
+            // Set zoom level to 1.5x (less aggressive)
+            zoomLevel = 1.5;
+            applyZoom();
+            
+            // Calculate scroll position to center the location
+            // Account for both canvas scale and zoom level
+            const scaledX = loc.x * canvasScale * zoomLevel;
+            const scaledY = loc.y * canvasScale * zoomLevel;
+            
+            const scrollX = scaledX - (mapWrapper.clientWidth / 2);
+            const scrollY = scaledY - (mapWrapper.clientHeight / 2);
+            
+            mapWrapper.scrollLeft = Math.max(0, scrollX);
+            mapWrapper.scrollTop = Math.max(0, scrollY);
+            
+            // Redraw with highlight
+            drawMap();
+        }
+
+        function changeCursor(type) {
+            const mapWrapper = document.getElementById('practiceMapWrapper');
+            
+            // Remove all cursor classes
+            mapWrapper.classList.remove('skis', 'snowboard');
+            
+            // Add the selected cursor class
+            if (type === 'skis') {
+                mapWrapper.classList.add('skis');
+                document.getElementById('cursorType').textContent = 'Skis ⛷️';
+            } else if (type === 'snowboard') {
+                mapWrapper.classList.add('snowboard');
+                document.getElementById('cursorType').textContent = 'Snowboard 🏂';
+            } else {
+                document.getElementById('cursorType').textContent = 'Default';
+            }
+        }
+
+        canvas.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
