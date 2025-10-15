@@ -770,7 +770,6 @@
                     </div>
 
                     <div class="controls" style="flex-direction: column; gap: 8px; flex-shrink: 0;">
-                        <button class="btn btn-warning" onclick="showAnswer()" title="Reveal the correct location on the map">💡 Show Answer</button>
                         <button class="btn btn-secondary" onclick="skipCurrent()" title="Skip this location and move to the next one">⏭️ Skip</button>
                         <button class="btn btn-danger" onclick="resetPractice()" title="Start over from the beginning with a fresh session">🔄 Reset</button>
                     </div>
@@ -1033,6 +1032,12 @@
 
         canvas.addEventListener('click', function(e) {
             if (currentMode !== 'practice' || currentIndex >= locations.length) return;
+            
+            // Don't register clicks if user just finished dragging
+            if (hasDragged) {
+                hasDragged = false; // Reset for next interaction
+                return;
+            }
 
             const rect = canvas.getBoundingClientRect();
             // Convert click coordinates to canvas coordinates
@@ -1103,6 +1108,7 @@
 
         // Mouse panning functionality
         let isPanning = false;
+        let hasDragged = false; // Track if user actually dragged
         let panStartX = 0;
         let panStartY = 0;
         let scrollStartX = 0;
@@ -1116,6 +1122,7 @@
             if (e.button !== 0) return;
             
             isPanning = true;
+            hasDragged = false; // Reset drag flag
             panStartX = e.clientX;
             panStartY = e.clientY;
             scrollStartX = mapWrapper.scrollLeft;
@@ -1131,23 +1138,18 @@
             const deltaX = panStartX - e.clientX;
             const deltaY = panStartY - e.clientY;
             
+            // Check if user has moved enough to be considered a drag
+            const dragDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (dragDistance > MIN_DRAG_DISTANCE) {
+                hasDragged = true;
+            }
+            
             mapWrapper.scrollLeft = scrollStartX + deltaX;
             mapWrapper.scrollTop = scrollStartY + deltaY;
         });
 
         mapWrapper.addEventListener('mouseup', function(e) {
             if (isPanning) {
-                const deltaX = Math.abs(panStartX - e.clientX);
-                const deltaY = Math.abs(panStartY - e.clientY);
-                const dragDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-                
-                // If we barely moved, treat it as a click (let the canvas click handler deal with it)
-                // Otherwise, it was a drag/pan
-                if (dragDistance > MIN_DRAG_DISTANCE) {
-                    // Prevent the click event from firing after a drag
-                    e.stopPropagation();
-                }
-                
                 isPanning = false;
                 mapWrapper.style.cursor = 'grab';
             }
