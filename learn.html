@@ -82,6 +82,7 @@
             grid-template-columns: 320px 1fr;
             gap: 20px;
             height: calc(100vh - 200px);
+            min-height: 0; /* Safari grid fix */
         }
         .sidebar {
             background: white;
@@ -91,6 +92,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            min-height: 0; /* Safari flexbox fix */
             overflow: hidden;
         }
         .sidebar h2 {
@@ -118,8 +120,10 @@
             font-weight: bold;
         }
         .name-list-container {
-            flex: 1;
+            flex: 1 1 auto;
+            min-height: 0; /* Safari flexbox fix */
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* Safari smooth scrolling */
             margin-top: 10px;
             padding-right: 5px;
         }
@@ -136,6 +140,10 @@
         }
         .name-list-container::-webkit-scrollbar-thumb:hover {
             background: #764ba2;
+        }
+        #namesList {
+            width: 100%;
+            min-height: 100px; /* Ensure content is visible in Safari */
         }
         .name-list-item {
             padding: 8px 10px;
@@ -186,6 +194,9 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            min-height: 0; /* Safari grid fix */
+            display: flex;
+            flex-direction: column;
         }
         .map-wrapper {
             position: relative;
