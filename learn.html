@@ -1109,7 +1109,7 @@
         let scrollStartY = 0;
         const MIN_DRAG_DISTANCE = 5; // Minimum pixels to consider it a drag vs click
 
-        const mapWrapper = document.getElementById('practiceMapWrapper');
+        const mapWrapper = document.getElementById('practiceMapWrapper'); // Used for both panning and touch
 
         mapWrapper.addEventListener('mousedown', function(e) {
             // Only pan with left mouse button
@@ -1443,7 +1443,6 @@
         // Pinch-to-zoom for touch devices
         let initialPinchDistance = null;
         let initialZoomLevel = 1.0;
-        const mapWrapper = document.getElementById('practiceMapWrapper');
 
         canvas.addEventListener('touchstart', function(e) {
             if (e.touches.length === 2) {
