@@ -1411,25 +1411,46 @@
             drawMap();
         }
 
+        let currentCursorType = 'default'; // Track current cursor selection
+
         function changeCursor(type) {
             const mapWrapper = document.getElementById('practiceMapWrapper');
+            currentCursorType = type;
             
             // Remove all cursor classes
             mapWrapper.classList.remove('skis', 'snowboard');
+            
+            // Remove active class from all cursor buttons
+            document.querySelectorAll('[onclick^="changeCursor"]').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            });
             
             // Add the selected cursor class (all use grab/grabbing now)
             if (type === 'skis') {
                 mapWrapper.classList.add('skis');
                 document.getElementById('cursorType').textContent = 'Skier ⛷️';
+                // Highlight the ski button
+                document.querySelector('[onclick="changeCursor(\'skis\')"]').classList.remove('btn-secondary');
+                document.querySelector('[onclick="changeCursor(\'skis\')"]').classList.add('btn-primary');
             } else if (type === 'snowboard') {
                 mapWrapper.classList.add('snowboard');
                 document.getElementById('cursorType').textContent = 'Snowboarder 🏂';
+                // Highlight the snowboard button
+                document.querySelector('[onclick="changeCursor(\'snowboard\')"]').classList.remove('btn-secondary');
+                document.querySelector('[onclick="changeCursor(\'snowboard\')"]').classList.add('btn-primary');
             } else {
                 // Default to grab cursor (pointer finger style)
                 mapWrapper.style.cursor = 'grab';
                 document.getElementById('cursorType').textContent = 'Pointer 👆';
+                // Highlight the default button
+                document.querySelector('[onclick="changeCursor(\'default\')"]').classList.remove('btn-secondary');
+                document.querySelector('[onclick="changeCursor(\'default\')"]').classList.add('btn-primary');
             }
         }
+        
+        // Set default cursor on load
+        changeCursor('default');
 
         canvas.addEventListener('wheel', function(e) {
             if (e.ctrlKey) {
