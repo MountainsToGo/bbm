@@ -123,9 +123,10 @@
         }
         .name-list-container {
             flex: 0 1 auto;
-            max-height: 750px; /* Show ~10-15 items with scroll */
+            max-height: 675px; /* Show exactly 15 items with scroll */
+            height: 675px; /* Fixed height for scroll box */
             min-height: 0; /* Safari flexbox fix */
-            overflow-y: auto;
+            overflow-y: scroll; /* Always show scrollbar */
             -webkit-overflow-scrolling: touch; /* Safari smooth scrolling */
             margin-top: 10px;
             padding-right: 5px;
