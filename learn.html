@@ -194,8 +194,10 @@
             width: 100%;
             max-height: calc(100vh - 400px);
             overflow: scroll; /* Force scrollbars */
+            overflow-x: scroll; /* Explicit horizontal scroll for iOS */
+            overflow-y: scroll; /* Explicit vertical scroll for iOS */
             -webkit-overflow-scrolling: touch;
-            touch-action: manipulation; /* Allow native touch scrolling */
+            touch-action: pan-x pan-y; /* Allow panning in both directions */
         }
         .map-wrapper::-webkit-scrollbar {
             width: 12px;
@@ -221,6 +223,8 @@
             display: block;
             border: 2px solid #cbd5e1;
             border-radius: 8px;
+            min-width: 100%; /* Ensure canvas can expand beyond container */
+            min-height: 100%;
         }
         .instruction {
             background: #fef3c7;
@@ -1254,8 +1258,10 @@
         }
 
         function applyZoom() {
-            canvas.style.transform = `scale(${zoomLevel})`;
-            canvas.style.transformOrigin = 'top left';
+            // Use actual width/height changes for proper iOS Safari scrolling
+            canvas.style.width = (100 * zoomLevel) + '%';
+            canvas.style.height = 'auto';
+            canvas.style.transform = 'none';
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
 
