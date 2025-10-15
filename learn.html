@@ -432,8 +432,14 @@
             }
             
             .map-wrapper {
-                height: 60vh !important;
-                max-height: 600px;
+                height: auto !important;
+                min-height: 70vh;
+                max-height: none !important;
+            }
+            
+            #mapCanvas {
+                width: 100% !important;
+                height: auto !important;
             }
             
             .mode-selector {
@@ -546,7 +552,14 @@
             }
             
             .map-wrapper {
-                height: 50vh !important;
+                height: auto !important;
+                min-height: 60vh;
+                max-height: none !important;
+            }
+            
+            #mapCanvas {
+                width: 100% !important;
+                height: auto !important;
             }
             
             /* Sidebar buttons - full width, larger */
@@ -676,8 +689,14 @@
             }
             
             .map-wrapper {
-                height: calc(100vh - 200px) !important;
-                max-height: none;
+                height: auto !important;
+                min-height: 50vh;
+                max-height: none !important;
+            }
+            
+            #mapCanvas {
+                width: 100% !important;
+                height: auto !important;
             }
             
             .progress-bar {
