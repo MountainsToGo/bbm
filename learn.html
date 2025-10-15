@@ -225,10 +225,16 @@
             background: #764ba2;
         }
         .map-wrapper.skis {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">⛷️</text></svg>') 16 16, crosshair;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">⛷️</text></svg>') 16 16, grab;
+        }
+        .map-wrapper.skis:active {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">⛷️</text></svg>') 16 16, grabbing;
         }
         .map-wrapper.snowboard {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">🏂</text></svg>') 16 16, crosshair;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">🏂</text></svg>') 16 16, grab;
+        }
+        .map-wrapper.snowboard:active {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><text y="28" font-size="28">🏂</text></svg>') 16 16, grabbing;
         }
         #mapCanvas {
             display: block;
@@ -1095,6 +1101,68 @@
             drawMap();
         });
 
+        // Mouse panning functionality
+        let isPanning = false;
+        let panStartX = 0;
+        let panStartY = 0;
+        let scrollStartX = 0;
+        let scrollStartY = 0;
+        const MIN_DRAG_DISTANCE = 5; // Minimum pixels to consider it a drag vs click
+
+        const mapWrapper = document.getElementById('practiceMapWrapper');
+
+        mapWrapper.addEventListener('mousedown', function(e) {
+            // Only pan with left mouse button
+            if (e.button !== 0) return;
+            
+            isPanning = true;
+            panStartX = e.clientX;
+            panStartY = e.clientY;
+            scrollStartX = mapWrapper.scrollLeft;
+            scrollStartY = mapWrapper.scrollTop;
+            
+            mapWrapper.style.cursor = 'grabbing';
+            e.preventDefault(); // Prevent text selection while dragging
+        });
+
+        mapWrapper.addEventListener('mousemove', function(e) {
+            if (!isPanning) return;
+            
+            const deltaX = panStartX - e.clientX;
+            const deltaY = panStartY - e.clientY;
+            
+            mapWrapper.scrollLeft = scrollStartX + deltaX;
+            mapWrapper.scrollTop = scrollStartY + deltaY;
+        });
+
+        mapWrapper.addEventListener('mouseup', function(e) {
+            if (isPanning) {
+                const deltaX = Math.abs(panStartX - e.clientX);
+                const deltaY = Math.abs(panStartY - e.clientY);
+                const dragDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                
+                // If we barely moved, treat it as a click (let the canvas click handler deal with it)
+                // Otherwise, it was a drag/pan
+                if (dragDistance > MIN_DRAG_DISTANCE) {
+                    // Prevent the click event from firing after a drag
+                    e.stopPropagation();
+                }
+                
+                isPanning = false;
+                mapWrapper.style.cursor = 'grab';
+            }
+        });
+
+        mapWrapper.addEventListener('mouseleave', function() {
+            if (isPanning) {
+                isPanning = false;
+                mapWrapper.style.cursor = 'grab';
+            }
+        });
+
+        // Set initial cursor to grab
+        mapWrapper.style.cursor = 'grab';
+
         function showFeedback(correct) {
             const popup = document.createElement('div');
             popup.className = `feedback-popup ${correct ? 'correct' : 'incorrect'}`;
@@ -1355,6 +1423,8 @@
                 mapWrapper.classList.add('snowboard');
                 document.getElementById('cursorType').textContent = 'Snowboard 🏂';
             } else {
+                // Default to grab cursor
+                mapWrapper.style.cursor = 'grab';
                 document.getElementById('cursorType').textContent = 'Default';
             }
         }
