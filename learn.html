@@ -193,9 +193,9 @@
             cursor: crosshair;
             width: 100%;
             max-height: calc(100vh - 400px);
-            overflow: auto;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-            touch-action: pan-x pan-y; /* Allow panning in all directions */
+            overflow: scroll; /* Force scrollbars */
+            -webkit-overflow-scrolling: touch;
+            touch-action: manipulation; /* Allow native touch scrolling */
         }
         .map-wrapper::-webkit-scrollbar {
             width: 12px;
@@ -810,17 +810,15 @@
 
         // Load image first
         img.onload = function() {
-            // Calculate scale to fit window
-            const mapWrapper = document.getElementById('practiceMapWrapper');
-            const maxWidth = mapWrapper.clientWidth || 1200;
-            const maxHeight = 600;
+            // Use full image size - let CSS scale it down
+            canvasScale = 1;
             
-            const scaleX = maxWidth / img.width;
-            const scaleY = maxHeight / img.height;
-            canvasScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
+            canvas.width = img.width;  // 3131px
+            canvas.height = img.height; // 1999px
             
-            canvas.width = img.width * canvasScale;
-            canvas.height = img.height * canvasScale;
+            // Scale canvas to fit container using CSS transform
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
             
             // Then load configuration with cache-busting
             const cacheBuster = new Date().getTime();
@@ -1340,7 +1338,7 @@
         let initialZoomLevel = 1.0;
         const mapWrapper = document.getElementById('practiceMapWrapper');
 
-        mapWrapper.addEventListener('touchstart', function(e) {
+        canvas.addEventListener('touchstart', function(e) {
             if (e.touches.length === 2) {
                 e.preventDefault();
                 const touch1 = e.touches[0];
@@ -1351,10 +1349,9 @@
                 );
                 initialZoomLevel = zoomLevel;
             }
-            // Single finger touch allows normal scrolling (don't prevent default)
-        }, { passive: false });
+        });
 
-        mapWrapper.addEventListener('touchmove', function(e) {
+        canvas.addEventListener('touchmove', function(e) {
             if (e.touches.length === 2) {
                 e.preventDefault();
                 const touch1 = e.touches[0];
@@ -1376,10 +1373,9 @@
                     drawMap();
                 }
             }
-            // Single finger touch allows normal scrolling/panning (don't prevent default)
-        }, { passive: false });
+        });
 
-        mapWrapper.addEventListener('touchend', function(e) {
+        canvas.addEventListener('touchend', function(e) {
             if (e.touches.length < 2) {
                 initialPinchDistance = null;
             }
