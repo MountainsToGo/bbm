@@ -672,6 +672,12 @@
                 height: 20px;
                 margin-top: 8px;
             }
+            
+            /* Increase map visibility in landscape */
+            .map-wrapper {
+                max-height: calc(100vh - 200px);
+                min-height: 400px;
+            }
         }
         
         /* Touch device optimizations */
@@ -830,7 +836,7 @@
                     return response.json();
                 })
                 .then(config => {
-                    locations = config.locations.filter(loc => loc.enabled !== false);
+                    locations = config.locations;
                     console.log('Loaded locations:', locations.length);
                     if (locations.length === 0) {
                         alert('No locations found in configuration file!');
@@ -1233,7 +1239,7 @@
         }
 
         function zoomIn() {
-            zoomLevel = Math.min(3.0, zoomLevel + 0.25);
+            zoomLevel = Math.min(5.0, zoomLevel + 0.25);
             applyZoom();
         }
 
@@ -1368,8 +1374,8 @@
                     const scale = currentDistance / initialPinchDistance;
                     const newZoom = initialZoomLevel * scale;
                     
-                    // Clamp between 0.5x and 3x
-                    zoomLevel = Math.max(0.5, Math.min(3.0, newZoom));
+                    // Clamp between 0.5x and 5x
+                    zoomLevel = Math.max(0.5, Math.min(5.0, newZoom));
                     
                     document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
                     applyZoom();
