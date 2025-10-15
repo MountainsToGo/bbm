@@ -194,6 +194,8 @@
             width: 100%;
             max-height: calc(100vh - 400px);
             overflow: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            touch-action: pan-x pan-y; /* Allow panning in all directions */
         }
         .map-wrapper::-webkit-scrollbar {
             width: 12px;
@@ -1336,8 +1338,9 @@
         // Pinch-to-zoom for touch devices
         let initialPinchDistance = null;
         let initialZoomLevel = 1.0;
+        const mapWrapper = document.getElementById('practiceMapWrapper');
 
-        canvas.addEventListener('touchstart', function(e) {
+        mapWrapper.addEventListener('touchstart', function(e) {
             if (e.touches.length === 2) {
                 e.preventDefault();
                 const touch1 = e.touches[0];
@@ -1348,9 +1351,10 @@
                 );
                 initialZoomLevel = zoomLevel;
             }
+            // Single finger touch allows normal scrolling (don't prevent default)
         }, { passive: false });
 
-        canvas.addEventListener('touchmove', function(e) {
+        mapWrapper.addEventListener('touchmove', function(e) {
             if (e.touches.length === 2) {
                 e.preventDefault();
                 const touch1 = e.touches[0];
@@ -1372,9 +1376,10 @@
                     drawMap();
                 }
             }
+            // Single finger touch allows normal scrolling/panning (don't prevent default)
         }, { passive: false });
 
-        canvas.addEventListener('touchend', function(e) {
+        mapWrapper.addEventListener('touchend', function(e) {
             if (e.touches.length < 2) {
                 initialPinchDistance = null;
             }
