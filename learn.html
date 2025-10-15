@@ -1403,9 +1403,11 @@
         function applyZoom() {
             // Use actual width/height changes for proper iOS Safari scrolling
             canvas.style.width = (100 * zoomLevel) + '%';
-            canvas.style.height = 'auto';
-            canvas.style.maxHeight = 'none';
+            canvas.style.height = ''; // Clear height to let aspect-ratio work
+            canvas.style.maxHeight = '';
+            canvas.style.maxWidth = '';
             canvas.style.transform = 'none';
+            canvas.style.aspectRatio = '3131 / 1999'; // Maintain original aspect ratio
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
 
