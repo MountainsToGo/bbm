@@ -196,7 +196,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            min-height: 500px; /* Ensure scrollable area */
+            min-height: 1200px; /* Maximize map height */
             display: flex;
             flex-direction: column;
             overflow-y: auto; /* Allow scroll in Safari */
@@ -207,7 +207,8 @@
             display: block;
             cursor: grab; /* Default grab cursor */
             width: 100%;
-            max-height: calc(100vh - 400px);
+            max-height: none; /* Remove height restriction */
+            min-height: 1100px; /* Ensure tall map box */
             overflow: auto; /* Auto scrollbars for better Mac compatibility */
             -webkit-overflow-scrolling: touch;
             touch-action: pan-x pan-y; /* Allow panning in both directions */
