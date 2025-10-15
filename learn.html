@@ -808,11 +808,17 @@
 
         // Load image first
         img.onload = function() {
-            // Use full image size - no scaling
-            canvasScale = 1;
+            // Calculate scale to fit window
+            const mapWrapper = document.getElementById('practiceMapWrapper');
+            const maxWidth = mapWrapper.clientWidth || 1200;
+            const maxHeight = 600;
             
-            canvas.width = img.width;
-            canvas.height = img.height;
+            const scaleX = maxWidth / img.width;
+            const scaleY = maxHeight / img.height;
+            canvasScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
+            
+            canvas.width = img.width * canvasScale;
+            canvas.height = img.height * canvasScale;
             
             // Then load configuration with cache-busting
             const cacheBuster = new Date().getTime();
@@ -1326,6 +1332,53 @@
                 }
             }
         }, { passive: false });
+
+        // Pinch-to-zoom for touch devices
+        let initialPinchDistance = null;
+        let initialZoomLevel = 1.0;
+
+        canvas.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                initialPinchDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                initialZoomLevel = zoomLevel;
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const touch1 = e.touches[0];
+                const touch2 = e.touches[1];
+                const currentDistance = Math.hypot(
+                    touch2.clientX - touch1.clientX,
+                    touch2.clientY - touch1.clientY
+                );
+                
+                if (initialPinchDistance) {
+                    const scale = currentDistance / initialPinchDistance;
+                    const newZoom = initialZoomLevel * scale;
+                    
+                    // Clamp between 0.5x and 3x
+                    zoomLevel = Math.max(0.5, Math.min(3.0, newZoom));
+                    
+                    document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+                    applyZoom();
+                    drawMap();
+                }
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', function(e) {
+            if (e.touches.length < 2) {
+                initialPinchDistance = null;
+            }
+        });
     </script>
 </body>
 </html>
