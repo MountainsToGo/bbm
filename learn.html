@@ -808,17 +808,11 @@
 
         // Load image first
         img.onload = function() {
-            // Calculate scale to fit window
-            const mapWrapper = document.getElementById('practiceMapWrapper');
-            const maxWidth = mapWrapper.clientWidth || 1200;
-            const maxHeight = 600;
+            // Use full image size - no scaling
+            canvasScale = 1;
             
-            const scaleX = maxWidth / img.width;
-            const scaleY = maxHeight / img.height;
-            canvasScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
-            
-            canvas.width = img.width * canvasScale;
-            canvas.height = img.height * canvasScale;
+            canvas.width = img.width;
+            canvas.height = img.height;
             
             // Then load configuration with cache-busting
             const cacheBuster = new Date().getTime();
