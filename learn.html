@@ -824,7 +824,7 @@
 
                     <div class="controls map-controls">
                         <button class="btn btn-secondary" onclick="toggleAutoZoom()" id="autoZoomBtn" title="Automatically zoom to the current location when selected">� Auto-Zoom: OFF</button>
-                        <button class="btn btn-secondary" onclick="toggleLabels()" title="Show or hide location labels on the map">�️ Labels</button>
+                        <button class="btn btn-secondary" onclick="toggleLabels()" id="labelsBtn" title="Show or hide location labels on the map">�️ Labels</button>
                         <button class="btn btn-secondary" onclick="zoomIn()" title="Zoom in on the map (up to 1000%)">🔍+ Zoom In</button>
                         <button class="btn btn-secondary" onclick="zoomOut()" title="Zoom out on the map">🔍- Zoom Out</button>
                         <button class="btn btn-secondary" onclick="resetZoom()" title="Reset zoom level back to 100%">↺ Reset Map</button>
@@ -1376,6 +1376,18 @@
 
         function toggleLabels() {
             showLabels = !showLabels;
+            const btn = document.getElementById('labelsBtn');
+            
+            if (showLabels) {
+                // Labels ON - show green
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-primary');
+            } else {
+                // Labels OFF - show gray
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            }
+            
             drawMap();
         }
 
