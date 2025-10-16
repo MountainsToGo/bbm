@@ -1394,16 +1394,28 @@
 
         function resetZoom() {
             zoomLevel = 1.0;
-            applyZoom();
+            // Clear all canvas style properties that might interfere
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
+            canvas.style.maxWidth = '';
+            canvas.style.maxHeight = '';
+            canvas.style.minWidth = '';
+            canvas.style.minHeight = '';
+            canvas.style.transform = 'none';
+            canvas.style.aspectRatio = '';
             // Reset scroll position to top-left
             mapWrapper.scrollLeft = 0;
             mapWrapper.scrollTop = 0;
+            // Update display
+            document.getElementById('zoomLevel').textContent = '100%';
+            drawMap();
         }
 
         function applyZoom() {
             // Use actual width/height changes for proper iOS Safari scrolling
             canvas.style.width = (100 * zoomLevel) + '%';
             canvas.style.height = 'auto';
+            canvas.style.transform = 'none';
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
 
