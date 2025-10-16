@@ -1388,7 +1388,7 @@
         }
 
         function zoomOut() {
-            zoomLevel = Math.max(0.5, zoomLevel - 0.25);
+            zoomLevel = Math.max(1.0, zoomLevel - 0.25); // Minimum zoom is 100%
             applyZoom();
         }
 
@@ -1403,11 +1403,7 @@
         function applyZoom() {
             // Use actual width/height changes for proper iOS Safari scrolling
             canvas.style.width = (100 * zoomLevel) + '%';
-            canvas.style.height = ''; // Clear height to let aspect-ratio work
-            canvas.style.maxHeight = '';
-            canvas.style.maxWidth = '';
-            canvas.style.transform = 'none';
-            canvas.style.aspectRatio = '3131 / 1999'; // Maintain original aspect ratio
+            canvas.style.height = 'auto';
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
 
@@ -1550,8 +1546,8 @@
                     const scale = currentDistance / initialPinchDistance;
                     const newZoom = initialZoomLevel * scale;
                     
-                    // Clamp between 0.5x and 10x (1000%)
-                    zoomLevel = Math.max(0.5, Math.min(10.0, newZoom));
+                    // Clamp between 1.0x (100%) and 10x (1000%)
+                    zoomLevel = Math.max(1.0, Math.min(10.0, newZoom));
                     
                     document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
                     applyZoom();
