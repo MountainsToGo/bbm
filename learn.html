@@ -1391,9 +1391,10 @@
 
         function resetZoom() {
             zoomLevel = 1.0;
-            // Clear all canvas style properties that might interfere
-            canvas.style.width = '';
-            canvas.style.height = '';
+            
+            // Restore to EXACT initial state (same as page load)
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
             canvas.style.maxWidth = '';
             canvas.style.maxHeight = '';
             canvas.style.minWidth = '';
@@ -1401,34 +1402,21 @@
             canvas.style.transform = '';
             canvas.style.aspectRatio = '';
             
-            // Safari-specific fix: Calculate height explicitly based on aspect ratio
-            // Original canvas dimensions: 3131 x 1999
-            const containerWidth = mapWrapper.clientWidth;
-            const aspectRatio = 1999 / 3131;  // height / width
-            const calculatedHeight = containerWidth * aspectRatio;
-            
-            canvas.style.width = containerWidth + 'px';
-            canvas.style.height = calculatedHeight + 'px';
-            
             // Reset scroll position to top-left
             mapWrapper.scrollLeft = 0;
             mapWrapper.scrollTop = 0;
+            
             // Update display
             document.getElementById('zoomLevel').textContent = '100%';
+            
             // Force redraw
             drawMap();
         }
 
         function applyZoom() {
-            // Safari-specific fix: Calculate dimensions explicitly
-            // Original canvas dimensions: 3131 x 1999
-            const containerWidth = mapWrapper.clientWidth;
-            const aspectRatio = 1999 / 3131;  // height / width
-            const zoomedWidth = containerWidth * zoomLevel;
-            const zoomedHeight = zoomedWidth * aspectRatio;
-            
-            canvas.style.width = zoomedWidth + 'px';
-            canvas.style.height = zoomedHeight + 'px';
+            // Use percentage-based sizing (matching initial setup)
+            canvas.style.width = (100 * zoomLevel) + '%';
+            canvas.style.height = 'auto';
             canvas.style.transform = 'none';
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
