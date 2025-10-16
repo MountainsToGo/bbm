@@ -776,10 +776,6 @@
         <div class="header">
             <h1>⛷️ Bogus Basin Interactive Map</h1>
             <p>Learn the locations of all lifts and runs at Bogus Basin!</p>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar">0 / 103</div>
-            </div>
         </div>
 
         <div id="practiceMode">
@@ -1241,9 +1237,10 @@
             document.getElementById('percentComplete').textContent = percent + '%';
             document.getElementById('streakCount').textContent = streak;
 
-            const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = percent + '%';
-            progressBar.textContent = `${completed} / ${locations.length}`;
+            // Progress bar removed from UI
+            // const progressBar = document.getElementById('progressBar');
+            // progressBar.style.width = percent + '%';
+            // progressBar.textContent = `${completed} / ${locations.length}`;
 
             updateList();
         }
