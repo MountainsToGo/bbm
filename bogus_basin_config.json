@@ -461,8 +461,9 @@
     },
     {
       "name": "Smuggler Cut-Off",
-      "x": 2235,
-      "y": 1715
+      "x": 2230,
+      "y": 1717,
+      "enabled": true
     },
     {
       "name": "Snoozer",
