@@ -12,7 +12,7 @@
 2. **Sign in to the account** you want to use for hosting
 3. Go to https://github.com/new
 4. Create a new repository:
-   - **Repository name:** `bogus-basin-map` (or your preferred name)
+   - **Repository name:** `bbm` (or your preferred name)
    - **Description:** "Interactive learning map for Bogus Basin Ski Resort locations"
    - **Visibility:** 
      - ✅ **Public** (required for free GitHub Pages hosting)
@@ -43,7 +43,7 @@ git add learn.html location_manager.html bogus_basin_config.json location_names.
 git commit -m "Initial commit: Bogus Basin Interactive Map"
 
 # Add remote (replace USERNAME with your GitHub username)
-git remote add origin https://github.com/USERNAME/bogus-basin-map.git
+git remote add origin https://github.com/USERNAME/bbm.git
 
 # Push to GitHub
 git branch -M main
@@ -82,7 +82,7 @@ git push -u origin main
    - Select folder: `/ (root)`
 5. Click **"Save"**
 6. Wait 1-2 minutes for deployment
-7. Your site will be live at: `https://USERNAME.github.io/bogus-basin-map/learn.html`
+7. Your site will be live at: `https://USERNAME.github.io/bbm/learn.html`
 
 ---
 
@@ -103,7 +103,7 @@ Create an `index.html` file to redirect to `learn.html`:
 </html>
 ```
 
-Then your site will work at: `https://USERNAME.github.io/bogus-basin-map/`
+Then your site will work at: `https://USERNAME.github.io/bbm/`
 
 ---
 
@@ -144,7 +144,7 @@ When you first push, Windows will prompt for credentials. Enter the **other acco
 
 2. When pushing, use token as password:
    ```powershell
-   git push https://USERNAME:TOKEN@github.com/USERNAME/bogus-basin-map.git main
+   git push https://USERNAME:TOKEN@github.com/USERNAME/bbm.git main
    ```
 
 ### Method 3: Use SSH Key
@@ -162,7 +162,7 @@ When you first push, Windows will prompt for credentials. Enter the **other acco
 
 3. Use SSH remote:
    ```powershell
-   git remote set-url origin git@github.com:USERNAME/bogus-basin-map.git
+   git remote set-url origin git@github.com:USERNAME/bbm.git
    ```
 
 ---
@@ -232,7 +232,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 ## Live Demo
 
-Visit: [https://USERNAME.github.io/bogus-basin-map/](https://USERNAME.github.io/bogus-basin-map/)
+Visit: [https://USERNAME.github.io/bbm/](https://USERNAME.github.io/bbm/)
 
 ## Local Development
 
@@ -289,7 +289,7 @@ MIT License - Feel free to use and modify!
 
 ```powershell
 # Clone your repo
-git clone https://github.com/USERNAME/bogus-basin-map.git
+git clone https://github.com/USERNAME/bbm.git
 
 # Check status
 git status

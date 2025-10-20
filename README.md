@@ -2,7 +2,7 @@
 
 An interactive learning tool for memorizing the locations of all lifts, runs, lodges, and terrain features at Bogus Basin Ski Resort.
 
-🎿 **Live Demo:** [https://mountainstogo.github.io/bogus-basin-map/](https://mountainstogo.github.io/bogus-basin-map/)
+🎿 **Live Demo:** [https://mountainstogo.github.io/bbm/](https://mountainstogo.github.io/bbm/)
 
 ## Features
 
@@ -37,8 +37,8 @@ Want to run this locally or contribute?
 
 ```bash
 # Clone the repository
-git clone https://github.com/mountainstogo/bogus-basin-map.git
-cd bogus-basin-map
+git clone https://github.com/mountainstogo/bbm.git
+cd bbm
 
 # Start a local server
 python -m http.server 8000
@@ -50,7 +50,7 @@ python -m http.server 8000
 ## Project Structure
 
 ```
-bogus-basin-map/
+bbm/
 ├── learn.html                  # Main interactive map application
 ├── location_manager.html       # Admin tool for managing locations
 ├── bogus_basin_config.json     # Location data (117 locations with coordinates)
