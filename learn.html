@@ -784,7 +784,7 @@
                             <div class="stat-label">Completed</div>
                         </div>
                         <div class="stat-box">
-                            <div class="stat-value" id="remainingCount">110</div>
+                            <div class="stat-value" id="remainingCount">117</div>
                             <div class="stat-label">Remaining</div>
                         </div>
                         <div class="stat-box">
@@ -872,7 +872,7 @@
             canvas.style.height = 'auto';
             
             // Then load configuration with cache-busting
-            const VERSION = '110locations'; // Update this to force cache refresh
+            const VERSION = '117locations'; // Update this to force cache refresh
             const cacheBuster = new Date().getTime();
             fetch(`bogus_basin_config.json?v=${VERSION}_${cacheBuster}`, {
                 cache: 'no-cache',

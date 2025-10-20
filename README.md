@@ -6,7 +6,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 ## Features
 
-- 🎿 **110 Locations** - All lifts, runs, lodges, and landmarks mapped
+- 🎿 **117 Locations** - All lifts, runs, lodges, and landmarks mapped
 - 📱 **Fully Responsive** - Optimized for phones, tablets, and desktops
 - 🎯 **Auto-Zoom** - Automatically zoom to the current location
 - 🔍 **Zoom Controls** - Pan and zoom the high-resolution trail map
@@ -22,7 +22,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 1. Visit the live demo link above
 2. Click on the map where you think the highlighted location is
 3. Get instant feedback (✓ for correct, ✗ for incorrect)
-4. Track your progress as you learn all 110 locations!
+4. Track your progress as you learn all 117 locations!
 
 ## Technology Stack
 
@@ -53,7 +53,7 @@ python -m http.server 8000
 bogus-basin-map/
 ├── learn.html                  # Main interactive map application
 ├── location_manager.html       # Admin tool for managing locations
-├── bogus_basin_config.json     # Location data (110 locations with coordinates)
+├── bogus_basin_config.json     # Location data (117 locations with coordinates)
 ├── location_names.js           # Location names array
 ├── trail_map.png              # High-resolution trail map (3131x1999px)
 ├── mobile_testing_guide.md    # Guide for testing mobile responsiveness
