@@ -10,13 +10,15 @@
     },
     {
       "name": "B-2",
-      "x": 2834,
-      "y": 1365
+      "x": 2847,
+      "y": 1343,
+      "enabled": true
     },
     {
       "name": "B-3",
-      "x": 2921,
-      "y": 1431
+      "x": 2936,
+      "y": 1410,
+      "enabled": true
     },
     {
       "name": "Bear Paw",
@@ -37,6 +39,12 @@
       "name": "Bitterroot Basin",
       "x": 2825,
       "y": 1464
+    },
+    {
+      "name": "Blackbird",
+      "x": 1725,
+      "y": 727,
+      "enabled": true
     },
     {
       "name": "Bogus Creek Trail",
@@ -70,9 +78,21 @@
       "y": 571
     },
     {
+      "name": "Cabin Traverse (2nd location)",
+      "x": 1438,
+      "y": 971,
+      "enabled": true
+    },
+    {
       "name": "Cascade",
       "x": 1862,
       "y": 576
+    },
+    {
+      "name": "Claim Jumer",
+      "x": 2138,
+      "y": 360,
+      "enabled": true
     },
     {
       "name": "Coach #7",
@@ -292,6 +312,12 @@
       "y": 1148
     },
     {
+      "name": "Nighthawk Cut-Off",
+      "x": 1521,
+      "y": 1488,
+      "enabled": true
+    },
+    {
       "name": "Nitro",
       "x": 2674,
       "y": 1315
@@ -417,9 +443,21 @@
       "y": 1324
     },
     {
+      "name": "Sleepy Hollow (Lower)",
+      "x": 2616,
+      "y": 1549,
+      "enabled": true
+    },
+    {
       "name": "Smuggler",
       "x": 2282,
       "y": 1379
+    },
+    {
+      "name": "Smuggler (Lower)",
+      "x": 2264,
+      "y": 1748,
+      "enabled": true
     },
     {
       "name": "Smuggler Cut-Off",
@@ -555,6 +593,12 @@
       "name": "Wildcat",
       "x": 878,
       "y": 1044
+    },
+    {
+      "name": "Wildcat (Top)",
+      "x": 1120,
+      "y": 769,
+      "enabled": true
     }
   ]
 }
