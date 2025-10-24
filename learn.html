@@ -799,6 +799,7 @@
 
                     <div class="controls" style="flex-direction: column; gap: 8px; flex-shrink: 0;">
                         <button class="btn btn-secondary" onclick="skipCurrent()" title="Skip this location and move to the next one">⏭️ Skip</button>
+                        <button class="btn btn-secondary" onclick="scrambleList()" title="Shuffle the order of locations in the list below">🔀 Scramble List</button>
                         <button class="btn btn-danger" onclick="resetPractice()" title="Start over from the beginning with a fresh session">🔄 Reset</button>
                     </div>
 
@@ -842,6 +843,7 @@
         let currentMode = 'practice';
         let currentIndex = 0;
         let locations = [];
+        let displayOrder = []; // Array of indices to control list display order (can be shuffled)
         let showLabels = false;
         let canvasScale = 1;
         let zoomLevel = 1.0;
@@ -943,6 +945,9 @@
             console.log('BEFORE SORT:', locations.length, 'locations');
             locations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
             console.log('AFTER SORT:', locations.length, 'locations');
+            
+            // Initialize display order as sequential (0, 1, 2, ...)
+            displayOrder = locations.map((_, index) => index);
             
             console.log('Initialized with', locations.length, 'locations');
             console.log('First location:', locations[0]);
@@ -1241,7 +1246,9 @@
         function updateList() {
             const list = document.getElementById('namesList');
             list.innerHTML = '';
-            locations.forEach((loc, index) => {
+            // Use displayOrder to control the order items appear in the list
+            displayOrder.forEach(index => {
+                const loc = locations[index];
                 const item = document.createElement('div');
                 item.className = 'name-list-item';
                 
@@ -1359,6 +1366,19 @@
                 updateUI();
                 drawMap();
             }
+        }
+
+        function scrambleList() {
+            // Fisher-Yates shuffle algorithm to randomize displayOrder
+            const shuffled = [...displayOrder];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            displayOrder = shuffled;
+            
+            // Re-render the list with new order (keeps all selections intact)
+            updateList();
         }
 
         function resetPractice() {
