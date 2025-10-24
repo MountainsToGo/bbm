@@ -800,6 +800,7 @@
                     <div class="controls" style="flex-direction: column; gap: 8px; flex-shrink: 0;">
                         <button class="btn btn-secondary" onclick="skipCurrent()" title="Skip this location and move to the next one">⏭️ Skip</button>
                         <button class="btn btn-secondary" onclick="scrambleList()" title="Shuffle the order of locations in the list below">🔀 Scramble List</button>
+                        <button class="btn btn-secondary" onclick="toggleMapText()" id="hideMapTextBtn" title="Hide trail and lift names printed on the map">🙈 Hide Map Text</button>
                         <button class="btn btn-danger" onclick="resetPractice()" title="Start over from the beginning with a fresh session">🔄 Reset</button>
                     </div>
 
@@ -856,6 +857,8 @@
         let autoZoomEnabled = false; // Toggle for auto-zoom to selected location
         let highlightTimer = null; // Timer for temporary highlight
         let highlightedLocationIndex = null; // Track which location to highlight (for viewing completed items)
+        let hideMapText = false; // Toggle to hide trail/lift names on the map image
+        let textOverlays = []; // Array of overlay rectangles loaded from text_overlays.json
 
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
@@ -897,6 +900,31 @@
                     if (locations.length === 0) {
                         alert('No locations found in configuration file!');
                         return;
+                    }
+                    
+                    // Load text overlays configuration
+                    return fetch('text_overlays.json?v=' + cacheBuster, {
+                        cache: 'no-cache',
+                        headers: {
+                            'Cache-Control': 'no-cache, no-store, must-revalidate',
+                            'Pragma': 'no-cache',
+                            'Expires': '0'
+                        }
+                    });
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('No text overlays file found, continuing without overlays');
+                        textOverlays = [];
+                        initializeMode();
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(overlayConfig => {
+                    if (overlayConfig) {
+                        textOverlays = overlayConfig.overlays || [];
+                        console.log('Loaded', textOverlays.length, 'text overlays');
                     }
                     initializeMode();
                 })
@@ -959,6 +987,32 @@
         function drawMap() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Draw white overlays to hide trail/lift text on map if enabled
+            if (hideMapText && textOverlays.length > 0) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                textOverlays.forEach(overlay => {
+                    ctx.save();
+                    
+                    // Apply rotation if specified
+                    if (overlay.rotation) {
+                        const centerX = (overlay.x + overlay.width / 2) * canvasScale;
+                        const centerY = (overlay.y + overlay.height / 2) * canvasScale;
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate((overlay.rotation * Math.PI) / 180);
+                        ctx.translate(-centerX, -centerY);
+                    }
+                    
+                    ctx.fillRect(
+                        overlay.x * canvasScale,
+                        overlay.y * canvasScale,
+                        overlay.width * canvasScale,
+                        overlay.height * canvasScale
+                    );
+                    
+                    ctx.restore();
+                });
+            }
             
             // Draw white boxes at all location coordinates
             locations.forEach((loc, index) => {
@@ -1093,6 +1147,7 @@
             const distance = Math.sqrt(Math.pow(clickX - correctLoc.x, 2) + Math.pow(clickY - correctLoc.y, 2));
             
             console.log('Click at:', clickX, clickY, 'Target:', correctLoc.x, correctLoc.y, 'Distance:', distance, 'Scale:', canvasScale, 'Zoom:', zoomLevel);
+            console.log('📍 OVERLAY HELPER: {x: ' + Math.round(clickX) + ', y: ' + Math.round(clickY) + ', width: 200, height: 30},');
 
             const isCorrect = distance < tolerance;
 
@@ -1112,7 +1167,8 @@
                     permanent: true
                 });
                 
-                currentIndex++;
+                // Move to next location in displayOrder (not alphabetically)
+                moveToNextLocation();
             } else {
                 showFeedback(false);
                 incorrectCount++;
@@ -1358,10 +1414,29 @@
             setTimeout(() => drawMap(), 3000);
         }
 
+        // Helper function to move to the next incomplete location in displayOrder
+        function moveToNextLocation() {
+            // Find the current location's position in displayOrder
+            const currentPosition = displayOrder.indexOf(currentIndex);
+            
+            // Start searching from the next position in displayOrder
+            for (let i = currentPosition + 1; i < displayOrder.length; i++) {
+                const locationIndex = displayOrder[i];
+                // Find first location that isn't completed or skipped
+                if (!completedIndices.has(locationIndex) && !skippedIndices.has(locationIndex)) {
+                    currentIndex = locationIndex;
+                    return;
+                }
+            }
+            
+            // If no incomplete locations found after current position, we've reached the end
+            currentIndex = locations.length;
+        }
+
         function skipCurrent() {
             if (currentIndex < locations.length) {
                 skippedIndices.add(currentIndex);
-                currentIndex++;
+                moveToNextLocation();
                 streak = 0;
                 updateUI();
                 drawMap();
@@ -1377,8 +1452,38 @@
             }
             displayOrder = shuffled;
             
-            // Re-render the list with new order (keeps all selections intact)
-            updateList();
+            // After scrambling, jump to the first incomplete location in the new order
+            for (let i = 0; i < displayOrder.length; i++) {
+                const locationIndex = displayOrder[i];
+                // Skip completed and skipped locations, find first pending location
+                if (!completedIndices.has(locationIndex) && !skippedIndices.has(locationIndex)) {
+                    currentIndex = locationIndex;
+                    break;
+                }
+            }
+            
+            // Re-render the list with new order and update UI to show new current location
+            updateUI();
+            drawMap();
+        }
+
+        function toggleMapText() {
+            hideMapText = !hideMapText;
+            const btn = document.getElementById('hideMapTextBtn');
+            
+            if (hideMapText) {
+                // Map text hidden
+                btn.textContent = '👁️ Show Map Text';
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-primary');
+            } else {
+                // Map text visible
+                btn.textContent = '🙈 Hide Map Text';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-secondary');
+            }
+            
+            drawMap();
         }
 
         function resetPractice() {
