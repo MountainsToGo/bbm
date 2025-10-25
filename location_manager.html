@@ -248,6 +248,14 @@
             color: #64748b;
             margin-top: 5px;
         }
+        #locationsPanel, #overlaysPanel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+            min-height: 0;
+        }
         
         /* Mobile & Tablet Responsive Styles */
         @media screen and (max-width: 1024px) {
@@ -433,12 +441,22 @@
 
         <div class="main-content">
             <div class="sidebar">
-                <h2>Add New Location</h2>
-                
-                <div class="form-group">
-                    <label for="locationName">Location Name:</label>
-                    <input type="text" id="locationName" placeholder="Enter location name...">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-shrink: 0;">
+                    <button class="btn btn-primary" id="locationsTab" onclick="switchMode('locations')" style="flex: 1;">
+                        📍 Locations
+                    </button>
+                    <button class="btn btn-secondary" id="overlaysTab" onclick="switchMode('overlays')" style="flex: 1;">
+                        🙈 Text Overlays
+                    </button>
                 </div>
+
+                <div id="locationsPanel">
+                    <h2>Add New Location</h2>
+                    
+                    <div class="form-group">
+                        <label for="locationName">Location Name:</label>
+                        <input type="text" id="locationName" placeholder="Enter location name...">
+                    </div>
 
                 <div class="click-mode-box" id="clickModeBox">
                     <strong>📍 Click Mode:</strong>
@@ -473,13 +491,88 @@
                     <p style="color: #64748b; text-align: center;">Loading locations...</p>
                 </div>
 
-                <button class="btn btn-success" onclick="saveToFile()">
-                    💾 Save All Changes
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                    <button class="btn btn-success" onclick="saveToFile()">
+                        💾 Save All Changes
+                    </button>
 
-                <button class="btn btn-warning" onclick="window.location.href='learn.html'">
-                    ← Back to Learning App
-                </button>
+                    <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                        ← Back to Learning App
+                    </button>
+                </div>
+                </div>
+
+                <div id="overlaysPanel" style="display: none;">
+                    <h2>Add Text Overlay</h2>
+                    
+                    <div class="instruction" style="font-size: 0.9em; margin-bottom: 10px;">
+                        <strong>How to add overlays:</strong><br>
+                        1. Click and drag on the map to draw a rectangle<br>
+                        2. Adjust rotation if needed using the slider<br>
+                        3. Click "Add Overlay" to save it<br>
+                        <strong>💡 Tip:</strong> Click and drag existing overlays to move them!
+                    </div>
+
+                    <div class="click-mode-box" id="overlayModeBox">
+                        <strong>✏️ Drawing Mode:</strong>
+                        <p id="overlayModeText">Click and drag on the map to draw an overlay rectangle</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="overlayNote">Note (optional):</label>
+                        <input type="text" id="overlayNote" placeholder="e.g., 'Covers Alpine lift name'">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="overlayRotation">Rotation Angle (degrees):</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" id="overlayRotation" min="-180" max="180" value="0" step="1" 
+                                   style="flex: 1;" oninput="updatePendingOverlayRotation(this.value)" disabled>
+                            <input type="number" id="overlayRotationValue" min="-180" max="180" value="0" step="1"
+                                   style="width: 70px; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px;"
+                                   oninput="updatePendingOverlayRotation(this.value)" disabled>
+                        </div>
+                        <small style="color: #64748b;">Rotate the overlay to match angled text (0° = horizontal)</small>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="addOverlay()" id="addOverlayButton" disabled style="flex: 1;">
+                            ➕ Add Overlay
+                        </button>
+                        <button class="btn btn-secondary" onclick="cancelOverlay()" id="cancelOverlayButton" disabled style="flex: 1;">
+                            ✖ Cancel
+                        </button>
+                    </div>
+
+                    <hr style="border: 1px solid #e2e8f0;">
+
+                    <h2>Current Overlays</h2>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalOverlays">0</div>
+                            <div class="stat-label">Total Overlays</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="coverageArea">0</div>
+                            <div class="stat-label">Coverage (px²)</div>
+                        </div>
+                    </div>
+
+                    <div class="location-list" id="overlayList">
+                        <p style="color: #64748b; text-align: center;">No overlays yet. Draw one!</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                        <button class="btn btn-success" onclick="saveOverlaysToFile()">
+                            💾 Save Overlays
+                        </button>
+
+                        <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                            ← Back to Learning App
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="map-area">
@@ -510,10 +603,16 @@
 
     <script>
         let locations = [];
+        let textOverlays = [];
         let showLabels = true;
         let canvasScale = 1;
         let zoomLevel = 1.0;
         let pendingCoords = null;
+        let currentMode = 'locations'; // 'locations' or 'overlays'
+        let overlayDrawStart = null; // For drawing overlay rectangles
+        let pendingOverlay = null; // Store the drawn overlay before adding it
+        let draggingOverlayIndex = null; // Track which overlay is being dragged
+        let dragOffset = { x: 0, y: 0 }; // Offset from overlay corner to mouse
 
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
@@ -534,12 +633,31 @@
                     console.log('Loaded locations:', locations.length);
                     updateLocationList();
                     updateStats();
+                    
+                    // Load text overlays
+                    return fetch(`text_overlays.json?v=${cacheBuster}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('No overlays file found');
+                        textOverlays = [];
+                        drawMap();
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(overlayConfig => {
+                    if (overlayConfig) {
+                        textOverlays = overlayConfig.overlays || [];
+                        console.log('Loaded overlays:', textOverlays.length);
+                    }
                     drawMap();
                 })
                 .catch(err => {
                     console.error('Error loading config:', err);
                     showStatus('Could not load configuration file. Starting with empty list.', 'error');
                     locations = [];
+                    textOverlays = [];
                     updateLocationList();
                     drawMap();
                 });
@@ -550,9 +668,81 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             
+            // Draw text overlays if in overlay mode
+            if (currentMode === 'overlays') {
+                textOverlays.forEach(overlay => {
+                    ctx.save();
+                    
+                    // Calculate center point for rotation
+                    const centerX = overlay.x + overlay.width / 2;
+                    const centerY = overlay.y + overlay.height / 2;
+                    
+                    // Apply rotation if specified
+                    if (overlay.rotation) {
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate((overlay.rotation * Math.PI) / 180);
+                        ctx.translate(-centerX, -centerY);
+                    }
+                    
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(overlay.x, overlay.y, overlay.width, overlay.height);
+                    ctx.strokeRect(overlay.x, overlay.y, overlay.width, overlay.height);
+                    
+                    ctx.restore();
+                });
+                
+                // Draw pending overlay (stays visible after mouse release until added/cancelled)
+                if (pendingOverlay) {
+                    ctx.save();
+                    
+                    // Calculate center point for rotation
+                    const centerX = pendingOverlay.x + pendingOverlay.width / 2;
+                    const centerY = pendingOverlay.y + pendingOverlay.height / 2;
+                    
+                    // Apply rotation if specified
+                    if (pendingOverlay.rotation) {
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate((pendingOverlay.rotation * Math.PI) / 180);
+                        ctx.translate(-centerX, -centerY);
+                    }
+                    
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([10, 5]); // Dashed line to indicate it's pending
+                    ctx.fillRect(pendingOverlay.x, pendingOverlay.y, pendingOverlay.width, pendingOverlay.height);
+                    ctx.strokeRect(pendingOverlay.x, pendingOverlay.y, pendingOverlay.width, pendingOverlay.height);
+                    ctx.setLineDash([]); // Reset dash
+                    
+                    // Draw size and rotation label
+                    ctx.fillStyle = '#22c55e';
+                    ctx.font = 'bold 14px Arial';
+                    const label = `${pendingOverlay.width}×${pendingOverlay.height}px @ ${pendingOverlay.rotation || 0}°`;
+                    ctx.fillText(label, pendingOverlay.x + 5, pendingOverlay.y + 20);
+                    
+                    ctx.restore();
+                }
+                
+                // Draw currently drawing overlay (while mouse is dragging)
+                if (overlayDrawStart && pendingCoords) {
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 2;
+                    const x = Math.min(overlayDrawStart.x, pendingCoords.x);
+                    const y = Math.min(overlayDrawStart.y, pendingCoords.y);
+                    const width = Math.abs(pendingCoords.x - overlayDrawStart.x);
+                    const height = Math.abs(pendingCoords.y - overlayDrawStart.y);
+                    ctx.fillRect(x, y, width, height);
+                    ctx.strokeRect(x, y, width, height);
+                }
+            }
+            
             // Draw all existing locations
-            locations.forEach((loc, index) => {
-                if (loc.enabled === false) return;
+            if (currentMode === 'locations') {
+                locations.forEach((loc, index) => {
+                    if (loc.enabled === false) return;
                 
                 // Draw marker
                 ctx.fillStyle = '#667eea';
@@ -574,29 +764,32 @@
                 }
             });
 
-            // Draw pending location (preview)
-            if (pendingCoords) {
-                ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
-                ctx.strokeStyle = '#22c55e';
-                ctx.lineWidth = 4;
-                ctx.beginPath();
-                ctx.arc(pendingCoords.x, pendingCoords.y, 12, 0, 2 * Math.PI);
-                ctx.fill();
-                ctx.stroke();
+                // Draw pending location (preview)
+                if (pendingCoords && !overlayDrawStart) {
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.arc(pendingCoords.x, pendingCoords.y, 12, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
 
-                // Draw crosshair
-                ctx.strokeStyle = '#22c55e';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(pendingCoords.x - 20, pendingCoords.y);
-                ctx.lineTo(pendingCoords.x + 20, pendingCoords.y);
-                ctx.moveTo(pendingCoords.x, pendingCoords.y - 20);
-                ctx.lineTo(pendingCoords.x, pendingCoords.y + 20);
-                ctx.stroke();
+                    // Draw crosshair
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(pendingCoords.x - 20, pendingCoords.y);
+                    ctx.lineTo(pendingCoords.x + 20, pendingCoords.y);
+                    ctx.moveTo(pendingCoords.x, pendingCoords.y - 20);
+                    ctx.lineTo(pendingCoords.x, pendingCoords.y + 20);
+                    ctx.stroke();
+                }
             }
         }
 
         canvas.addEventListener('click', function(e) {
+            if (currentMode === 'overlays') return; // Overlays use mousedown/mouseup
+            
             const name = document.getElementById('locationName').value.trim();
             if (!name) {
                 showStatus('Please enter a location name first!', 'error');
@@ -614,6 +807,159 @@
             document.getElementById('clickModeText').textContent = `Coordinates set! Click "Add Location" to save.`;
             
             drawMap();
+        });
+
+        // Helper function to check if point is inside a rotated rectangle
+        function isPointInRotatedRect(px, py, overlay) {
+            const centerX = overlay.x + overlay.width / 2;
+            const centerY = overlay.y + overlay.height / 2;
+            
+            // If rotated, transform point back to unrotated space
+            if (overlay.rotation) {
+                const angle = -overlay.rotation * Math.PI / 180; // Negative to reverse rotation
+                const dx = px - centerX;
+                const dy = py - centerY;
+                px = centerX + (dx * Math.cos(angle) - dy * Math.sin(angle));
+                py = centerY + (dx * Math.sin(angle) + dy * Math.cos(angle));
+            }
+            
+            // Check if point is in unrotated rectangle
+            return px >= overlay.x && px <= overlay.x + overlay.width &&
+                   py >= overlay.y && py <= overlay.y + overlay.height;
+        }
+
+        // Overlay drawing with mouse drag
+        canvas.addEventListener('mousedown', function(e) {
+            if (currentMode !== 'overlays') return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            
+            // Check if clicking on an existing overlay (check in reverse order to get topmost)
+            for (let i = textOverlays.length - 1; i >= 0; i--) {
+                if (isPointInRotatedRect(x, y, textOverlays[i])) {
+                    draggingOverlayIndex = i;
+                    dragOffset.x = x - textOverlays[i].x;
+                    dragOffset.y = y - textOverlays[i].y;
+                    canvas.style.cursor = 'move';
+                    return; // Start dragging, don't start new drawing
+                }
+            }
+            
+            // Not clicking on existing overlay, start drawing new one
+            // Clear any pending overlay when starting a new draw
+            if (pendingOverlay) {
+                pendingOverlay = null;
+                document.getElementById('addOverlayButton').disabled = true;
+                document.getElementById('cancelOverlayButton').disabled = true;
+                document.getElementById('overlayRotation').disabled = true;
+                document.getElementById('overlayRotationValue').disabled = true;
+                document.getElementById('overlayModeBox').classList.remove('active');
+                document.getElementById('overlayModeText').textContent = 'Click and drag on the map to draw an overlay rectangle';
+            }
+            
+            overlayDrawStart = { x, y };
+            pendingCoords = { x, y };
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (currentMode !== 'overlays') return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            
+            // If dragging an existing overlay, update its position
+            if (draggingOverlayIndex !== null) {
+                textOverlays[draggingOverlayIndex].x = x - dragOffset.x;
+                textOverlays[draggingOverlayIndex].y = y - dragOffset.y;
+                drawMap();
+                return;
+            }
+            
+            // Otherwise, drawing new overlay
+            if (!overlayDrawStart) return;
+            
+            pendingCoords = { x, y };
+            drawMap();
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            if (currentMode !== 'overlays') return;
+            
+            // If was dragging an overlay, finish the drag
+            if (draggingOverlayIndex !== null) {
+                showStatus(`✓ Overlay moved! Don't forget to save.`, 'success');
+                updateOverlayList();
+                draggingOverlayIndex = null;
+                canvas.style.cursor = 'crosshair';
+                drawMap();
+                return;
+            }
+            
+            // Otherwise, finish drawing new overlay
+            if (!overlayDrawStart) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            
+            const overlayX = Math.min(overlayDrawStart.x, x);
+            const overlayY = Math.min(overlayDrawStart.y, y);
+            const overlayWidth = Math.abs(x - overlayDrawStart.x);
+            const overlayHeight = Math.abs(y - overlayDrawStart.y);
+            
+            if (overlayWidth > 10 && overlayHeight > 10) {
+                // Save the overlay so it persists after mouse release
+                pendingOverlay = {
+                    x: overlayX,
+                    y: overlayY,
+                    width: overlayWidth,
+                    height: overlayHeight,
+                    rotation: 0
+                };
+                
+                document.getElementById('overlayModeBox').classList.add('active');
+                document.getElementById('overlayModeText').textContent = 
+                    `Rectangle drawn: ${overlayWidth}×${overlayHeight}px. Adjust rotation if needed, then click "Add Overlay".`;
+                document.getElementById('addOverlayButton').disabled = false;
+                document.getElementById('cancelOverlayButton').disabled = false;
+                document.getElementById('overlayRotation').disabled = false;
+                document.getElementById('overlayRotationValue').disabled = false;
+                document.getElementById('overlayRotation').value = 0;
+                document.getElementById('overlayRotationValue').value = 0;
+            } else {
+                showStatus('Overlay too small! Draw a larger rectangle (minimum 10×10px).', 'error');
+                pendingOverlay = null;
+            }
+            
+            // Clear drawing state
+            overlayDrawStart = null;
+            pendingCoords = null;
+            drawMap();
+        });
+
+        // Show hover feedback for existing overlays (when not drawing)
+        canvas.addEventListener('mousemove', function(e) {
+            if (currentMode !== 'overlays' || overlayDrawStart || draggingOverlayIndex !== null) {
+                return;
+            }
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            
+            // Check if hovering over an existing overlay
+            let hovering = false;
+            for (let i = textOverlays.length - 1; i >= 0; i--) {
+                if (isPointInRotatedRect(x, y, textOverlays[i])) {
+                    hovering = true;
+                    break;
+                }
+            }
+            
+            canvas.style.cursor = hovering ? 'move' : 'crosshair';
         });
 
         function addLocation() {
@@ -767,6 +1113,165 @@
             const hasName = this.value.trim().length > 0;
             document.getElementById('addButton').disabled = !hasName || !pendingCoords;
         });
+
+        // Mode switching
+        function switchMode(mode) {
+            currentMode = mode;
+            overlayDrawStart = null;
+            pendingCoords = null;
+            pendingOverlay = null;
+            
+            if (mode === 'locations') {
+                document.getElementById('locationsPanel').style.display = 'flex';
+                document.getElementById('overlaysPanel').style.display = 'none';
+                document.getElementById('locationsTab').className = 'btn btn-primary';
+                document.getElementById('overlaysTab').className = 'btn btn-secondary';
+                canvas.style.cursor = 'crosshair';
+            } else {
+                document.getElementById('locationsPanel').style.display = 'none';
+                document.getElementById('overlaysPanel').style.display = 'flex';
+                document.getElementById('locationsTab').className = 'btn btn-secondary';
+                document.getElementById('overlaysTab').className = 'btn btn-primary';
+                canvas.style.cursor = 'crosshair';
+                updateOverlayList();
+            }
+            
+            drawMap();
+        }
+
+        // Overlay management
+        function updatePendingOverlayRotation(value) {
+            const angle = parseInt(value) || 0;
+            document.getElementById('overlayRotation').value = angle;
+            document.getElementById('overlayRotationValue').value = angle;
+            if (pendingOverlay) {
+                pendingOverlay.rotation = angle;
+                drawMap();
+            }
+        }
+
+        function addOverlay() {
+            if (!pendingOverlay) {
+                showStatus('Please draw a rectangle on the map first!', 'error');
+                return;
+            }
+
+            const note = document.getElementById('overlayNote').value.trim();
+
+            const newOverlay = {
+                x: pendingOverlay.x,
+                y: pendingOverlay.y,
+                width: pendingOverlay.width,
+                height: pendingOverlay.height,
+                rotation: pendingOverlay.rotation || 0,
+                note: note || `Overlay at (${pendingOverlay.x}, ${pendingOverlay.y})`
+            };
+
+            textOverlays.push(newOverlay);
+
+            const rotationText = newOverlay.rotation ? ` @ ${newOverlay.rotation}°` : '';
+            showStatus(`✓ Overlay added (${newOverlay.width}×${newOverlay.height}px${rotationText})! Don't forget to save.`, 'success');
+            
+            // Reset form
+            document.getElementById('overlayNote').value = '';
+            document.getElementById('addOverlayButton').disabled = true;
+            document.getElementById('cancelOverlayButton').disabled = true;
+            document.getElementById('overlayRotation').disabled = true;
+            document.getElementById('overlayRotationValue').disabled = true;
+            document.getElementById('overlayRotation').value = 0;
+            document.getElementById('overlayRotationValue').value = 0;
+            document.getElementById('overlayModeBox').classList.remove('active');
+            document.getElementById('overlayModeText').textContent = 'Click and drag on the map to draw an overlay rectangle';
+            pendingOverlay = null;
+
+            updateOverlayList();
+            updateOverlayStats();
+            drawMap();
+        }
+
+        function cancelOverlay() {
+            pendingOverlay = null;
+            document.getElementById('overlayNote').value = '';
+            document.getElementById('addOverlayButton').disabled = true;
+            document.getElementById('cancelOverlayButton').disabled = true;
+            document.getElementById('overlayRotation').disabled = true;
+            document.getElementById('overlayRotationValue').disabled = true;
+            document.getElementById('overlayRotation').value = 0;
+            document.getElementById('overlayRotationValue').value = 0;
+            document.getElementById('overlayModeBox').classList.remove('active');
+            document.getElementById('overlayModeText').textContent = 'Click and drag on the map to draw an overlay rectangle';
+            drawMap();
+        }
+
+        function updateOverlayList() {
+            const list = document.getElementById('overlayList');
+            if (textOverlays.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No overlays yet. Draw one!</p>';
+                updateOverlayStats();
+                return;
+            }
+
+            list.innerHTML = '';
+            textOverlays.forEach((overlay, index) => {
+                const item = document.createElement('div');
+                item.className = 'location-item';
+                const rotationText = overlay.rotation ? ` @ ${overlay.rotation}°` : '';
+                item.innerHTML = `
+                    <div>
+                        <div class="location-name">${overlay.note}</div>
+                        <div class="location-coords">${overlay.width}×${overlay.height}px${rotationText} at (${overlay.x}, ${overlay.y})</div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="deleteOverlay(${index})">🗑️</button>
+                `;
+                list.appendChild(item);
+            });
+            
+            updateOverlayStats();
+        }
+
+        function deleteOverlay(index) {
+            const overlay = textOverlays[index];
+            if (confirm(`Delete overlay "${overlay.note}"?`)) {
+                textOverlays.splice(index, 1);
+                showStatus(`Deleted overlay. Don't forget to save!`, 'info');
+                updateOverlayList();
+                updateOverlayStats();
+                drawMap();
+            }
+        }
+
+        function updateOverlayStats() {
+            const total = textOverlays.length;
+            const coverageArea = textOverlays.reduce((sum, overlay) => sum + (overlay.width * overlay.height), 0);
+            document.getElementById('totalOverlays').textContent = total;
+            document.getElementById('coverageArea').textContent = coverageArea.toLocaleString();
+        }
+
+        function saveOverlaysToFile() {
+            const config = {
+                overlays: textOverlays
+            };
+
+            const jsonString = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text_overlays.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showStatus('✓ Text overlays file downloaded! Replace the old file with this one.', 'success');
+        }
+
+        // Ensure sidebar panels use flex layout
+        document.getElementById('locationsPanel').style.display = 'flex';
+        document.getElementById('locationsPanel').style.flexDirection = 'column';
+        document.getElementById('locationsPanel').style.gap = '15px';
+        document.getElementById('overlaysPanel').style.flexDirection = 'column';
+        document.getElementById('overlaysPanel').style.gap = '15px';
     </script>
 </body>
 </html>
