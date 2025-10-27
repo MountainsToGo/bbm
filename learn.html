@@ -784,7 +784,7 @@
                             <div class="stat-label">Completed</div>
                         </div>
                         <div class="stat-box">
-                            <div class="stat-value" id="remainingCount">117</div>
+                            <div class="stat-value" id="remainingCount">120</div>
                             <div class="stat-label">Remaining</div>
                         </div>
                         <div class="stat-box">
@@ -859,6 +859,7 @@
         let highlightedLocationIndex = null; // Track which location to highlight (for viewing completed items)
         let hideMapText = false; // Toggle to hide trail/lift names on the map image
         let textOverlays = []; // Array of overlay rectangles loaded from text_overlays.json
+        let revealedOverlays = new Set(); // Track which overlays have been revealed by correct answers
 
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
@@ -877,7 +878,7 @@
             canvas.style.height = 'auto';
             
             // Then load configuration with cache-busting
-            const VERSION = '117locations'; // Update this to force cache refresh
+            const VERSION = '120locations'; // Update this to force cache refresh
             const cacheBuster = new Date().getTime();
             fetch(`bogus_basin_config.json?v=${VERSION}_${cacheBuster}`, {
                 cache: 'no-cache',
@@ -963,6 +964,7 @@
             clickMarkers = [];
             completedIndices = new Set();
             skippedIndices = new Set();
+            revealedOverlays = new Set(); // Reset revealed overlays on restart
             
             if (locations.length === 0) {
                 console.error('No locations loaded!');
@@ -991,7 +993,12 @@
             // Draw black overlays to hide trail/lift text on map if enabled
             if (hideMapText && textOverlays.length > 0) {
                 ctx.fillStyle = 'rgba(0, 0, 0, 1.0)';
-                textOverlays.forEach(overlay => {
+                textOverlays.forEach((overlay, index) => {
+                    // Skip overlays that have been revealed by correct answers
+                    if (revealedOverlays.has(index)) {
+                        return;
+                    }
+                    
                     ctx.save();
                     
                     // Apply rotation if specified
@@ -1158,6 +1165,14 @@
                 
                 // Mark this index as completed (not skipped)
                 completedIndices.add(currentIndex);
+                
+                // Reveal ALL overlays for this location (some locations have multiple overlays)
+                const currentLocationName = locations[currentIndex].name;
+                textOverlays.forEach((overlay, index) => {
+                    if (overlay.note === currentLocationName) {
+                        revealedOverlays.add(index);
+                    }
+                });
                 
                 // Add ONE permanent green marker at the correct location
                 clickMarkers.push({

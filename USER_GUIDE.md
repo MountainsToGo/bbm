@@ -1,7 +1,7 @@
 # 🎿 Bogus Basin Interactive Map - User Guide
 
 ## 📖 Overview
-Learn all 117 locations at Bogus Basin ski resort through an interactive, gamified map experience!
+Learn all 120 locations at Bogus Basin ski resort through an interactive, gamified map experience!
 
 ---
 
@@ -118,7 +118,7 @@ Learn all 117 locations at Bogus Basin ski resort through an interactive, gamifi
 
 ### Interactive Learning Features
 
-The map includes **117 locations** to identify on Bogus Basin's trail map:
+The map includes **120 locations** to identify on Bogus Basin's trail map:
 - ⛷️ **Ski Lifts**: Chair lifts and surface lifts
 - 🎿 **Runs**: Named ski runs and trails
 - 🏔️ **Terrain Features**: Notable areas and landmarks
@@ -147,7 +147,7 @@ The map includes **117 locations** to identify on Bogus Basin's trail map:
 
 ## 📊 Statistics
 
-- **Total Locations**: 117
+- **Total Locations**: 120
 - **Zoom Range**: 100% - 1000%
 - **Mobile Compatible**: Yes
 - **Offline Mode**: No (requires internet for first load)
@@ -165,7 +165,7 @@ The map includes **117 locations** to identify on Bogus Basin's trail map:
 ## 📝 Version History
 
 - **v1.0**: Initial release with 110 locations
-- **v1.1**: Expanded to 117 locations with additional trails and features
+- **v1.1**: Expanded to 120 locations with additional trails and features
 - **Latest**: Auto-zoom, labels toggle, improved mobile support
 
 ---

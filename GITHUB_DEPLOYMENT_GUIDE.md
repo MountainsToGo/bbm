@@ -222,7 +222,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 ## Features
 
-- 🎿 **117 Locations** - All lifts, runs, and landmarks
+- 🎿 **120 Locations** - All lifts, runs, and landmarks
 - 📱 **Fully Responsive** - Works on phones, tablets, and desktops
 - 🎯 **Auto-Zoom** - Automatically zoom to current location
 - 🔍 **Zoom Controls** - Pan and zoom the map
@@ -322,7 +322,7 @@ git config user.email "other@email.com"
 C:\Users\cbernier\BB\
 ├── learn.html                  (Main app - 1,304 lines)
 ├── location_manager.html       (Admin interface)
-├── bogus_basin_config.json     (117 locations)
+├── bogus_basin_config.json     (120 locations)
 ├── location_names.js           (Location data)
 ├── trail_map.png              (15.5 MB map image)
 ├── mobile_testing_guide.md    (Testing guide)

@@ -6,12 +6,12 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 ## Features
 
-- 🎿 **117 Locations** - All lifts, runs, lodges, and landmarks mapped
+- 🎿 **120 Locations** - All lifts, runs, lodges, and landmarks mapped
 - 📱 **Fully Responsive** - Optimized for phones, tablets, and desktops
 - 🎯 **Auto-Zoom** - Automatically zoom to the current location when selected
 - 🔍 **Zoom Controls** - Pan and zoom the high-resolution trail map (up to 1000%)
 - � **Scramble List** - Shuffle the location order for varied practice
-- 🙈 **Hide Map Text** - Cover trail/lift names with black overlays for harder practice
+- 🙈 **Hide Map Text** - Cover trail/lift names with black overlays; reveals as you learn each location
 - �📊 **Progress Tracking** - Track completed locations, streaks, and percentage
 - ⛷️ **Custom Cursors** - Choose between ski, snowboard, or default cursors
 - 🏷️ **Toggle Labels** - Show/hide location names on completed locations
@@ -37,7 +37,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 - **Turn on Auto-Zoom** - Click any location in the list to jump right to it on the map
 - **Use Scramble List** - Randomize the order to avoid memorizing alphabetically
-- **Enable Hide Map Text** - Once you know the general area, hide the text for a real challenge
+- **Enable Hide Map Text** - Once you know the general area, hide the text for a real challenge. Overlays disappear as you correctly identify each location!
 - **Skip Tricky Ones** - Use the Skip button and come back to difficult locations later
 - **Click Completed Locations** - Click green (completed) items in the list to view where they are
 - **Show Labels** - Turn on labels to see names of completed locations on the map
@@ -71,7 +71,7 @@ python -m http.server 8000
 bbm/
 ├── learn.html                  # Main interactive map application
 ├── location_manager.html       # Admin tool for managing locations and overlays
-├── bogus_basin_config.json     # Location data (117 locations with coordinates)
+├── bogus_basin_config.json     # Location data (120 locations with coordinates)
 ├── text_overlays.json          # Text overlay rectangles for hiding trail/lift names
 ├── location_names.js           # Location names array
 ├── trail_map.png              # High-resolution trail map (3131x1999px)

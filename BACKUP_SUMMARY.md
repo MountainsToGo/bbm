@@ -13,7 +13,7 @@
 ### Application Files ✅
 - learn.html (main app)
 - location_manager.html (admin)
-- bogus_basin_config.json (117 locations)
+- bogus_basin_config.json (120 locations)
 - location_names.js (names array)
 - trail_map.png (15.5 MB image)
 
@@ -39,7 +39,7 @@
 ✅ Auto-zoom with bold, tight red circles
 ✅ Clickable completed locations
 ✅ Touch-optimized interface
-✅ 117 mapped locations
+✅ 120 mapped locations
 ✅ Custom cursors (ski/snowboard)
 ✅ Location skip/retry functionality
 

@@ -39,7 +39,7 @@
     {
       "name": "Bitterroot Basin",
       "x": 2743,
-      "y": 1305,
+      "y": 1307,
       "enabled": true
     },
     {
@@ -71,8 +71,9 @@
     },
     {
       "name": "Buttercup Trail",
-      "x": 3008,
-      "y": 1447
+      "x": 2684,
+      "y": 1268,
+      "enabled": true
     },
     {
       "name": "Cabin Traverse",
@@ -91,7 +92,7 @@
       "y": 576
     },
     {
-      "name": "Claim Jumer",
+      "name": "Claim Jumper",
       "x": 2138,
       "y": 360,
       "enabled": true
@@ -103,8 +104,9 @@
     },
     {
       "name": "Coach's Corner",
-      "x": 2784,
-      "y": 803
+      "x": 2891,
+      "y": 683,
+      "enabled": true
     },
     {
       "name": "Comeback",
@@ -115,6 +117,12 @@
       "name": "Condominiums",
       "x": 2562,
       "y": 1236
+    },
+    {
+      "name": "Connector",
+      "x": 2048,
+      "y": 945,
+      "enabled": true
     },
     {
       "name": "Corn Patch",
@@ -503,9 +511,21 @@
       "y": 830
     },
     {
+      "name": "Sunshine (Lower)",
+      "x": 2058,
+      "y": 996,
+      "enabled": true
+    },
+    {
       "name": "Superior",
       "x": 1936,
       "y": 1434
+    },
+    {
+      "name": "Superior Base",
+      "x": 2225,
+      "y": 1886,
+      "enabled": true
     },
     {
       "name": "Superior Express #3",
@@ -528,7 +548,7 @@
       "y": 1242
     },
     {
-      "name": "The Triangle",
+      "name": "The Triangle (Lower)",
       "x": 1175,
       "y": 1384
     },

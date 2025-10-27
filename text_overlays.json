@@ -35,7 +35,7 @@
       "width": 123,
       "height": 26,
       "rotation": -38,
-      "note": "Upper Nugger"
+      "note": "Upper Nugget"
     },
     {
       "x": 623,
@@ -91,7 +91,7 @@
       "width": 68,
       "height": 28,
       "rotation": 15,
-      "note": "Wildcat Top"
+      "note": "Wildcat (Top)"
     },
     {
       "x": 872,
@@ -211,7 +211,7 @@
       "width": 128,
       "height": 32,
       "rotation": 0,
-      "note": "Shafer Bute"
+      "note": "Shafer Butte"
     },
     {
       "x": 1446,
@@ -219,7 +219,7 @@
       "width": 121,
       "height": 28,
       "rotation": 19,
-      "note": "Cabin Traverse (1)"
+      "note": "Cabin Traverse (2nd location)"
     },
     {
       "x": 1364,
@@ -227,7 +227,7 @@
       "width": 128,
       "height": 26,
       "rotation": -13,
-      "note": "Cabin Traverse (2)"
+      "note": "Cabin Traverse"
     },
     {
       "x": 1461,
@@ -259,7 +259,7 @@
       "width": 127,
       "height": 25,
       "rotation": 38,
-      "note": "Independence"
+      "note": "Independance"
     },
     {
       "x": 1452,
@@ -291,7 +291,7 @@
       "width": 98,
       "height": 24,
       "rotation": -7,
-      "note": "The Triangle"
+      "note": "The Triangle (Lower)"
     },
     {
       "x": 1120,
@@ -355,7 +355,7 @@
       "width": 115,
       "height": 34,
       "rotation": 28,
-      "note": "NightHawk Cut-Off"
+      "note": "Nighthawk Cut-Off"
     },
     {
       "x": 1461,
@@ -467,7 +467,7 @@
       "width": 27,
       "height": 89,
       "rotation": 23,
-      "note": "Powerline"
+      "note": "Power Line"
     },
     {
       "x": 1619,
@@ -515,7 +515,7 @@
       "width": 27,
       "height": 119,
       "rotation": 12,
-      "note": "Shocase #4"
+      "note": "Showcase #4"
     },
     {
       "x": 2032,
@@ -539,7 +539,7 @@
       "width": 39,
       "height": 115,
       "rotation": 26,
-      "note": "Claim Jumber"
+      "note": "Claim Jumper"
     },
     {
       "x": 2320,
@@ -755,7 +755,7 @@
       "width": 24,
       "height": 71,
       "rotation": -31,
-      "note": "Sunshine"
+      "note": "Sunshine (Lower)"
     },
     {
       "x": 2220,
@@ -835,7 +835,7 @@
       "width": 30,
       "height": 44,
       "rotation": -31,
-      "note": "LULU"
+      "note": "LuLu"
     },
     {
       "x": 2690,
@@ -939,7 +939,7 @@
       "width": 72,
       "height": 42,
       "rotation": 23,
-      "note": "Sleepy Hollow"
+      "note": "Sleepy Hollow (Lower)"
     },
     {
       "x": 2907,
@@ -971,7 +971,7 @@
       "width": 117,
       "height": 26,
       "rotation": 33,
-      "note": "Wake up Jim"
+      "note": "Wake Up Jim"
     },
     {
       "x": 2623,
@@ -995,7 +995,7 @@
       "width": 105,
       "height": 30,
       "rotation": -44,
-      "note": "Smuggler"
+      "note": "Smuggler (Lower)"
     }
   ]
 }

@@ -99,7 +99,7 @@
 ✅ **Cursor Styles**: Emoji cursors display on mobile browsers
 ✅ **Canvas Scaling**: Map auto-fits to screen width
 ✅ **Touch Events**: Optimized click detection for touch screens
-✅ **Scrollable Lists**: Smooth scrolling through all 117 locations
+✅ **Scrollable Lists**: Smooth scrolling through all 120 locations
 ✅ **Responsive Stats**: 2-column grid on mobile for better space usage
 
 ## 📦 Files Backed Up:
