@@ -1,0 +1,1001 @@
+{
+  "overlays": [
+    {
+      "x": 291,
+      "y": 1029,
+      "width": 40,
+      "height": 110,
+      "note": "Second Chance"
+    },
+    {
+      "x": 386,
+      "y": 1068,
+      "width": 30,
+      "height": 54,
+      "note": "Eureka"
+    },
+    {
+      "x": 457,
+      "y": 1007,
+      "width": 33,
+      "height": 107,
+      "note": "Lower Nugget"
+    },
+    {
+      "x": 541,
+      "y": 946,
+      "width": 28,
+      "height": 82,
+      "rotation": 0,
+      "note": "Deadwood"
+    },
+    {
+      "x": 524,
+      "y": 742,
+      "width": 123,
+      "height": 26,
+      "rotation": -38,
+      "note": "Upper Nugger"
+    },
+    {
+      "x": 623,
+      "y": 857,
+      "width": 29,
+      "height": 99,
+      "rotation": 0,
+      "note": "Mary's Ridge"
+    },
+    {
+      "x": 221,
+      "y": 1200,
+      "width": 37,
+      "height": 78,
+      "rotation": 0,
+      "note": "Buckhorn"
+    },
+    {
+      "x": 145,
+      "y": 1366,
+      "width": 131,
+      "height": 32,
+      "rotation": 13,
+      "note": "Easy Way Down"
+    },
+    {
+      "x": 1071,
+      "y": 563,
+      "width": 115,
+      "height": 18,
+      "rotation": -10,
+      "note": "Nugget Bowls"
+    },
+    {
+      "x": 1376,
+      "y": 456,
+      "width": 151,
+      "height": 21,
+      "rotation": -4,
+      "note": "Nugget Cat Track"
+    },
+    {
+      "x": 1835,
+      "y": 270,
+      "width": 21,
+      "height": 57,
+      "rotation": 32,
+      "note": "Alpine"
+    },
+    {
+      "x": 1127,
+      "y": 768,
+      "width": 68,
+      "height": 28,
+      "rotation": 15,
+      "note": "Wildcat Top"
+    },
+    {
+      "x": 872,
+      "y": 1002,
+      "width": 75,
+      "height": 23,
+      "rotation": -45,
+      "note": "Wildcat"
+    },
+    {
+      "x": 1002,
+      "y": 1002,
+      "width": 100,
+      "height": 29,
+      "rotation": -62,
+      "note": "Lightning"
+    },
+    {
+      "x": 775,
+      "y": 1347,
+      "width": 87,
+      "height": 33,
+      "rotation": 0,
+      "note": "Lucky Friday"
+    },
+    {
+      "x": 538,
+      "y": 1466,
+      "width": 96,
+      "height": 27,
+      "rotation": 12,
+      "note": "Mother Lode"
+    },
+    {
+      "x": 459,
+      "y": 1499,
+      "width": 125,
+      "height": 29,
+      "rotation": 17,
+      "note": "Lower Paradise"
+    },
+    {
+      "x": 740,
+      "y": 1182,
+      "width": 195,
+      "height": 29,
+      "rotation": -23,
+      "note": "Pine Creek Express #6"
+    },
+    {
+      "x": 161,
+      "y": 1477,
+      "width": 142,
+      "height": 26,
+      "rotation": 0,
+      "note": "Pine Creek Base"
+    },
+    {
+      "x": 188,
+      "y": 1452,
+      "width": 89,
+      "height": 24,
+      "rotation": 0,
+      "note": "The Beach"
+    },
+    {
+      "x": 1200,
+      "y": 1179,
+      "width": 113,
+      "height": 32,
+      "rotation": -40,
+      "note": "Upper Paradise"
+    },
+    {
+      "x": 917,
+      "y": 1423,
+      "width": 80,
+      "height": 31,
+      "rotation": -38,
+      "note": "Paradise"
+    },
+    {
+      "x": 452,
+      "y": 1605,
+      "width": 119,
+      "height": 23,
+      "rotation": -15,
+      "note": "Good Enough"
+    },
+    {
+      "x": 1584,
+      "y": 550,
+      "width": 89,
+      "height": 22,
+      "rotation": -10,
+      "note": "Corn Patch"
+    },
+    {
+      "x": 1301,
+      "y": 712,
+      "width": 48,
+      "height": 23,
+      "rotation": -5,
+      "note": "Tiger"
+    },
+    {
+      "x": 1377,
+      "y": 785,
+      "width": 59,
+      "height": 20,
+      "rotation": -21,
+      "note": "Liberty"
+    },
+    {
+      "x": 1457,
+      "y": 840,
+      "width": 128,
+      "height": 32,
+      "rotation": 0,
+      "note": "Shafer Bute"
+    },
+    {
+      "x": 1446,
+      "y": 979,
+      "width": 121,
+      "height": 28,
+      "rotation": 19,
+      "note": "Cabin Traverse (1)"
+    },
+    {
+      "x": 1364,
+      "y": 538,
+      "width": 128,
+      "height": 26,
+      "rotation": -13,
+      "note": "Cabin Traverse (2)"
+    },
+    {
+      "x": 1461,
+      "y": 621,
+      "width": 59,
+      "height": 25,
+      "rotation": 10,
+      "note": "Shindig"
+    },
+    {
+      "x": 1714,
+      "y": 644,
+      "width": 66,
+      "height": 25,
+      "rotation": 12,
+      "note": "Shindig"
+    },
+    {
+      "x": 1728,
+      "y": 735,
+      "width": 81,
+      "height": 22,
+      "rotation": 24,
+      "note": "Blackbird"
+    },
+    {
+      "x": 1611,
+      "y": 699,
+      "width": 127,
+      "height": 25,
+      "rotation": 38,
+      "note": "Independence"
+    },
+    {
+      "x": 1452,
+      "y": 1053,
+      "width": 79,
+      "height": 23,
+      "rotation": -27,
+      "note": "Majestic"
+    },
+    {
+      "x": 1260,
+      "y": 1225,
+      "width": 85,
+      "height": 29,
+      "rotation": 0,
+      "note": "The Triangle"
+    },
+    {
+      "x": 1236,
+      "y": 1279,
+      "width": 103,
+      "height": 38,
+      "rotation": 0,
+      "note": "Mid-Paradise Cut-Off"
+    },
+    {
+      "x": 1179,
+      "y": 1365,
+      "width": 98,
+      "height": 24,
+      "rotation": -7,
+      "note": "The Triangle"
+    },
+    {
+      "x": 1120,
+      "y": 1374,
+      "width": 34,
+      "height": 80,
+      "rotation": -9,
+      "note": "Stump Bowl"
+    },
+    {
+      "x": 1073,
+      "y": 1476,
+      "width": 171,
+      "height": 20,
+      "rotation": -32,
+      "note": "Paradise Cat Track"
+    },
+    {
+      "x": 1550,
+      "y": 1120,
+      "width": 28,
+      "height": 78,
+      "rotation": 20,
+      "note": "Bonanza"
+    },
+    {
+      "x": 1627,
+      "y": 1159,
+      "width": 32,
+      "height": 94,
+      "rotation": -10,
+      "note": "Night Hawk"
+    },
+    {
+      "x": 1696,
+      "y": 1162,
+      "width": 35,
+      "height": 114,
+      "rotation": -14,
+      "note": "Upper Triumph"
+    },
+    {
+      "x": 1791,
+      "y": 1327,
+      "width": 27,
+      "height": 82,
+      "rotation": 35,
+      "note": "Matchless"
+    },
+    {
+      "x": 1731,
+      "y": 1551,
+      "width": 25,
+      "height": 71,
+      "rotation": 10,
+      "note": "Triumph"
+    },
+    {
+      "x": 1522,
+      "y": 1508,
+      "width": 115,
+      "height": 34,
+      "rotation": 28,
+      "note": "NightHawk Cut-Off"
+    },
+    {
+      "x": 1461,
+      "y": 1597,
+      "width": 147,
+      "height": 32,
+      "rotation": 40,
+      "note": "Lower Bonanza"
+    },
+    {
+      "x": 1465,
+      "y": 1692,
+      "width": 116,
+      "height": 31,
+      "rotation": 10,
+      "note": "Lower Majestic"
+    },
+    {
+      "x": 1408,
+      "y": 1750,
+      "width": 135,
+      "height": 36,
+      "rotation": 34,
+      "note": "Grooming Trail"
+    },
+    {
+      "x": 1757,
+      "y": 1769,
+      "width": 99,
+      "height": 32,
+      "rotation": 22,
+      "note": "Comeback"
+    },
+    {
+      "x": 1896,
+      "y": 1577,
+      "width": 35,
+      "height": 77,
+      "rotation": 0,
+      "note": "Sunbeam"
+    },
+    {
+      "x": 1942,
+      "y": 1439,
+      "width": 28,
+      "height": 75,
+      "rotation": -28,
+      "note": "Superior"
+    },
+    {
+      "x": 2024,
+      "y": 1601,
+      "width": 29,
+      "height": 155,
+      "rotation": -26,
+      "note": "Superior Express #3"
+    },
+    {
+      "x": 1888,
+      "y": 1260,
+      "width": 132,
+      "height": 47,
+      "rotation": 7,
+      "note": "Pioneer Lodge Cat Track"
+    },
+    {
+      "x": 1995,
+      "y": 1159,
+      "width": 31,
+      "height": 58,
+      "rotation": -17,
+      "note": "Tempest"
+    },
+    {
+      "x": 2123,
+      "y": 1354,
+      "width": 36,
+      "height": 83,
+      "rotation": -7,
+      "note": "War Eagle"
+    },
+    {
+      "x": 2193,
+      "y": 1279,
+      "width": 35,
+      "height": 84,
+      "rotation": -10,
+      "note": "War Eagle Cat Track"
+    },
+    {
+      "x": 2229,
+      "y": 1893,
+      "width": 126,
+      "height": 29,
+      "rotation": 0,
+      "note": "Superior Base"
+    },
+    {
+      "x": 1050,
+      "y": 1110,
+      "width": 117,
+      "height": 24,
+      "rotation": -23,
+      "note": "Pine Creek Bowl"
+    },
+    {
+      "x": 1725,
+      "y": 838,
+      "width": 27,
+      "height": 89,
+      "rotation": 23,
+      "note": "Powerline"
+    },
+    {
+      "x": 1619,
+      "y": 819,
+      "width": 99,
+      "height": 25,
+      "rotation": -39,
+      "note": "Last Chance"
+    },
+    {
+      "x": 1799,
+      "y": 946,
+      "width": 142,
+      "height": 21,
+      "rotation": -17,
+      "note": "Omar's Inspiration"
+    },
+    {
+      "x": 1966,
+      "y": 1097,
+      "width": 99,
+      "height": 21,
+      "rotation": 25,
+      "note": "Greenie's Run"
+    },
+    {
+      "x": 1861,
+      "y": 404,
+      "width": 24,
+      "height": 96,
+      "rotation": 31,
+      "note": "Showcase"
+    },
+    {
+      "x": 1855,
+      "y": 530,
+      "width": 76,
+      "height": 24,
+      "rotation": -46,
+      "note": "Cascade"
+    },
+    {
+      "x": 1935,
+      "y": 436,
+      "width": 27,
+      "height": 119,
+      "rotation": 12,
+      "note": "Shocase #4"
+    },
+    {
+      "x": 2032,
+      "y": 230,
+      "width": 26,
+      "height": 110,
+      "rotation": 12,
+      "note": "Shaker Ridge"
+    },
+    {
+      "x": 2084,
+      "y": 248,
+      "width": 28,
+      "height": 102,
+      "rotation": 0,
+      "note": "Playground"
+    },
+    {
+      "x": 2159,
+      "y": 245,
+      "width": 39,
+      "height": 115,
+      "rotation": 26,
+      "note": "Claim Jumber"
+    },
+    {
+      "x": 2320,
+      "y": 285,
+      "width": 35,
+      "height": 102,
+      "rotation": -13,
+      "note": "Upper Ridge"
+    },
+    {
+      "x": 2073,
+      "y": 564,
+      "width": 99,
+      "height": 25,
+      "rotation": -7,
+      "note": "Northslope"
+    },
+    {
+      "x": 2254,
+      "y": 521,
+      "width": 35,
+      "height": 106,
+      "rotation": 31,
+      "note": "Lando's Mojo"
+    },
+    {
+      "x": 2311,
+      "y": 600,
+      "width": 30,
+      "height": 106,
+      "rotation": 24,
+      "note": "Widowmaker"
+    },
+    {
+      "x": 2321,
+      "y": 441,
+      "width": 30,
+      "height": 174,
+      "rotation": -22,
+      "note": "Deer Point Express #1"
+    },
+    {
+      "x": 2490,
+      "y": 562,
+      "width": 27,
+      "height": 103,
+      "rotation": -44,
+      "note": "Sourdough"
+    },
+    {
+      "x": 2463,
+      "y": 733,
+      "width": 39,
+      "height": 52,
+      "rotation": -17,
+      "note": "Bowl"
+    },
+    {
+      "x": 1970,
+      "y": 491,
+      "width": 34,
+      "height": 112,
+      "rotation": 37,
+      "note": "Mike's Mambo"
+    },
+    {
+      "x": 1977,
+      "y": 559,
+      "width": 28,
+      "height": 156,
+      "rotation": 53,
+      "note": "Mambo Meadows"
+    },
+    {
+      "x": 1982,
+      "y": 684,
+      "width": 23,
+      "height": 65,
+      "rotation": 52,
+      "note": "Sunset"
+    },
+    {
+      "x": 1817,
+      "y": 813,
+      "width": 74,
+      "height": 32,
+      "rotation": 0,
+      "note": "Sunshine"
+    },
+    {
+      "x": 2037,
+      "y": 91,
+      "width": 100,
+      "height": 31,
+      "rotation": 0,
+      "note": "Deer Point"
+    },
+    {
+      "x": 2412,
+      "y": 966,
+      "width": 170,
+      "height": 29,
+      "rotation": 0,
+      "note": "J.R. Simplot Lodge"
+    },
+    {
+      "x": 2721,
+      "y": 647,
+      "width": 68,
+      "height": 37,
+      "rotation": 0,
+      "note": "Ida Belle"
+    },
+    {
+      "x": 2785,
+      "y": 610,
+      "width": 126,
+      "height": 30,
+      "rotation": 25,
+      "note": "Uphill Skin Track"
+    },
+    {
+      "x": 2773,
+      "y": 634,
+      "width": 114,
+      "height": 29,
+      "rotation": 30,
+      "note": "Coach's Corner"
+    },
+    {
+      "x": 2555,
+      "y": 707,
+      "width": 24,
+      "height": 134,
+      "rotation": 10,
+      "note": "Stewart's Bowl"
+    },
+    {
+      "x": 2576,
+      "y": 750,
+      "width": 26,
+      "height": 90,
+      "rotation": 10,
+      "note": "Coach #7"
+    },
+    {
+      "x": 2658,
+      "y": 824,
+      "width": 127,
+      "height": 30,
+      "rotation": -30,
+      "note": "Coach's Corner"
+    },
+    {
+      "x": 2628,
+      "y": 887,
+      "width": 99,
+      "height": 22,
+      "rotation": -33,
+      "note": "Easy Rider"
+    },
+    {
+      "x": 2500,
+      "y": 872,
+      "width": 29,
+      "height": 82,
+      "rotation": -11,
+      "note": "Explorer"
+    },
+    {
+      "x": 2406,
+      "y": 821,
+      "width": 27,
+      "height": 100,
+      "rotation": -35,
+      "note": "Lower Ridge"
+    },
+    {
+      "x": 2743,
+      "y": 978,
+      "width": 91,
+      "height": 31,
+      "rotation": 22,
+      "note": "Tubing Hill"
+    },
+    {
+      "x": 2054,
+      "y": 837,
+      "width": 133,
+      "height": 27,
+      "rotation": 28,
+      "note": "Bogus Creek Trail"
+    },
+    {
+      "x": 1991,
+      "y": 890,
+      "width": 119,
+      "height": 26,
+      "rotation": 38,
+      "note": "Pioneer Trail"
+    },
+    {
+      "x": 2049,
+      "y": 965,
+      "width": 93,
+      "height": 24,
+      "rotation": 32,
+      "note": "Connector"
+    },
+    {
+      "x": 2071,
+      "y": 997,
+      "width": 24,
+      "height": 71,
+      "rotation": -31,
+      "note": "Sunshine"
+    },
+    {
+      "x": 2220,
+      "y": 1139,
+      "width": 128,
+      "height": 24,
+      "rotation": 0,
+      "note": "Pioneer Lodge"
+    },
+    {
+      "x": 2429,
+      "y": 1214,
+      "width": 101,
+      "height": 35,
+      "rotation": 0,
+      "note": "Jason Harper Training Center"
+    },
+    {
+      "x": 2555,
+      "y": 1223,
+      "width": 85,
+      "height": 41,
+      "rotation": 0,
+      "note": "Condominiums"
+    },
+    {
+      "x": 2189,
+      "y": 971,
+      "width": 28,
+      "height": 126,
+      "rotation": 32,
+      "note": "Morning Star"
+    },
+    {
+      "x": 2227,
+      "y": 993,
+      "width": 104,
+      "height": 28,
+      "rotation": -34,
+      "note": "Hogsback"
+    },
+    {
+      "x": 2152,
+      "y": 1055,
+      "width": 223,
+      "height": 30,
+      "rotation": -38,
+      "note": "Morning Star Express #2"
+    },
+    {
+      "x": 2907,
+      "y": 983,
+      "width": 112,
+      "height": 24,
+      "rotation": 0,
+      "note": "Tubing Hill"
+    },
+    {
+      "x": 2926,
+      "y": 1232,
+      "width": 195,
+      "height": 24,
+      "rotation": 0,
+      "note": "Frontier Point Lodge"
+    },
+    {
+      "x": 2401,
+      "y": 1073,
+      "width": 108,
+      "height": 43,
+      "rotation": 0,
+      "note": "Silver Queen"
+    },
+    {
+      "x": 2365,
+      "y": 1112,
+      "width": 30,
+      "height": 44,
+      "rotation": -31,
+      "note": "LULU"
+    },
+    {
+      "x": 2690,
+      "y": 1270,
+      "width": 125,
+      "height": 30,
+      "rotation": 10,
+      "note": "Buttercup Trail"
+    },
+    {
+      "x": 3001,
+      "y": 1452,
+      "width": 37,
+      "height": 121,
+      "rotation": -12,
+      "note": "Buttercup Trail"
+    },
+    {
+      "x": 2727,
+      "y": 1313,
+      "width": 32,
+      "height": 142,
+      "rotation": 0,
+      "note": "Bitterroot Basin"
+    },
+    {
+      "x": 2763,
+      "y": 1445,
+      "width": 157,
+      "height": 30,
+      "rotation": 34,
+      "note": "Bitterroot Basin"
+    },
+    {
+      "x": 2818,
+      "y": 1351,
+      "width": 31,
+      "height": 38,
+      "rotation": 29,
+      "note": "B-2"
+    },
+    {
+      "x": 2905,
+      "y": 1416,
+      "width": 33,
+      "height": 40,
+      "rotation": 32,
+      "note": "B-3"
+    },
+    {
+      "x": 2314,
+      "y": 1304,
+      "width": 98,
+      "height": 40,
+      "rotation": 14,
+      "note": "Sleepy Connector"
+    },
+    {
+      "x": 2430,
+      "y": 1251,
+      "width": 31,
+      "height": 69,
+      "rotation": 16,
+      "note": "Sleepy Hollow"
+    },
+    {
+      "x": 2536,
+      "y": 1299,
+      "width": 20,
+      "height": 85,
+      "rotation": 7,
+      "note": "Lazy Mary"
+    },
+    {
+      "x": 2664,
+      "y": 1322,
+      "width": 32,
+      "height": 48,
+      "rotation": -13,
+      "note": "Nitro"
+    },
+    {
+      "x": 2672,
+      "y": 1482,
+      "width": 37,
+      "height": 39,
+      "rotation": 0,
+      "note": "Bear Paw"
+    },
+    {
+      "x": 2564,
+      "y": 1392,
+      "width": 33,
+      "height": 121,
+      "rotation": -47,
+      "note": "Bitterroot #5"
+    },
+    {
+      "x": 2622,
+      "y": 1548,
+      "width": 72,
+      "height": 42,
+      "rotation": 23,
+      "note": "Sleepy Hollow"
+    },
+    {
+      "x": 2907,
+      "y": 1588,
+      "width": 84,
+      "height": 31,
+      "rotation": -17,
+      "note": "Shamrock"
+    },
+    {
+      "x": 2291,
+      "y": 1384,
+      "width": 36,
+      "height": 88,
+      "rotation": -26,
+      "note": "Smuggler"
+    },
+    {
+      "x": 2384,
+      "y": 1501,
+      "width": 31,
+      "height": 75,
+      "rotation": -34,
+      "note": "Snoozer"
+    },
+    {
+      "x": 2418,
+      "y": 1624,
+      "width": 117,
+      "height": 26,
+      "rotation": 33,
+      "note": "Wake up Jim"
+    },
+    {
+      "x": 2623,
+      "y": 1724,
+      "width": 154,
+      "height": 36,
+      "rotation": 0,
+      "note": "Bitterroot Base"
+    },
+    {
+      "x": 2263,
+      "y": 1573,
+      "width": 34,
+      "height": 156,
+      "rotation": 36,
+      "note": "Smuggler Cut-Off"
+    },
+    {
+      "x": 2258,
+      "y": 1692,
+      "width": 105,
+      "height": 30,
+      "rotation": -44,
+      "note": "Smuggler"
+    }
+  ]
+}
