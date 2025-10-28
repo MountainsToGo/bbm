@@ -805,6 +805,18 @@
                     </div>
 
                     <h2>Location List <span style="font-size: 0.7em; color: #64748b; font-weight: normal;">(click any to select)</span></h2>
+                    
+                    <!-- Search box -->
+                    <div style="margin-bottom: 10px; position: relative;">
+                        <input type="text" id="locationSearch" placeholder="🔍 Search lifts, runs, lodges..." 
+                               style="width: 100%; padding: 8px 30px 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 14px; background: #f8fafc;" 
+                               oninput="filterLocations()" onkeydown="handleSearchKeydown(event)" />
+                        <button onclick="clearSearch()" id="clearSearchBtn" 
+                                style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; display: none;"
+                                title="Clear search">✕</button>
+                        <div id="searchResults" style="font-size: 12px; color: #64748b; margin-top: 4px;"></div>
+                    </div>
+                    
                     <div class="name-list-container">
                         <div id="namesList"></div>
                     </div>
@@ -1762,6 +1774,68 @@
         function resetPractice() {
             if (confirm('Start over from the beginning?')) {
                 initializeMode();
+            }
+        }
+        
+        function filterLocations() {
+            const searchTerm = document.getElementById('locationSearch').value.toLowerCase();
+            const searchResults = document.getElementById('searchResults');
+            
+            if (searchTerm === '') {
+                // Show all locations when search is empty
+                displayOrder = [...Array(locations.length).keys()];
+                updateList();
+                searchResults.textContent = '';
+                return;
+            }
+            
+            // Filter locations based on search term
+            const matchingIndices = [];
+            locations.forEach((location, index) => {
+                if (location.name.toLowerCase().includes(searchTerm)) {
+                    matchingIndices.push(index);
+                }
+            });
+            
+            // Update display order to show only matching locations
+            displayOrder = matchingIndices;
+            updateList();
+            
+            // Update search results info
+            if (matchingIndices.length === 0) {
+                searchResults.textContent = 'No locations found';
+                searchResults.style.color = '#ef4444';
+            } else if (matchingIndices.length === 1) {
+                searchResults.textContent = '1 location found';
+                searchResults.style.color = '#22c55e';
+            } else {
+                searchResults.textContent = `${matchingIndices.length} locations found`;
+                searchResults.style.color = '#22c55e';
+            }
+            
+            // Show/hide clear button
+            const clearBtn = document.getElementById('clearSearchBtn');
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+        }
+        
+        function clearSearch() {
+            document.getElementById('locationSearch').value = '';
+            filterLocations(); // This will reset to show all locations
+            document.getElementById('locationSearch').focus();
+        }
+        
+        function handleSearchKeydown(event) {
+            // Clear search on Escape key
+            if (event.key === 'Escape') {
+                clearSearch();
+            }
+            // Jump to first result on Enter key
+            else if (event.key === 'Enter') {
+                const firstVisible = displayOrder[0];
+                if (firstVisible !== undefined && autoZoomEnabled) {
+                    zoomToLocation(firstVisible);
+                    drawMap();
+                }
             }
         }
 

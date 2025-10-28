@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Test - Bogus Basin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            color: #1e293b;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f1f5f9;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .feature-list li::before {
+            content: "✅ ";
+            margin-right: 8px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            text-align: center;
+            color: white;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .device-info {
+            background: #e0e7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .device-info strong {
+            color: #667eea;
+        }
+        code {
+            background: #334155;
+            color: #fbbf24;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .card {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            h2 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>📱 Mobile & Tablet Enabled!</h1>
+            <p>Your Bogus Basin Trail Map Learning app is now fully responsive and optimized for mobile devices and tablets!</p>
+            
+            <div class="device-info">
+                <strong>Your Screen:</strong> <span id="screenSize"></span><br>
+                <strong>Device Type:</strong> <span id="deviceType"></span><br>
+                <strong>Touch Support:</strong> <span id="touchSupport"></span>
+            </div>
+            
+            <h2>🎯 What's New:</h2>
+            <ul class="feature-list">
+                <li><strong>Responsive Layout</strong> - Single column on mobile, grid on desktop</li>
+                <li><strong>Touch-Friendly</strong> - 44px minimum tap targets</li>
+                <li><strong>Auto-Scaling Map</strong> - Fits perfectly on any screen</li>
+                <li><strong>Optimized Controls</strong> - Buttons wrap on small screens</li>
+                <li><strong>Better Performance</strong> - Hardware-accelerated transforms</li>
+                <li><strong>Landscape Support</strong> - Smart layout for horizontal viewing</li>
+            </ul>
+            
+            <h2>🚀 Test It Now:</h2>
+            <a href="learn.html" class="btn btn-primary">🎿 Open Learning App</a>
+            <a href="location_manager.html" class="btn btn-success">⚙️ Open Location Manager</a>
+            
+            <h2>💡 Tips for Mobile:</h2>
+            <ul class="feature-list">
+                <li><strong>Tap</strong> white boxes to select locations</li>
+                <li><strong>Pinch</strong> to zoom in/out on the map</li>
+                <li><strong>Scroll</strong> through location lists smoothly</li>
+                <li><strong>Rotate</strong> device for landscape mode</li>
+                <li><strong>Toggle Auto-Zoom</strong> for easier location finding</li>
+            </ul>
+            
+            <h2>📊 Screen Breakpoints:</h2>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                <p><code>≤ 600px</code> - Phone Portrait</p>
+                <p><code>601px - 1024px</code> - Tablet</p>
+                <p><code>> 1024px</code> - Desktop</p>
+            </div>
+            
+            <h2>📦 Backup Created:</h2>
+            <p>All original files have been safely backed up to:<br>
+            <code>BACKUP_20251015_082327/</code></p>
+        </div>
+        
+        <div class="card">
+            <h2>🔧 Testing on Real Phone:</h2>
+            <ol style="line-height: 1.8;">
+                <li>Find your computer's IP address</li>
+                <li>Connect phone to same WiFi</li>
+                <li>Open browser on phone</li>
+                <li>Navigate to: <code>http://YOUR_IP:8000/learn.html</code></li>
+            </ol>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #dcfce7; border-radius: 8px; border-left: 4px solid #22c55e;">
+                <strong>✅ Server Running!</strong><br>
+                Access locally at: <code>http://localhost:8000/</code>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Display device information
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        document.getElementById('screenSize').textContent = `${width} x ${height}px`;
+        
+        let deviceType = 'Desktop';
+        if (width <= 600) deviceType = 'Phone';
+        else if (width <= 1024) deviceType = 'Tablet';
+        document.getElementById('deviceType').textContent = deviceType;
+        
+        const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        document.getElementById('touchSupport').textContent = hasTouch ? 'Yes ✅' : 'No ❌';
+        
+        // Update on resize
+        window.addEventListener('resize', () => {
+            const newWidth = window.innerWidth;
+            const newHeight = window.innerHeight;
+            document.getElementById('screenSize').textContent = `${newWidth} x ${newHeight}px`;
+            
+            let newDeviceType = 'Desktop';
+            if (newWidth <= 600) newDeviceType = 'Phone';
+            else if (newWidth <= 1024) newDeviceType = 'Tablet';
+            document.getElementById('deviceType').textContent = newDeviceType;
+        });
+    </script>
+</body>
+</html>

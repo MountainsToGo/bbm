@@ -10,9 +10,10 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 - 📱 **Fully Responsive** - Optimized for phones, tablets, and desktops
 - 🎯 **Auto-Zoom** - Automatically zoom to the current location when selected
 - 🔍 **Zoom Controls** - Pan and zoom the high-resolution trail map (up to 1000%)
-- � **Scramble List** - Shuffle the location order for varied practice
+- 🔎 **Location Search** - Search and filter through all 120 locations by name
+- 🎲 **Scramble List** - Shuffle the location order for varied practice
 - 🙈 **Hide Map Text** - Cover trail/lift names with black overlays; reveals as you learn each location
-- �📊 **Progress Tracking** - Track completed locations, streaks, and percentage
+- 📊 **Progress Tracking** - Track completed locations, streaks, and percentage
 - ⛷️ **Custom Cursors** - Choose between ski, snowboard, or default cursors
 - 🏷️ **Toggle Labels** - Show/hide location names on completed locations
 - ✓ **Smart List** - Clickable location list - jump to any location anytime
@@ -35,6 +36,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 ### Tips for Learning
 
+- **Use the Search Box** - Type to quickly find specific lifts, runs, or lodges among the 120 locations
 - **Turn on Auto-Zoom** - Click any location in the list to jump right to it on the map
 - **Use Scramble List** - Randomize the order to avoid memorizing alphabetically
 - **Enable Hide Map Text** - Once you know the general area, hide the text for a real challenge. Overlays disappear as you correctly identify each location!

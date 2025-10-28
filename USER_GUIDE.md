@@ -21,6 +21,14 @@ Learn all 120 locations at Bogus Basin ski resort through an interactive, gamifi
 
 ## 🎮 Controls & Features
 
+### 🔎 Search Box
+- **Type to Search**: Filter locations by name (lifts, runs, lodges)
+- **Clear Button (✕)**: Appears when typing, click to clear search
+- **Results Counter**: Shows "X of 120 locations" while searching
+- **Keyboard Shortcuts**: 
+  - **Escape**: Clear the search
+  - **Enter**: Jump to first search result with auto-zoom
+
 ### 🎯 Auto-Zoom Button
 - **OFF (Gray)**: Map stays still, you scroll manually
 - **ON (Green)**: Map automatically zooms to each new location
@@ -63,23 +71,28 @@ Learn all 120 locations at Bogus Basin ski resort through an interactive, gamifi
 
 ## 💡 Pro Tips
 
-1. **Start with Auto-Zoom ON** 🎯
+1. **Use Search to Find Locations** 🔎
+   - Type "chair" to see all chairlifts
+   - Search "tubing" to find tubing areas
+   - Partial matches work: "nugget" finds "Upper Nugget", "Lower Nugget"
+
+2. **Start with Auto-Zoom ON** 🎯
    - Helps you learn where locations are faster
    - Turn OFF once you're more confident
 
-2. **Use Labels for Study** 🏷️
+3. **Use Labels for Study** 🏷️
    - Turn labels ON to familiarize yourself with the map
    - Turn OFF to test your knowledge
 
-3. **Zoom In for Details** 🔍
+4. **Zoom In for Details** 🔍
    - Zoom up to 1000% to see small details
    - Reset Map to return to overview
 
-4. **Track Your Progress** 📈
+5. **Track Your Progress** 📈
    - Watch your Complete % increase
    - Try to build a high streak!
 
-5. **Click Precisely** 🎯
+6. **Click Precisely** 🎯
    - The system measures distance from your click
    - Closer clicks = better accuracy
 
