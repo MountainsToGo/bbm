@@ -860,6 +860,13 @@
         let hideMapText = false; // Toggle to hide trail/lift names on the map image
         let textOverlays = []; // Array of overlay rectangles loaded from text_overlays.json
         let revealedOverlays = new Set(); // Track which overlays have been revealed by correct answers
+        
+        // Celebration animation variables
+        let celebrationActive = false;
+        let celebrationStartTime = null;
+        let skierTrail = [];
+        let snowboarderTrail = [];
+        let snowflakes = []; // Array of snowflakes for celebration
 
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
@@ -965,6 +972,11 @@
             completedIndices = new Set();
             skippedIndices = new Set();
             revealedOverlays = new Set(); // Reset revealed overlays on restart
+            celebrationActive = false; // Stop celebration animation
+            celebrationStartTime = null;
+            skierTrail = [];
+            snowboarderTrail = [];
+            snowflakes = []; // Clear snowflakes
             
             if (locations.length === 0) {
                 console.error('No locations loaded!');
@@ -1119,7 +1131,239 @@
                     ctx.restore();
                 }
             }
+            
+            // Check if all locations completed - trigger celebration animation
+            if (completedIndices.size === locations.length && !celebrationActive) {
+                celebrationActive = true;
+                celebrationStartTime = Date.now();
+                // Initialize snowflakes
+                initSnowflakes();
+                requestAnimationFrame(animateCelebration);
+            }
         }
+        
+        function initSnowflakes() {
+            // Create 80 snowflakes with random positions
+            snowflakes = [];
+            for (let i = 0; i < 80; i++) {
+                snowflakes.push({
+                    x: Math.random() * img.width,
+                    y: Math.random() * img.height,
+                    speed: 1 + Math.random() * 2, // Fall speed
+                    drift: (Math.random() - 0.5) * 0.5, // Horizontal drift
+                    size: 3 + Math.random() * 4 // Size variation
+                });
+            }
+        }
+        
+        function animateCelebration() {
+            if (!celebrationActive) return;
+            
+            const elapsed = Date.now() - celebrationStartTime;
+            const duration = 10000; // 10 seconds for smoother animation
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Linear progress for most of the run, then speed up at the end
+            let easedProgress;
+            if (progress < 0.7) {
+                // First 70% - constant speed
+                easedProgress = progress;
+            } else {
+                // Last 30% - accelerate
+                const endProgress = (progress - 0.7) / 0.3;
+                easedProgress = 0.7 + (0.3 * endProgress * endProgress);
+            }
+            
+            // Calculate Y position (top to bottom of map)
+            const startY = 0;
+            const endY = img.height;
+            const currentY = startY + (endY - startY) * easedProgress;
+            
+            // Zigzag motion for realistic skiing
+            const zigzagAmount = 100; // pixels
+            const zigzagFrequency = 12; // More oscillations per descent (was 8)
+            const zigzag = Math.sin(progress * Math.PI * zigzagFrequency) * zigzagAmount;
+            
+            // Multiple skiers/snowboarders with completely different diagonal paths - mixed up!
+            const routes = [
+                // Route 1: Snowboarder - far left to center-right (starts immediately)
+                {
+                    startX: img.width * 0.05,
+                    endX: img.width * 0.65,
+                    zigzag: zigzag * 1.2,
+                    emoji: '🏂',
+                    name: 'snowboarder1',
+                    delay: 0,      // No delay
+                    duration: 1.0  // Normal speed
+                },
+                // Route 2: Skier - center to far left (starts 20% into animation)
+                {
+                    startX: img.width * 0.5,
+                    endX: img.width * 0.1,
+                    zigzag: -zigzag * 0.6,
+                    emoji: '⛷️',
+                    name: 'skier1',
+                    delay: 0.2,    // Starts at 20% progress
+                    duration: 0.8  // Faster
+                },
+                // Route 3: Snowboarder - right to center (starts 40% into animation)
+                {
+                    startX: img.width * 0.88,
+                    endX: img.width * 0.45,
+                    zigzag: -zigzag * 0.85,
+                    emoji: '🏂',
+                    name: 'snowboarder2',
+                    delay: 0.4,    // Starts at 40% progress
+                    duration: 0.9  // Slightly faster
+                },
+                // Route 4: Skier - center-left to far right (starts 15% into animation)
+                {
+                    startX: img.width * 0.3,
+                    endX: img.width * 0.9,
+                    zigzag: zigzag * 0.75,
+                    emoji: '⛷️',
+                    name: 'skier2',
+                    delay: 0.15,   // Starts at 15% progress
+                    duration: 1.1  // Slightly slower
+                },
+                // Route 5: Skier - far right to center-left (starts 30% into animation)
+                {
+                    startX: img.width * 0.95,
+                    endX: img.width * 0.35,
+                    zigzag: -zigzag * 1.1,
+                    emoji: '⛷️',
+                    name: 'skier3',
+                    delay: 0.3,    // Starts at 30% progress
+                    duration: 0.85 // Faster
+                },
+                // Route 6: Snowboarder - center-left to right (starts 10% into animation)
+                {
+                    startX: img.width * 0.25,
+                    endX: img.width * 0.8,
+                    zigzag: zigzag * 0.9,
+                    emoji: '🏂',
+                    name: 'snowboarder3',
+                    delay: 0.1,    // Starts at 10% progress
+                    duration: 1.05 // Slightly slower
+                }
+            ];
+            
+            // Store positions for each route with diagonal movement and timing
+            const positions = [];
+            routes.forEach(route => {
+                // Calculate individual progress for this route based on delay and duration
+                const routeProgress = (progress - route.delay) / route.duration;
+                
+                // Only show if route has started and not finished
+                if (routeProgress >= 0 && routeProgress <= 1) {
+                    // Use same easing for each route
+                    let routeEasedProgress;
+                    if (routeProgress < 0.7) {
+                        routeEasedProgress = routeProgress;
+                    } else {
+                        const endProgress = (routeProgress - 0.7) / 0.3;
+                        routeEasedProgress = 0.7 + (0.3 * endProgress * endProgress);
+                    }
+                    
+                    const routeY = startY + (endY - startY) * routeEasedProgress;
+                    const baseX = route.startX + (route.endX - route.startX) * routeEasedProgress;
+                    
+                    positions.push({
+                        x: baseX + route.zigzag,
+                        y: routeY,
+                        emoji: route.emoji,
+                        zigzag: route.zigzag
+                    });
+                }
+            });
+            
+            // Add to trails (keeping for potential future use)
+            skierTrail.push(positions[0]);
+            snowboarderTrail.push(positions[1]);
+            const trailLength = 15;
+            if (skierTrail.length > trailLength) skierTrail.shift();
+            if (snowboarderTrail.length > trailLength) snowboarderTrail.shift();
+            
+            // Redraw map with animation
+            drawMap();
+            
+            // Save context for crisp rendering
+            ctx.save();
+            // ctx.imageSmoothingEnabled = false; // COMMENTED OUT - was causing blurriness with motion
+            
+            // Draw current position only (no trail to avoid blur)
+            const emojiSize = 80; // Much bigger emojis
+            ctx.font = `${emojiSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.globalAlpha = 1.0;
+            
+            // Draw each position with flipping based on zigzag direction
+            positions.forEach(pos => {
+                ctx.save();
+                
+                // Flip horizontally if moving left (negative zigzag)
+                if (pos.zigzag < 0) {
+                    // Translate to position, flip, then draw
+                    ctx.translate(pos.x * canvasScale, pos.y * canvasScale);
+                    ctx.scale(-1, 1); // Flip horizontally
+                    ctx.fillText(pos.emoji, 0, 0);
+                } else {
+                    // Draw normally (facing right)
+                    ctx.fillText(pos.emoji, pos.x * canvasScale, pos.y * canvasScale);
+                }
+                
+                ctx.restore();
+            });
+            
+            // Update and draw snowflakes
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            snowflakes.forEach(flake => {
+                // Update position
+                flake.y += flake.speed;
+                flake.x += flake.drift;
+                
+                // Reset to top if fallen off bottom
+                if (flake.y > img.height) {
+                    flake.y = 0;
+                    flake.x = Math.random() * img.width;
+                }
+                
+                // Wrap around horizontally
+                if (flake.x < 0) flake.x = img.width;
+                if (flake.x > img.width) flake.x = 0;
+                
+                // Draw snowflake
+                ctx.beginPath();
+                ctx.arc(flake.x * canvasScale, flake.y * canvasScale, flake.size, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            ctx.restore();
+            
+            // Continue animation or restart immediately
+            if (progress < 1) {
+                requestAnimationFrame(animateCelebration);
+            } else {
+                // Loop the animation - restart immediately without pause
+                if (completedIndices.size === locations.length) {
+                    celebrationStartTime = Date.now();
+                    skierTrail = [];
+                    snowboarderTrail = [];
+                    // Keep snowflakes falling, don't reset them
+                    requestAnimationFrame(animateCelebration);
+                }
+            }
+        }
+        
+        // Hidden keyboard shortcut to complete all locations (for testing)
+        // Press Ctrl+Shift+Q to trigger
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'Q') {
+                e.preventDefault(); // Prevent any default browser behavior
+                completeAll();
+            }
+        });
 
         canvas.addEventListener('click', function(e) {
             if (currentMode !== 'practice' || currentIndex >= locations.length) return;
@@ -1478,6 +1722,20 @@
             }
             
             // Re-render the list with new order and update UI to show new current location
+            updateUI();
+            drawMap();
+        }
+        
+        function completeAll() {
+            // Mark all locations as completed for testing the celebration animation
+            for (let i = 0; i < locations.length; i++) {
+                completedIndices.add(i);
+                // Reveal all overlays
+                textOverlays.forEach((overlay, index) => {
+                    revealedOverlays.add(index);
+                });
+            }
+            currentIndex = locations.length; // Move past the last location
             updateUI();
             drawMap();
         }
