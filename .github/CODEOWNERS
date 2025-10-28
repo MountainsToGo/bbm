@@ -1,0 +1,8 @@
+# Global code owners - require approval for any changes
+* @MountainsToGo
+
+# Specific protections for critical files
+*.json @MountainsToGo
+*.html @MountainsToGo
+*.md @MountainsToGo
+learn.html @MountainsToGo
