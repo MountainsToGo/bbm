@@ -1049,10 +1049,12 @@
             locations.forEach((loc, index) => {
                 // Draw white boxes for pending and skipped locations (not completed)
                 if (!completedIndices.has(index)) {
-                    const boxSize = 16;
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    // Larger, more visible boxes that scale with zoom level
+                    const baseBoxSize = 20; // Increased from 16
+                    const boxSize = Math.max(baseBoxSize, baseBoxSize * Math.sqrt(zoomLevel));
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // More opaque
                     ctx.strokeStyle = '#ef4444';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 4; // Thicker border
                     ctx.fillRect(
                         loc.x * canvasScale - boxSize/2,
                         loc.y * canvasScale - boxSize/2,
@@ -1388,13 +1390,19 @@
 
             const rect = canvas.getBoundingClientRect();
             // Convert click coordinates to canvas coordinates
-            // Scale from screen pixels to canvas pixels
+            // Scale from screen pixels to canvas pixels, accounting for zoom and canvas scaling
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
-            const clickX = (e.clientX - rect.left) * scaleX;
-            const clickY = (e.clientY - rect.top) * scaleY;
+            const rawClickX = (e.clientX - rect.left) * scaleX;
+            const rawClickY = (e.clientY - rect.top) * scaleY;
+            
+            // Convert to map coordinates (accounting for canvas scaling)
+            const clickX = rawClickX / canvasScale;
+            const clickY = rawClickY / canvasScale;
 
-            const tolerance = 80; // Increased tolerance for easier clicking
+            // Dynamic tolerance based on zoom level - larger at higher zoom, smaller when zoomed out
+            const baseTolerance = 120; // Increased base tolerance
+            const tolerance = baseTolerance / Math.sqrt(zoomLevel); // Scale tolerance with zoom level
             
             // Check if clicking on an already completed location (ignore it)
             for (const i of completedIndices) {
@@ -1409,7 +1417,9 @@
             const correctLoc = locations[currentIndex];
             const distance = Math.sqrt(Math.pow(clickX - correctLoc.x, 2) + Math.pow(clickY - correctLoc.y, 2));
             
-            console.log('Click at:', clickX, clickY, 'Target:', correctLoc.x, correctLoc.y, 'Distance:', distance, 'Scale:', canvasScale, 'Zoom:', zoomLevel);
+            console.log('Click at canvas coords:', rawClickX, rawClickY, 'Map coords:', clickX, clickY);
+            console.log('Target at:', correctLoc.x, correctLoc.y, 'Distance:', distance, 'Tolerance:', tolerance);
+            console.log('Scale:', canvasScale, 'Zoom:', zoomLevel);
             console.log('📍 OVERLAY HELPER: {x: ' + Math.round(clickX) + ', y: ' + Math.round(clickY) + ', width: 200, height: 30},');
 
             const isCorrect = distance < tolerance;
@@ -1430,10 +1440,10 @@
                     }
                 });
                 
-                // Add ONE permanent green marker at the correct location
+                // Add ONE permanent green marker at the correct location (using canvas coordinates)
                 clickMarkers.push({
-                    x: correctLoc.x,
-                    y: correctLoc.y,
+                    x: correctLoc.x * canvasScale,
+                    y: correctLoc.y * canvasScale,
                     correct: true,
                     permanent: true
                 });
@@ -1445,10 +1455,10 @@
                 incorrectCount++;
                 streak = 0;
                 
-                // Add red marker temporarily
+                // Add red marker temporarily (using raw canvas coordinates)
                 clickMarkers.push({
-                    x: clickX,
-                    y: clickY,
+                    x: rawClickX,
+                    y: rawClickY,
                     correct: false
                 });
                 
