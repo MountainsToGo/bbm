@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinate Alignment Test - Bogus Basin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .controls {
+            background: #334155;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .control-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        label {
+            font-weight: bold;
+            min-width: 120px;
+        }
+        input[type="range"] {
+            flex: 1;
+            max-width: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .map-container {
+            position: relative;
+            background: #475569;
+            border-radius: 10px;
+            overflow: auto;
+            max-height: 800px;
+            border: 3px solid #64748b;
+        }
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        .info {
+            background: #334155;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .info-row {
+            margin: 5px 0;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+        }
+        .info-label {
+            color: #94a3b8;
+        }
+        .info-value {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .error {
+            color: #ef4444;
+        }
+        .location-list {
+            background: #334155;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .location-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #475569;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .location-item:hover {
+            background: #1e40af;
+        }
+        .location-item.selected {
+            background: #3b82f6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Coordinate Alignment Test</h1>
+        <p>Click on the map to test coordinate alignment at different zoom levels</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Zoom Level:</label>
+                <input type="range" id="zoomSlider" min="0.5" max="3" step="0.1" value="1">
+                <span id="zoomValue">1.0x</span>
+            </div>
+            <div class="control-group">
+                <label>Click Tolerance:</label>
+                <input type="range" id="toleranceSlider" min="50" max="200" step="10" value="120">
+                <span id="toleranceValue">120px</span>
+            </div>
+            <div class="control-group">
+                <button onclick="toggleBoxes()">Toggle Location Boxes</button>
+                <button onclick="toggleLabels()">Toggle Labels</button>
+                <button onclick="clearMarkers()">Clear Markers</button>
+                <button onclick="testAllLocations()">Test All Locations</button>
+            </div>
+        </div>
+
+        <div class="map-container" id="mapContainer">
+            <canvas id="mapCanvas"></canvas>
+        </div>
+
+        <div class="info">
+            <h3>Click Information</h3>
+            <div class="info-row">
+                <span class="info-label">Canvas Size:</span>
+                <span class="info-value" id="canvasSize">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Display Size:</span>
+                <span class="info-value" id="displaySize">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Scale Ratio:</span>
+                <span class="info-value" id="scaleRatio">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Client Click (px):</span>
+                <span class="info-value" id="clientClick">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Canvas Click (px):</span>
+                <span class="info-value" id="canvasClick">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Map Coordinates:</span>
+                <span class="info-value" id="mapCoords">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Nearest Location:</span>
+                <span class="info-value" id="nearestLoc">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Distance:</span>
+                <span class="info-value" id="distance">-</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Within Tolerance:</span>
+                <span class="info-value" id="withinTolerance">-</span>
+            </div>
+        </div>
+
+        <div class="location-list">
+            <h3>Locations (click to zoom)</h3>
+            <div id="locationList"></div>
+        </div>
+    </div>
+
+    <script src="location_names.js"></script>
+    <script>
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const mapContainer = document.getElementById('mapContainer');
+        const img = new Image();
+        
+        let locations = [];
+        let showBoxes = true;
+        let showLabels = false;
+        let clickMarkers = [];
+        let canvasScale = 1;
+        let currentZoom = 1;
+        let currentTolerance = 120;
+
+        img.onload = function() {
+            canvasScale = 1;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
+            
+            loadConfig();
+        };
+
+        img.src = 'trail_map.png';
+
+        function loadConfig() {
+            fetch('bogus_basin_config.json')
+                .then(response => response.json())
+                .then(config => {
+                    locations = config.locations;
+                    console.log('Loaded', locations.length, 'locations');
+                    updateLocationList();
+                    drawMap();
+                    updateInfo();
+                })
+                .catch(err => {
+                    alert('Error loading config: ' + err.message);
+                });
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Draw location boxes
+            if (showBoxes) {
+                locations.forEach((loc, index) => {
+                    const baseBoxSize = 20;
+                    const boxSize = Math.max(baseBoxSize, baseBoxSize * Math.sqrt(currentZoom));
+                    
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 4;
+                    ctx.fillRect(
+                        loc.x * canvasScale - boxSize/2,
+                        loc.y * canvasScale - boxSize/2,
+                        boxSize,
+                        boxSize
+                    );
+                    ctx.strokeRect(
+                        loc.x * canvasScale - boxSize/2,
+                        loc.y * canvasScale - boxSize/2,
+                        boxSize,
+                        boxSize
+                    );
+                    
+                    // Draw tolerance circle
+                    const tolerance = currentTolerance / Math.sqrt(currentZoom);
+                    ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.arc(loc.x * canvasScale, loc.y * canvasScale, tolerance, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                });
+            }
+            
+            // Draw labels
+            if (showLabels) {
+                locations.forEach(loc => {
+                    ctx.fillStyle = 'white';
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 3;
+                    ctx.font = 'bold 14px Arial';
+                    ctx.strokeText(loc.name, loc.x * canvasScale + 15, loc.y * canvasScale);
+                    ctx.fillText(loc.name, loc.x * canvasScale + 15, loc.y * canvasScale);
+                });
+            }
+            
+            // Draw click markers
+            clickMarkers.forEach(marker => {
+                const size = 20;
+                ctx.strokeStyle = marker.correct ? '#22c55e' : '#ef4444';
+                ctx.lineWidth = 4;
+                
+                // Draw X
+                ctx.beginPath();
+                ctx.moveTo(marker.x - size/2, marker.y - size/2);
+                ctx.lineTo(marker.x + size/2, marker.y + size/2);
+                ctx.moveTo(marker.x + size/2, marker.y - size/2);
+                ctx.lineTo(marker.x - size/2, marker.y + size/2);
+                ctx.stroke();
+                
+                // Draw circle
+                ctx.beginPath();
+                ctx.arc(marker.x, marker.y, size, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // Draw line to nearest location
+                if (marker.nearestLoc) {
+                    ctx.strokeStyle = marker.correct ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(marker.x, marker.y);
+                    ctx.lineTo(marker.nearestLoc.x * canvasScale, marker.nearestLoc.y * canvasScale);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // Draw distance text
+                    const midX = (marker.x + marker.nearestLoc.x * canvasScale) / 2;
+                    const midY = (marker.y + marker.nearestLoc.y * canvasScale) / 2;
+                    ctx.fillStyle = 'yellow';
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 3;
+                    ctx.font = 'bold 14px Arial';
+                    const distText = Math.round(marker.distance) + 'px';
+                    ctx.strokeText(distText, midX, midY);
+                    ctx.fillText(distText, midX, midY);
+                }
+            });
+        }
+
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            
+            // Client coordinates
+            const clientX = e.clientX - rect.left;
+            const clientY = e.clientY - rect.top;
+            
+            // Scale from display to canvas
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const rawClickX = clientX * scaleX;
+            const rawClickY = clientY * scaleY;
+            
+            // Convert to map coordinates
+            const clickX = rawClickX / canvasScale;
+            const clickY = rawClickY / canvasScale;
+            
+            // Find nearest location
+            let nearestLoc = null;
+            let minDistance = Infinity;
+            locations.forEach(loc => {
+                const dist = Math.sqrt(Math.pow(clickX - loc.x, 2) + Math.pow(clickY - loc.y, 2));
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    nearestLoc = loc;
+                }
+            });
+            
+            const tolerance = currentTolerance / Math.sqrt(currentZoom);
+            const isCorrect = minDistance < tolerance;
+            
+            // Add marker
+            clickMarkers.push({
+                x: rawClickX,
+                y: rawClickY,
+                correct: isCorrect,
+                nearestLoc: nearestLoc,
+                distance: minDistance
+            });
+            
+            // Update info display
+            document.getElementById('clientClick').textContent = `(${Math.round(clientX)}, ${Math.round(clientY)})`;
+            document.getElementById('canvasClick').textContent = `(${Math.round(rawClickX)}, ${Math.round(rawClickY)})`;
+            document.getElementById('mapCoords').textContent = `(${Math.round(clickX)}, ${Math.round(clickY)})`;
+            document.getElementById('nearestLoc').textContent = nearestLoc ? `${nearestLoc.name} at (${nearestLoc.x}, ${nearestLoc.y})` : 'None';
+            document.getElementById('distance').textContent = `${Math.round(minDistance)}px`;
+            document.getElementById('withinTolerance').innerHTML = isCorrect ? 
+                '<span style="color: #22c55e">✓ YES</span>' : 
+                '<span style="color: #ef4444">✗ NO (tolerance: ' + Math.round(tolerance) + 'px)</span>';
+            
+            drawMap();
+        });
+
+        // Zoom slider
+        document.getElementById('zoomSlider').addEventListener('input', function(e) {
+            currentZoom = parseFloat(e.target.value);
+            document.getElementById('zoomValue').textContent = currentZoom.toFixed(1) + 'x';
+            drawMap();
+        });
+
+        // Tolerance slider
+        document.getElementById('toleranceSlider').addEventListener('input', function(e) {
+            currentTolerance = parseInt(e.target.value);
+            document.getElementById('toleranceValue').textContent = currentTolerance + 'px';
+            drawMap();
+        });
+
+        function toggleBoxes() {
+            showBoxes = !showBoxes;
+            drawMap();
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            drawMap();
+        }
+
+        function clearMarkers() {
+            clickMarkers = [];
+            drawMap();
+        }
+
+        function testAllLocations() {
+            clickMarkers = [];
+            locations.forEach(loc => {
+                const tolerance = currentTolerance / Math.sqrt(currentZoom);
+                clickMarkers.push({
+                    x: loc.x * canvasScale,
+                    y: loc.y * canvasScale,
+                    correct: true,
+                    nearestLoc: loc,
+                    distance: 0
+                });
+            });
+            drawMap();
+        }
+
+        function updateLocationList() {
+            const list = document.getElementById('locationList');
+            list.innerHTML = '';
+            locations.forEach((loc, index) => {
+                const item = document.createElement('div');
+                item.className = 'location-item';
+                item.textContent = `${loc.name} (${loc.x}, ${loc.y})`;
+                item.onclick = () => zoomToLocation(loc);
+                list.appendChild(item);
+            });
+        }
+
+        function zoomToLocation(loc) {
+            // Scroll to center the location in the viewport
+            const rect = canvas.getBoundingClientRect();
+            const targetX = (loc.x * canvasScale) * (rect.width / canvas.width);
+            const targetY = (loc.y * canvasScale) * (rect.height / canvas.height);
+            
+            mapContainer.scrollLeft = targetX - mapContainer.clientWidth / 2;
+            mapContainer.scrollTop = targetY - mapContainer.clientHeight / 2;
+            
+            // Highlight temporarily
+            ctx.save();
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 6;
+            ctx.setLineDash([10, 5]);
+            ctx.beginPath();
+            ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 50, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.restore();
+            
+            setTimeout(() => drawMap(), 2000);
+        }
+
+        function updateInfo() {
+            const rect = canvas.getBoundingClientRect();
+            document.getElementById('canvasSize').textContent = `${canvas.width} × ${canvas.height}px`;
+            document.getElementById('displaySize').textContent = `${Math.round(rect.width)} × ${Math.round(rect.height)}px`;
+            document.getElementById('scaleRatio').textContent = `${(canvas.width / rect.width).toFixed(3)} × ${(canvas.height / rect.height).toFixed(3)}`;
+        }
+
+        window.addEventListener('resize', updateInfo);
+    </script>
+</body>
+</html>

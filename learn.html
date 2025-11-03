@@ -1049,23 +1049,23 @@
             locations.forEach((loc, index) => {
                 // Draw white boxes for pending and skipped locations (not completed)
                 if (!completedIndices.has(index)) {
-                    // Larger, more visible boxes that scale with zoom level
-                    const baseBoxSize = 20; // Increased from 16
-                    const boxSize = Math.max(baseBoxSize, baseBoxSize * Math.sqrt(zoomLevel));
+                    // Fixed box size in canvas coordinates - no scaling needed
+                    // The CSS zoom will automatically scale the entire canvas
+                    const baseBoxSize = 20;
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; // More opaque
                     ctx.strokeStyle = '#ef4444';
                     ctx.lineWidth = 4; // Thicker border
                     ctx.fillRect(
-                        loc.x * canvasScale - boxSize/2,
-                        loc.y * canvasScale - boxSize/2,
-                        boxSize,
-                        boxSize
+                        loc.x * canvasScale - baseBoxSize/2,
+                        loc.y * canvasScale - baseBoxSize/2,
+                        baseBoxSize,
+                        baseBoxSize
                     );
                     ctx.strokeRect(
-                        loc.x * canvasScale - boxSize/2,
-                        loc.y * canvasScale - boxSize/2,
-                        boxSize,
-                        boxSize
+                        loc.x * canvasScale - baseBoxSize/2,
+                        loc.y * canvasScale - baseBoxSize/2,
+                        baseBoxSize,
+                        baseBoxSize
                     );
                 }
             });
@@ -1384,6 +1384,7 @@
             
             // Don't register clicks if user just finished dragging
             if (hasDragged) {
+                console.log('⚠️ Click ignored - hasDragged flag was set');
                 hasDragged = false; // Reset for next interaction
                 return;
             }
@@ -1400,29 +1401,49 @@
             const clickX = rawClickX / canvasScale;
             const clickY = rawClickY / canvasScale;
 
-            // Dynamic tolerance based on zoom level - larger at higher zoom, smaller when zoomed out
-            const baseTolerance = 120; // Increased base tolerance
-            const tolerance = baseTolerance / Math.sqrt(zoomLevel); // Scale tolerance with zoom level
+            // Increased tolerance in map coordinates for more forgiving clicking
+            const baseTolerance = 150; // Increased from 120 for easier clicking
+            const tolerance = baseTolerance;
             
-            // Check if clicking on an already completed location (ignore it)
-            for (const i of completedIndices) {
-                const completedLoc = locations[i];
-                const distToCompleted = Math.sqrt(Math.pow(clickX - completedLoc.x, 2) + Math.pow(clickY - completedLoc.y, 2));
-                if (distToCompleted < tolerance) {
-                    console.log('Ignoring click on already completed location:', completedLoc.name);
-                    return; // Don't process clicks on completed locations
-                }
-            }
-
             const correctLoc = locations[currentIndex];
             const distance = Math.sqrt(Math.pow(clickX - correctLoc.x, 2) + Math.pow(clickY - correctLoc.y, 2));
             
-            console.log('Click at canvas coords:', rawClickX, rawClickY, 'Map coords:', clickX, clickY);
-            console.log('Target at:', correctLoc.x, correctLoc.y, 'Distance:', distance, 'Tolerance:', tolerance);
-            console.log('Scale:', canvasScale, 'Zoom:', zoomLevel);
-            console.log('📍 OVERLAY HELPER: {x: ' + Math.round(clickX) + ', y: ' + Math.round(clickY) + ', width: 200, height: 30},');
+            // Only block clicks on completed locations if they're NOT the current target
+            // and they're closer than the current target
+            let blockedByCompleted = false;
+            for (const i of completedIndices) {
+                const completedLoc = locations[i];
+                const distToCompleted = Math.sqrt(Math.pow(clickX - completedLoc.x, 2) + Math.pow(clickY - completedLoc.y, 2));
+                
+                // Only block if:
+                // 1. Click is within tolerance of a completed location
+                // 2. That completed location is CLOSER than the current target
+                if (distToCompleted < tolerance && distToCompleted < distance) {
+                    console.log('⚠️ Click blocked - closer to completed location:', completedLoc.name, '(dist:', Math.round(distToCompleted), ') than target:', correctLoc.name, '(dist:', Math.round(distance), ')');
+                    blockedByCompleted = true;
+                    break;
+                }
+            }
+            
+            if (blockedByCompleted) {
+                return; // Don't process clicks on completed locations
+            }
+            
+            console.log('🎯 CLICK REGISTERED');
+            console.log('  Click at canvas coords:', Math.round(rawClickX), Math.round(rawClickY));
+            console.log('  Map coords:', Math.round(clickX), Math.round(clickY));
+            console.log('  Target:', correctLoc.name, 'at', correctLoc.x, correctLoc.y);
+            console.log('  Distance:', Math.round(distance), 'px | Tolerance:', tolerance, 'px');
+            console.log('  Scale X/Y:', scaleX.toFixed(3), '/', scaleY.toFixed(3), '| Zoom:', zoomLevel);
+            console.log('  Rect:', Math.round(rect.width), 'x', Math.round(rect.height), '| Canvas:', canvas.width, 'x', canvas.height);
 
             const isCorrect = distance < tolerance;
+            
+            if (!isCorrect) {
+                console.log('  ❌ MISS - Distance', Math.round(distance), '> Tolerance', tolerance);
+            } else {
+                console.log('  ✅ HIT - Distance', Math.round(distance), '<= Tolerance', tolerance);
+            }
 
             if (isCorrect) {
                 showFeedback(true);
@@ -1480,7 +1501,7 @@
         let panStartY = 0;
         let scrollStartX = 0;
         let scrollStartY = 0;
-        const MIN_DRAG_DISTANCE = 5; // Minimum pixels to consider it a drag vs click
+        const MIN_DRAG_DISTANCE = 10; // Increased from 5 to reduce false positives
 
         const mapWrapper = document.getElementById('practiceMapWrapper'); // Used for both panning and touch
 
@@ -1510,6 +1531,7 @@
             if (dragDistance > MIN_DRAG_DISTANCE) {
                 hasDragged = true;
                 mapWrapper.style.cursor = 'grabbing';
+                console.log('🖱️ Drag detected, distance:', Math.round(dragDistance), 'px');
             }
             
             // Only do manual scrolling if actually dragging (not just clicked)
@@ -1524,6 +1546,13 @@
                 isPanning = false;
                 // Reset cursor - changeCursor will set the right one
                 updateMapCursor();
+                
+                // Reset hasDragged after a short delay to allow click event to check it
+                // but prevent it from blocking subsequent clicks
+                setTimeout(() => {
+                    hasDragged = false;
+                    console.log('🔄 Drag flag reset');
+                }, 100);
             }
         });
 
@@ -1531,6 +1560,10 @@
             if (isPanning) {
                 isPanning = false;
                 updateMapCursor();
+                // Also reset hasDragged when mouse leaves
+                setTimeout(() => {
+                    hasDragged = false;
+                }, 100);
             }
         });
         
