@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Bogus Basin Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            font-size: 120px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: #f0f0f0;
+        }
+        .links {
+            margin-top: 30px;
+        }
+        .links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="emoji">⛷️</span>
+        <h1>404</h1>
+        <h2>Oops! You're Off the Trail</h2>
+        <p>The page you're looking for doesn't exist. Maybe you took a wrong turn on the mountain?</p>
+        <a href="/learn.html" class="btn">🏔️ Back to the Map</a>
+        
+        <div class="links">
+            <a href="/learn.html">Interactive Map</a>
+            <a href="/location_manager.html">Location Manager</a>
+            <a href="/USER_GUIDE.md">User Guide</a>
+        </div>
+    </div>
+</body>
+</html>

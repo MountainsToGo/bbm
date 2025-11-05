@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Mountain background -->
+  <rect fill="#667eea" width="64" height="64"/>
+  
+  <!-- Snow-capped mountain peak -->
+  <path fill="#ffffff" d="M32 10 L50 40 L14 40 Z"/>
+  <path fill="#e0e7ff" d="M32 10 L44 32 L20 32 Z"/>
+  
+  <!-- Ski lift pole -->
+  <rect fill="#4a5568" x="30" y="35" width="4" height="20"/>
+  
+  <!-- Ski lift cable -->
+  <line stroke="#4a5568" stroke-width="2" x1="10" y1="30" x2="54" y2="30"/>
+  
+  <!-- Ski lift chair -->
+  <rect fill="#2d3748" x="28" y="26" width="8" height="6" rx="1"/>
+  <line stroke="#2d3748" stroke-width="2" x1="32" y1="26" x2="32" y2="30"/>
+</svg>
