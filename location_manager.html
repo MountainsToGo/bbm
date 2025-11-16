@@ -449,6 +449,9 @@
                     <button class="btn btn-secondary" id="overlaysTab" onclick="switchMode('overlays')" style="flex: 1;">
                         🙈 Text Overlays
                     </button>
+                    <button class="btn btn-secondary" id="routesTab" onclick="switchMode('routes')" style="flex: 1;">
+                        🛤️ Routes
+                    </button>
                 </div>
 
                 <div id="locationsPanel">
@@ -574,6 +577,81 @@
                         </button>
                     </div>
                 </div>
+
+                <div id="routesPanel" style="display: none;">
+                    <h2>Create Route</h2>
+                    
+                    <div class="instruction" style="font-size: 0.9em; margin-bottom: 10px;">
+                        <strong>How to create a route:</strong><br>
+                        1. Enter a route name<br>
+                        2. Click locations on the map in order to build your route<br>
+                        3. Click "Complete Route" when finished<br>
+                        <strong>💡 Tip:</strong> Routes will be saved with arrows showing direction
+                    </div>
+
+                    <div class="form-group">
+                        <label for="routeName">Route Name:</label>
+                        <input type="text" id="routeName" placeholder="e.g., MTN Host Tour Route" value="MTN Host Tour Route">
+                    </div>
+
+                    <div class="click-mode-box" id="routeModeBox">
+                        <strong>🛤️ Route Building Mode:</strong>
+                        <p id="routeModeText">Enter a route name, then click locations on the map to build the route</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Route Waypoints (<span id="waypointCount">0</span>):</label>
+                        <div id="waypointsList" style="max-height: 200px; overflow-y: auto; border: 2px solid #e2e8f0; border-radius: 6px; padding: 10px; background: #f8fafc;">
+                            <p style="color: #64748b; text-align: center; margin: 0;">No waypoints yet. Click locations on the map.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="completeRoute()" id="completeRouteButton" disabled style="flex: 1;">
+                            ✓ Complete Route
+                        </button>
+                        <button class="btn btn-primary" onclick="updateRoute()" id="updateRouteButton" disabled style="flex: 1; display: none;">
+                            💾 Update Route
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearCurrentRoute()" id="clearRouteButton" disabled style="flex: 1;">
+                            🗑️ Clear
+                        </button>
+                    </div>
+
+                    <hr style="border: 1px solid #e2e8f0;">
+
+                    <h2>Saved Routes</h2>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalRoutes">0</div>
+                            <div class="stat-label">Total Routes</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalWaypoints">0</div>
+                            <div class="stat-label">Total Waypoints</div>
+                        </div>
+                    </div>
+
+                    <div class="location-list" id="routeList">
+                        <p style="color: #64748b; text-align: center;">No routes yet. Create one!</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                        <button class="btn btn-success" onclick="saveRoutesToFile()">
+                            💾 Save Routes
+                        </button>
+
+                        <button class="btn btn-primary" onclick="document.getElementById('routesFileInput').click()">
+                            📂 Import Routes from File
+                        </button>
+                        <input type="file" id="routesFileInput" accept=".json" style="display: none;" onchange="loadRoutesFromFile(event)">
+
+                        <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                            ← Back to Learning App
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="map-area">
@@ -605,11 +683,14 @@
     <script>
         let locations = [];
         let textOverlays = [];
+        let routes = [];
+        let currentRoute = { name: '', waypoints: [] };
+        let editingRouteIndex = -1; // Track which route is being edited (-1 = new route)
         let showLabels = true;
         let canvasScale = 1;
         let zoomLevel = 1.0;
         let pendingCoords = null;
-        let currentMode = 'locations'; // 'locations' or 'overlays'
+        let currentMode = 'locations'; // 'locations', 'overlays', or 'routes'
         let overlayDrawStart = null; // For drawing overlay rectangles
         let pendingOverlay = null; // Store the drawn overlay before adding it
         let draggingOverlayIndex = null; // Track which overlay is being dragged
@@ -652,6 +733,26 @@
                         textOverlays = overlayConfig.overlays || [];
                         console.log('Loaded overlays:', textOverlays.length);
                     }
+                    
+                    // Load routes
+                    return fetch(`routes.json?v=${cacheBuster}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('No routes file found');
+                        routes = [];
+                        drawMap();
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(routeConfig => {
+                    if (routeConfig) {
+                        routes = routeConfig.routes || [];
+                        console.log('Loaded routes:', routes.length);
+                        updateRouteList();
+                        updateRouteStats();
+                    }
                     drawMap();
                 })
                 .catch(err => {
@@ -659,6 +760,7 @@
                     showStatus('Could not load configuration file. Starting with empty list.', 'error');
                     locations = [];
                     textOverlays = [];
+                    routes = [];
                     updateLocationList();
                     drawMap();
                 });
@@ -786,20 +888,169 @@
                     ctx.stroke();
                 }
             }
+
+            // Draw routes (in routes mode or when routes exist)
+            if (currentMode === 'routes' || routes.length > 0) {
+                // Draw saved routes
+                routes.forEach(route => {
+                    if (route.waypoints.length < 2) return;
+                    
+                    ctx.save();
+                    ctx.strokeStyle = '#000000'; // Black color
+                    ctx.lineWidth = 4;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    
+                    // Draw the path
+                    ctx.beginPath();
+                    ctx.moveTo(route.waypoints[0].x * canvasScale, route.waypoints[0].y * canvasScale);
+                    for (let i = 1; i < route.waypoints.length; i++) {
+                        ctx.lineTo(route.waypoints[i].x * canvasScale, route.waypoints[i].y * canvasScale);
+                    }
+                    ctx.stroke();
+                    
+                    // Draw arrows between waypoints
+                    for (let i = 0; i < route.waypoints.length - 1; i++) {
+                        const from = route.waypoints[i];
+                        const to = route.waypoints[i + 1];
+                        const midX = (from.x + to.x) / 2 * canvasScale;
+                        const midY = (from.y + to.y) / 2 * canvasScale;
+                        
+                        // Calculate arrow angle
+                        const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                        const arrowSize = 15;
+                        
+                        // Draw arrowhead in RED for better visibility
+                        ctx.fillStyle = '#ef4444'; // Red color
+                        ctx.strokeStyle = '#000000'; // Black outline
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(midX, midY);
+                        ctx.lineTo(
+                            midX - arrowSize * Math.cos(angle - Math.PI / 6),
+                            midY - arrowSize * Math.sin(angle - Math.PI / 6)
+                        );
+                        ctx.lineTo(
+                            midX - arrowSize * Math.cos(angle + Math.PI / 6),
+                            midY - arrowSize * Math.sin(angle + Math.PI / 6)
+                        );
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                    
+                    ctx.restore();
+                });
+                
+                // Draw current route being built
+                if (currentMode === 'routes' && currentRoute.waypoints.length > 0) {
+                    ctx.save();
+                    ctx.strokeStyle = '#22c55e'; // Green for active route
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([10, 5]);
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    
+                    // Draw the path
+                    ctx.beginPath();
+                    ctx.moveTo(currentRoute.waypoints[0].x * canvasScale, currentRoute.waypoints[0].y * canvasScale);
+                    for (let i = 1; i < currentRoute.waypoints.length; i++) {
+                        ctx.lineTo(currentRoute.waypoints[i].x * canvasScale, currentRoute.waypoints[i].y * canvasScale);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // Draw arrows
+                    ctx.fillStyle = '#22c55e';
+                    for (let i = 0; i < currentRoute.waypoints.length - 1; i++) {
+                        const from = currentRoute.waypoints[i];
+                        const to = currentRoute.waypoints[i + 1];
+                        const midX = (from.x + to.x) / 2 * canvasScale;
+                        const midY = (from.y + to.y) / 2 * canvasScale;
+                        
+                        const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                        const arrowSize = 15;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(midX, midY);
+                        ctx.lineTo(
+                            midX - arrowSize * Math.cos(angle - Math.PI / 6),
+                            midY - arrowSize * Math.sin(angle - Math.PI / 6)
+                        );
+                        ctx.lineTo(
+                            midX - arrowSize * Math.cos(angle + Math.PI / 6),
+                            midY - arrowSize * Math.sin(angle + Math.PI / 6)
+                        );
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    
+                    // Highlight waypoints in current route
+                    currentRoute.waypoints.forEach((wp, index) => {
+                        ctx.fillStyle = '#22c55e';
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(wp.x * canvasScale, wp.y * canvasScale, 12, 0, 2 * Math.PI);
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        // Draw number
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(String(index + 1), wp.x * canvasScale, wp.y * canvasScale);
+                    });
+                    
+                    ctx.restore();
+                }
+            }
         }
 
         canvas.addEventListener('click', function(e) {
             if (currentMode === 'overlays') return; // Overlays use mousedown/mouseup
             
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+
+            if (currentMode === 'routes') {
+                // Route building mode - click on existing locations
+                const tolerance = 20; // pixels
+                let clickedLocation = null;
+                
+                for (const loc of locations) {
+                    if (loc.enabled === false) continue;
+                    const dist = Math.sqrt(Math.pow(x - loc.x, 2) + Math.pow(y - loc.y, 2));
+                    if (dist < tolerance) {
+                        clickedLocation = loc;
+                        break;
+                    }
+                }
+                
+                if (clickedLocation) {
+                    // Allow duplicate locations in route (removed the duplicate check)
+                    currentRoute.waypoints.push({
+                        name: clickedLocation.name,
+                        x: clickedLocation.x,
+                        y: clickedLocation.y
+                    });
+                    updateWaypointsList();
+                    drawMap();
+                    showStatus(`Added ${clickedLocation.name} to route`, 'success');
+                } else {
+                    showStatus('Click on an existing location to add it to the route', 'error');
+                }
+                return;
+            }
+            
+            // Locations mode
             const name = document.getElementById('locationName').value.trim();
             if (!name) {
                 showStatus('Please enter a location name first!', 'error');
                 return;
             }
-
-            const rect = canvas.getBoundingClientRect();
-            const x = Math.round((e.clientX - rect.left) / zoomLevel);
-            const y = Math.round((e.clientY - rect.top) / zoomLevel);
 
             pendingCoords = { x, y };
             document.getElementById('coordsDisplay').value = `X: ${x}, Y: ${y}`;
@@ -1122,19 +1373,32 @@
             pendingCoords = null;
             pendingOverlay = null;
             
+            // Hide all panels
+            document.getElementById('locationsPanel').style.display = 'none';
+            document.getElementById('overlaysPanel').style.display = 'none';
+            document.getElementById('routesPanel').style.display = 'none';
+            
+            // Reset all tabs
+            document.getElementById('locationsTab').className = 'btn btn-secondary';
+            document.getElementById('overlaysTab').className = 'btn btn-secondary';
+            document.getElementById('routesTab').className = 'btn btn-secondary';
+            
+            // Show selected panel and highlight tab
             if (mode === 'locations') {
                 document.getElementById('locationsPanel').style.display = 'flex';
-                document.getElementById('overlaysPanel').style.display = 'none';
                 document.getElementById('locationsTab').className = 'btn btn-primary';
-                document.getElementById('overlaysTab').className = 'btn btn-secondary';
                 canvas.style.cursor = 'crosshair';
-            } else {
-                document.getElementById('locationsPanel').style.display = 'none';
+            } else if (mode === 'overlays') {
                 document.getElementById('overlaysPanel').style.display = 'flex';
-                document.getElementById('locationsTab').className = 'btn btn-secondary';
                 document.getElementById('overlaysTab').className = 'btn btn-primary';
                 canvas.style.cursor = 'crosshair';
                 updateOverlayList();
+            } else if (mode === 'routes') {
+                document.getElementById('routesPanel').style.display = 'flex';
+                document.getElementById('routesTab').className = 'btn btn-primary';
+                canvas.style.cursor = 'pointer';
+                updateRouteList();
+                updateRouteStats();
             }
             
             drawMap();
@@ -1267,12 +1531,262 @@
             showStatus('✓ Text overlays file downloaded! Replace the old file with this one.', 'success');
         }
 
+        // Route management functions
+        function updateRouteStats() {
+            const totalWaypoints = routes.reduce((sum, route) => sum + route.waypoints.length, 0);
+            document.getElementById('totalRoutes').textContent = routes.length;
+            document.getElementById('totalWaypoints').textContent = totalWaypoints;
+        }
+
+        function updateRouteList() {
+            const list = document.getElementById('routeList');
+            if (routes.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No routes yet. Create one!</p>';
+                return;
+            }
+
+            list.innerHTML = routes.map((route, index) => `
+                <div class="location-item" style="display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>${route.name}</strong>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-primary" onclick="loadRoute(${index})" 
+                                    style="padding: 5px 10px; font-size: 0.85em;">
+                                📝 Load
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteRoute(${index})" 
+                                    style="padding: 5px 10px; font-size: 0.85em;">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85em; color: #64748b;">
+                        ${route.waypoints.length} waypoints
+                    </div>
+                    <div style="font-size: 0.75em; color: #94a3b8; max-height: 60px; overflow-y: auto;">
+                        ${route.waypoints.map((wp, i) => `${i + 1}. ${wp.name}`).join(' → ')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateWaypointsList() {
+            const list = document.getElementById('waypointsList');
+            const count = document.getElementById('waypointCount');
+            count.textContent = currentRoute.waypoints.length;
+
+            if (currentRoute.waypoints.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center; margin: 0;">No waypoints yet. Click locations on the map.</p>';
+                document.getElementById('clearRouteButton').disabled = true;
+                updateButtonStates();
+                return;
+            }
+
+            list.innerHTML = currentRoute.waypoints.map((wp, index) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; background: white; border-radius: 4px; margin-bottom: 5px;">
+                    <span><strong>${index + 1}.</strong> ${wp.name}</span>
+                    <button onclick="removeWaypoint(${index})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em;">✖</button>
+                </div>
+            `).join('');
+
+            document.getElementById('clearRouteButton').disabled = false;
+            updateButtonStates();
+        }
+
+        function removeWaypoint(index) {
+            currentRoute.waypoints.splice(index, 1);
+            updateWaypointsList();
+            drawMap();
+        }
+
+        function clearCurrentRoute() {
+            if (currentRoute.waypoints.length > 0) {
+                if (!confirm('Clear all waypoints from the current route?')) return;
+            }
+            currentRoute.waypoints = [];
+            editingRouteIndex = -1;
+            document.getElementById('routeName').value = 'MTN Host Tour Route';
+            updateWaypointsList();
+            updateButtonStates();
+            drawMap();
+            showStatus('Route cleared', 'info');
+        }
+
+        function updateButtonStates() {
+            const completeBtn = document.getElementById('completeRouteButton');
+            const updateBtn = document.getElementById('updateRouteButton');
+            
+            if (editingRouteIndex >= 0) {
+                // Editing mode - show Update button, hide Complete button
+                completeBtn.style.display = 'none';
+                updateBtn.style.display = 'block';
+                updateBtn.disabled = currentRoute.waypoints.length < 2;
+            } else {
+                // New route mode - show Complete button, hide Update button
+                completeBtn.style.display = 'block';
+                completeBtn.disabled = currentRoute.waypoints.length < 2;
+                updateBtn.style.display = 'none';
+            }
+        }
+
+        function loadRoute(index) {
+            if (currentRoute.waypoints.length > 0 && editingRouteIndex !== index) {
+                if (!confirm('Loading a route will clear your current work. Continue?')) return;
+            }
+            
+            const route = routes[index];
+            currentRoute = {
+                name: route.name,
+                waypoints: [...route.waypoints.map(wp => ({...wp}))] // Deep copy
+            };
+            editingRouteIndex = index;
+            
+            document.getElementById('routeName').value = route.name;
+            updateWaypointsList();
+            updateButtonStates();
+            drawMap();
+            showStatus(`Loaded "${route.name}" for editing - click locations to add more waypoints`, 'success');
+        }
+
+        function updateRoute() {
+            const name = document.getElementById('routeName').value.trim();
+            if (!name) {
+                showStatus('Please enter a route name!', 'error');
+                return;
+            }
+
+            if (currentRoute.waypoints.length < 2) {
+                showStatus('Route must have at least 2 waypoints!', 'error');
+                return;
+            }
+
+            if (editingRouteIndex < 0 || editingRouteIndex >= routes.length) {
+                showStatus('Error: Invalid route index', 'error');
+                return;
+            }
+
+            // Update the existing route
+            routes[editingRouteIndex] = {
+                name: name,
+                waypoints: [...currentRoute.waypoints]
+            };
+
+            showStatus(`✓ Route "${name}" updated!`, 'success');
+            currentRoute = { name: '', waypoints: [] };
+            editingRouteIndex = -1;
+            document.getElementById('routeName').value = 'MTN Host Tour Route';
+            updateWaypointsList();
+            updateButtonStates();
+            updateRouteList();
+            updateRouteStats();
+            drawMap();
+        }
+
+        function completeRoute() {
+            const name = document.getElementById('routeName').value.trim();
+            if (!name) {
+                showStatus('Please enter a route name!', 'error');
+                return;
+            }
+
+            if (currentRoute.waypoints.length < 2) {
+                showStatus('Route must have at least 2 waypoints!', 'error');
+                return;
+            }
+
+            routes.push({
+                name: name,
+                waypoints: [...currentRoute.waypoints]
+            });
+
+            showStatus(`✓ Route "${name}" created with ${currentRoute.waypoints.length} waypoints!`, 'success');
+            currentRoute = { name: '', waypoints: [] };
+            editingRouteIndex = -1;
+            document.getElementById('routeName').value = 'MTN Host Tour Route';
+            updateWaypointsList();
+            updateButtonStates();
+            updateRouteList();
+            updateRouteStats();
+            drawMap();
+        }
+
+        function deleteRoute(index) {
+            if (!confirm(`Delete route "${routes[index].name}"?`)) return;
+            
+            routes.splice(index, 1);
+            updateRouteList();
+            updateRouteStats();
+            drawMap();
+            showStatus('Route deleted', 'info');
+        }
+
+        function saveRoutesToFile() {
+            const config = {
+                routes: routes
+            };
+
+            const jsonString = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'routes.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showStatus('✓ Routes file downloaded! Place this in your project folder.', 'success');
+        }
+
+        function loadRoutesFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    if (!config.routes || !Array.isArray(config.routes)) {
+                        showStatus('Invalid routes file format!', 'error');
+                        return;
+                    }
+
+                    // Ask for confirmation if there are existing routes
+                    if (routes.length > 0) {
+                        if (!confirm(`This will replace your ${routes.length} existing route(s). Continue?`)) {
+                            event.target.value = ''; // Reset file input
+                            return;
+                        }
+                    }
+
+                    routes = config.routes;
+                    updateRouteList();
+                    updateRouteStats();
+                    drawMap();
+                    showStatus(`✓ Loaded ${routes.length} route(s) from file!`, 'success');
+                    
+                    // Reset file input
+                    event.target.value = '';
+                } catch (err) {
+                    console.error('Error parsing routes file:', err);
+                    showStatus('Error reading routes file. Make sure it\'s valid JSON.', 'error');
+                    event.target.value = '';
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
         // Ensure sidebar panels use flex layout
         document.getElementById('locationsPanel').style.display = 'flex';
         document.getElementById('locationsPanel').style.flexDirection = 'column';
         document.getElementById('locationsPanel').style.gap = '15px';
         document.getElementById('overlaysPanel').style.flexDirection = 'column';
         document.getElementById('overlaysPanel').style.gap = '15px';
+        document.getElementById('routesPanel').style.flexDirection = 'column';
+        document.getElementById('routesPanel').style.gap = '15px';
     </script>
 </body>
 </html>

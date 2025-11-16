@@ -1,0 +1,104 @@
+{
+  "routes": [
+    {
+      "name": "MTN Host Tour Route",
+      "waypoints": [
+        {
+          "name": "J.R. Simplot Lodge",
+          "x": 2561,
+          "y": 999
+        },
+        {
+          "name": "Deer Point Express #1",
+          "x": 2334,
+          "y": 525
+        },
+        {
+          "name": "Alpine",
+          "x": 1827,
+          "y": 329
+        },
+        {
+          "name": "Showcase",
+          "x": 1844,
+          "y": 501
+        },
+        {
+          "name": "Bogus Creek Trail",
+          "x": 2049,
+          "y": 813
+        },
+        {
+          "name": "Morning Star Express #2",
+          "x": 2380,
+          "y": 982
+        },
+        {
+          "name": "Pioneer Lodge",
+          "x": 2349,
+          "y": 1177
+        },
+        {
+          "name": "Smuggler",
+          "x": 2282,
+          "y": 1379
+        },
+        {
+          "name": "Smuggler (Lower)",
+          "x": 2264,
+          "y": 1748
+        },
+        {
+          "name": "Superior Base",
+          "x": 2225,
+          "y": 1886
+        },
+        {
+          "name": "Superior Express #3",
+          "x": 2039,
+          "y": 1674
+        },
+        {
+          "name": "Cabin Traverse (2nd location)",
+          "x": 1438,
+          "y": 971
+        },
+        {
+          "name": "Wildcat (Top)",
+          "x": 1120,
+          "y": 769
+        },
+        {
+          "name": "Upper Nugget",
+          "x": 532,
+          "y": 799
+        },
+        {
+          "name": "Lower Nugget",
+          "x": 477,
+          "y": 1122
+        },
+        {
+          "name": "Pine Creek Base",
+          "x": 330,
+          "y": 1433
+        },
+        {
+          "name": "Pine Creek Express #6",
+          "x": 841,
+          "y": 1197
+        },
+        {
+          "name": "Shafer Butte",
+          "x": 1466,
+          "y": 897
+        },
+        {
+          "name": "Pioneer Lodge Cat Track",
+          "x": 1874,
+          "y": 1268
+        }
+      ]
+    }
+  ]
+}
