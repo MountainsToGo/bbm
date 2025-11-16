@@ -97,6 +97,11 @@
           "name": "Pioneer Lodge Cat Track",
           "x": 1874,
           "y": 1268
+        },
+        {
+          "name": "Pioneer Lodge",
+          "x": 2349,
+          "y": 1177
         }
       ]
     }

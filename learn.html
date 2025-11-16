@@ -1229,8 +1229,7 @@
                         ctx.restore();
                     }
                     
-                    // Draw numbered circles at waypoints
-                    ctx.font = 'bold 14px Arial';
+                    // Draw waypoint markers
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     
@@ -1239,18 +1238,98 @@
                         const x = wp.x * canvasScale;
                         const y = wp.y * canvasScale;
                         
-                        // Draw white circle with black border
-                        ctx.fillStyle = '#ffffff';
-                        ctx.strokeStyle = '#000000';
-                        ctx.lineWidth = 3;
-                        ctx.beginPath();
-                        ctx.arc(x, y, 12, 0, 2 * Math.PI);
-                        ctx.fill();
-                        ctx.stroke();
-                        
-                        // Draw number
-                        ctx.fillStyle = '#000000';
-                        ctx.fillText((i + 1).toString(), x, y);
+                        if (i === 0) {
+                            // START marker - big green flag
+                            ctx.save();
+                            
+                            // Draw flagpole
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y);
+                            ctx.lineTo(x, y - 55);
+                            ctx.stroke();
+                            
+                            // Draw flag
+                            ctx.fillStyle = '#22c55e';
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y - 55);
+                            ctx.lineTo(x + 40, y - 42);
+                            ctx.lineTo(x, y - 29);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.stroke();
+                            
+                            // Draw "START" text
+                            ctx.fillStyle = '#22c55e';
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 4;
+                            ctx.font = 'bold 22px Arial';
+                            ctx.strokeText('START', x, y + 25);
+                            ctx.fillText('START', x, y + 25);
+                            
+                            ctx.restore();
+                        } else if (i === route.waypoints.length - 1) {
+                            // FINISH marker - big checkered flag
+                            ctx.save();
+                            
+                            // Draw flagpole
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y);
+                            ctx.lineTo(x, y - 55);
+                            ctx.stroke();
+                            
+                            // Draw checkered flag pattern (larger)
+                            const flagWidth = 40;
+                            const flagHeight = 24;
+                            const checkSize = 10;
+                            
+                            for (let row = 0; row < 2; row++) {
+                                for (let col = 0; col < 4; col++) {
+                                    const isBlack = (row + col) % 2 === 0;
+                                    ctx.fillStyle = isBlack ? '#000000' : '#ffffff';
+                                    ctx.fillRect(
+                                        x + (col * checkSize),
+                                        y - 55 + (row * checkSize) + 7,
+                                        checkSize,
+                                        checkSize
+                                    );
+                                }
+                            }
+                            
+                            // Border around flag
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 3;
+                            ctx.strokeRect(x, y - 55 + 7, flagWidth, flagHeight);
+                            
+                            // Draw "FINISH" text
+                            ctx.fillStyle = '#ef4444';
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 4;
+                            ctx.font = 'bold 22px Arial';
+                            ctx.strokeText('FINISH', x + 20, y + 25);
+                            ctx.fillText('FINISH', x + 20, y + 25);
+                            
+                            ctx.restore();
+                        } else {
+                            // Regular numbered waypoint markers
+                            ctx.fillStyle = '#ffffff';
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.arc(x, y, 12, 0, 2 * Math.PI);
+                            ctx.fill();
+                            ctx.stroke();
+                            
+                            // Draw number
+                            ctx.fillStyle = '#000000';
+                            ctx.font = 'bold 14px Arial';
+                            ctx.fillText((i + 1).toString(), x, y);
+                        }
                     }
                     
                     ctx.restore();
