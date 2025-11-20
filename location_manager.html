@@ -686,6 +686,7 @@
         let routes = [];
         let currentRoute = { name: '', waypoints: [] };
         let editingRouteIndex = -1; // Track which route is being edited (-1 = new route)
+        let insertAtIndex = -1; // Track insert position (-1 = append at end, >=0 = insert at position)
         let showLabels = true;
         let canvasScale = 1;
         let zoomLevel = 1.0;
@@ -1114,15 +1115,24 @@
                 }
                 
                 if (clickedLocation) {
-                    // Allow duplicate locations in route (removed the duplicate check)
-                    currentRoute.waypoints.push({
+                    // Insert at specific position or append at end
+                    const newWaypoint = {
                         name: clickedLocation.name,
                         x: clickedLocation.x,
                         y: clickedLocation.y
-                    });
+                    };
+                    
+                    if (insertAtIndex >= 0 && insertAtIndex <= currentRoute.waypoints.length) {
+                        currentRoute.waypoints.splice(insertAtIndex, 0, newWaypoint);
+                        showStatus(`Inserted ${clickedLocation.name} at position ${insertAtIndex + 1}`, 'success');
+                        insertAtIndex = -1; // Exit insert mode after inserting
+                    } else {
+                        currentRoute.waypoints.push(newWaypoint);
+                        showStatus(`Added ${clickedLocation.name} to route`, 'success');
+                    }
+                    
                     updateWaypointsList();
                     drawMap();
-                    showStatus(`Added ${clickedLocation.name} to route`, 'success');
                 } else {
                     showStatus('Click on an existing location to add it to the route', 'error');
                 }
@@ -1669,7 +1679,11 @@
             list.innerHTML = currentRoute.waypoints.map((wp, index) => `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; background: white; border-radius: 4px; margin-bottom: 5px;">
                     <span><strong>${index + 1}.</strong> ${wp.name}</span>
-                    <button onclick="removeWaypoint(${index})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em;">✖</button>
+                    <div style="display: flex; gap: 3px;">
+                        <button onclick="moveWaypointUp(${index})" ${index === 0 ? 'disabled' : ''} style="background: #3b82f6; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em; ${index === 0 ? 'opacity: 0.3; cursor: not-allowed;' : ''}" title="Move up">▲</button>
+                        <button onclick="moveWaypointDown(${index})" ${index === currentRoute.waypoints.length - 1 ? 'disabled' : ''} style="background: #3b82f6; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em; ${index === currentRoute.waypoints.length - 1 ? 'opacity: 0.3; cursor: not-allowed;' : ''}" title="Move down">▼</button>
+                        <button onclick="removeWaypoint(${index})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em;" title="Remove">✖</button>
+                    </div>
                 </div>
             `).join('');
 
@@ -1679,8 +1693,33 @@
 
         function removeWaypoint(index) {
             currentRoute.waypoints.splice(index, 1);
+            insertAtIndex = -1; // Cancel insert mode
             updateWaypointsList();
             drawMap();
+        }
+
+        function moveWaypointUp(index) {
+            if (index === 0) return;
+            const temp = currentRoute.waypoints[index];
+            currentRoute.waypoints[index] = currentRoute.waypoints[index - 1];
+            currentRoute.waypoints[index - 1] = temp;
+            updateWaypointsList();
+            drawMap();
+        }
+
+        function moveWaypointDown(index) {
+            if (index === currentRoute.waypoints.length - 1) return;
+            const temp = currentRoute.waypoints[index];
+            currentRoute.waypoints[index] = currentRoute.waypoints[index + 1];
+            currentRoute.waypoints[index + 1] = temp;
+            updateWaypointsList();
+            drawMap();
+        }
+
+        function startInsertMode(index) {
+            insertAtIndex = index;
+            updateWaypointsList();
+            showStatus(`Insert mode active! Click a location on the map to insert it at position ${index + 1}`, 'info');
         }
 
         function clearCurrentRoute() {
@@ -1689,6 +1728,7 @@
             }
             currentRoute.waypoints = [];
             editingRouteIndex = -1;
+            insertAtIndex = -1; // Reset insert mode
             document.getElementById('routeName').value = 'MTN Host Tour Route';
             updateWaypointsList();
             updateButtonStates();
