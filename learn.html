@@ -879,6 +879,15 @@
         let routes = []; // Array of routes loaded from routes.json
         let showRoute = false; // Toggle to show/hide the MTN Host Tour Route
         
+        // Route animation variables
+        let routeAnimating = false;
+        let animationSegment = 0; // Current segment being drawn (0 to waypoints.length-1)
+        let animationProgress = 0; // Progress along current segment (0 to 1)
+        let animationStartTime = 0;
+        let flashPhase = 0; // 0=start flash, 1=drawing, 2=finish flash
+        let flashStartTime = 0;
+        let animationFrameId = null;
+        
         // Celebration animation variables
         let celebrationActive = false;
         let celebrationStartTime = null;
@@ -1184,27 +1193,52 @@
                 if (route && route.waypoints && route.waypoints.length > 1) {
                     ctx.save();
                     
+                    // Determine how much to draw based on animation state
+                    let segmentsToDraw = route.waypoints.length - 1;
+                    let partialProgress = 1;
+                    
+                    if (routeAnimating && flashPhase === 1) {
+                        segmentsToDraw = animationSegment;
+                        partialProgress = animationProgress;
+                    }
+                    
                     // Draw black lines connecting waypoints
                     ctx.strokeStyle = '#000000';
-                    ctx.lineWidth = 4;
+                    ctx.lineWidth = 6;
                     ctx.setLineDash([]);
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
                     
-                    ctx.beginPath();
-                    ctx.moveTo(route.waypoints[0].x * canvasScale, route.waypoints[0].y * canvasScale);
-                    for (let i = 1; i < route.waypoints.length; i++) {
-                        ctx.lineTo(route.waypoints[i].x * canvasScale, route.waypoints[i].y * canvasScale);
+                    // Draw completed segments
+                    for (let i = 0; i < segmentsToDraw; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(route.waypoints[i].x * canvasScale, route.waypoints[i].y * canvasScale);
+                        ctx.lineTo(route.waypoints[i + 1].x * canvasScale, route.waypoints[i + 1].y * canvasScale);
+                        ctx.stroke();
                     }
-                    ctx.stroke();
                     
-                    // Draw red arrows between waypoints
-                    const arrowSize = 15;
+                    // Draw partial segment if animating
+                    if (routeAnimating && flashPhase === 1 && segmentsToDraw < route.waypoints.length - 1) {
+                        const from = route.waypoints[segmentsToDraw];
+                        const to = route.waypoints[segmentsToDraw + 1];
+                        const partialX = from.x + (to.x - from.x) * partialProgress;
+                        const partialY = from.y + (to.y - from.y) * partialProgress;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(from.x * canvasScale, from.y * canvasScale);
+                        ctx.lineTo(partialX * canvasScale, partialY * canvasScale);
+                        ctx.stroke();
+                    }
+                    
+                    // Draw red arrows between waypoints (only for completed segments)
+                    const arrowSize = 20;
                     ctx.fillStyle = '#ef4444';
                     ctx.strokeStyle = '#000000';
                     ctx.lineWidth = 2;
                     
-                    for (let i = 0; i < route.waypoints.length - 1; i++) {
+                    const arrowsToDraw = routeAnimating && flashPhase === 1 ? segmentsToDraw : route.waypoints.length - 1;
+                    
+                    for (let i = 0; i < arrowsToDraw; i++) {
                         const from = route.waypoints[i];
                         const to = route.waypoints[i + 1];
                         
@@ -1241,8 +1275,19 @@
                         const y = wp.y * canvasScale;
                         
                         if (i === 0) {
-                            // START marker - big green flag
+                            // START marker - big green flag with flash animation
                             ctx.save();
+                            
+                            // Flash effect during start phase
+                            let opacity = 1;
+                            if (routeAnimating && flashPhase === 0) {
+                                const elapsed = Date.now() - flashStartTime;
+                                const pulseSpeed = 300; // 300ms per pulse
+                                const pulsePhase = (elapsed % pulseSpeed) / pulseSpeed;
+                                opacity = 0.3 + 0.7 * Math.abs(Math.sin(pulsePhase * Math.PI));
+                            }
+                            
+                            ctx.globalAlpha = opacity;
                             
                             // Draw flagpole
                             ctx.strokeStyle = '#000000';
@@ -1274,8 +1319,19 @@
                             
                             ctx.restore();
                         } else if (i === route.waypoints.length - 1) {
-                            // FINISH marker - big checkered flag
+                            // FINISH marker - big checkered flag with flash animation
                             ctx.save();
+                            
+                            // Flash effect during finish phase
+                            let opacity = 1;
+                            if (routeAnimating && flashPhase === 2) {
+                                const elapsed = Date.now() - flashStartTime;
+                                const pulseSpeed = 300; // 300ms per pulse
+                                const pulsePhase = (elapsed % pulseSpeed) / pulseSpeed;
+                                opacity = 0.3 + 0.7 * Math.abs(Math.sin(pulsePhase * Math.PI));
+                            }
+                            
+                            ctx.globalAlpha = opacity;
                             
                             // Draw flagpole
                             ctx.strokeStyle = '#000000';
@@ -2096,16 +2152,107 @@
             const btn = document.getElementById('routeBtn');
             
             if (showRoute) {
-                // Route ON - show green
+                // Route ON - show green and start animation
                 btn.classList.remove('btn-secondary');
                 btn.classList.add('btn-primary');
+                startRouteAnimation();
             } else {
-                // Route OFF - show gray
+                // Route OFF - show gray and stop animation
                 btn.classList.remove('btn-primary');
                 btn.classList.add('btn-secondary');
+                stopRouteAnimation();
+                drawMap();
+            }
+        }
+        
+        function startRouteAnimation() {
+            // Cancel any existing animation
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
             }
             
-            drawMap();
+            // Reset animation state
+            routeAnimating = true;
+            animationSegment = 0;
+            animationProgress = 0;
+            flashPhase = 0; // Start with START flash
+            flashStartTime = Date.now();
+            animationStartTime = Date.now();
+            
+            // Start animation loop
+            animateRouteFrame();
+        }
+        
+        function stopRouteAnimation() {
+            routeAnimating = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+        
+        function animateRouteFrame() {
+            if (!routeAnimating || !showRoute) return;
+            
+            const currentTime = Date.now();
+            const route = routes.find(r => r.name === 'MTN Host Tour Route');
+            
+            if (!route || !route.waypoints || route.waypoints.length < 2) {
+                stopRouteAnimation();
+                return;
+            }
+            
+            // Phase 0: Flash START (1 second)
+            if (flashPhase === 0) {
+                const elapsed = currentTime - flashStartTime;
+                if (elapsed >= 1000) {
+                    flashPhase = 1;
+                    animationStartTime = currentTime;
+                }
+                drawMap();
+                animationFrameId = requestAnimationFrame(animateRouteFrame);
+                return;
+            }
+            
+            // Phase 1: Draw route segments
+            if (flashPhase === 1) {
+                const segmentDuration = 1000; // 1000ms per segment
+                const elapsed = currentTime - animationStartTime;
+                
+                // Calculate current segment and progress
+                const totalElapsed = elapsed;
+                const currentSegmentIndex = Math.floor(totalElapsed / segmentDuration);
+                const progressInSegment = (totalElapsed % segmentDuration) / segmentDuration;
+                
+                animationSegment = currentSegmentIndex;
+                animationProgress = progressInSegment;
+                
+                // Check if animation complete
+                if (animationSegment >= route.waypoints.length - 1) {
+                    animationSegment = route.waypoints.length - 1;
+                    animationProgress = 1;
+                    flashPhase = 2; // Move to finish flash
+                    flashStartTime = currentTime;
+                }
+                
+                drawMap();
+                animationFrameId = requestAnimationFrame(animateRouteFrame);
+                return;
+            }
+            
+            // Phase 2: Flash FINISH (1 second)
+            if (flashPhase === 2) {
+                const elapsed = currentTime - flashStartTime;
+                if (elapsed >= 1000) {
+                    // Animation complete
+                    stopRouteAnimation();
+                    drawMap(); // Final draw with full route
+                    return;
+                }
+                drawMap();
+                animationFrameId = requestAnimationFrame(animateRouteFrame);
+                return;
+            }
         }
 
         function zoomIn() {
