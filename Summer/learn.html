@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: 2026-03-06 - Summer Trail Map (Interactive) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogus Basin Summer Trail Map</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2334d399;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23059669;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23sky)' width='64' height='64'/%3E%3Cpath fill='%23047857' d='M0 64 L20 30 L45 64 Z'/%3E%3Cpath fill='%23065f46' d='M15 64 L32 15 L55 64 Z'/%3E%3Cpath fill='%23fbbf24' d='M32 10 A5 5 0 1 0 32 20 A5 5 0 1 0 32 10'/%3E%3Cpath fill='%23047857' d='M35 64 L48 35 L64 64 Z'/%3E%3C/svg%3E">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            color: #059669;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            max-height: calc(100vh - 200px);
+            min-height: 500px;
+            overflow: visible;
+        }
+        .sidebar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            max-height: 1200px;
+            min-height: 500px;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+        }
+        .sidebar h2 {
+            color: #059669;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        .name-list-container {
+            flex: 1 1 auto;
+            max-height: 800px;
+            min-height: 0;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 10px;
+            padding-right: 5px;
+        }
+        .name-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .name-list-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .name-list-container::-webkit-scrollbar-thumb {
+            background: #059669;
+            border-radius: 10px;
+        }
+        .name-list-container::-webkit-scrollbar-thumb:hover {
+            background: #047857;
+        }
+        #namesList {
+            width: 100%;
+            min-height: 100px;
+        }
+        .name-list-item {
+            padding: 8px 10px;
+            margin: 3px 0;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+        .name-list-item:hover {
+            background: #d1fae5;
+            transform: translateX(5px);
+            border-left-color: #059669;
+        }
+        .name-list-item.active {
+            background: #d1fae5;
+            border-left-color: #059669;
+            font-weight: bold;
+        }
+        .map-area {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            min-height: 1200px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .map-wrapper {
+            position: relative;
+            display: block;
+            cursor: grab;
+            width: 100%;
+            max-height: none;
+            min-height: 1100px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: manipulation;
+        }
+        .map-wrapper:active {
+            cursor: grabbing;
+        }
+        .map-wrapper::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .map-wrapper::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .map-wrapper::-webkit-scrollbar-thumb {
+            background: #059669;
+            border-radius: 6px;
+        }
+        .map-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #047857;
+        }
+        #mapCanvas {
+            display: block;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            min-width: 100%;
+            min-height: 100%;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .map-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #94a3b8;
+            color: white;
+        }
+        .btn-secondary.active {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            color: #64748b;
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            margin: 20px;
+        }
+        .empty-state h3 {
+            color: #059669;
+            margin-bottom: 10px;
+        }
+        .empty-state a {
+            color: #059669;
+            text-decoration: underline;
+        }
+        .trail-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .trail-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 2px solid #059669;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 100;
+            min-width: 260px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 5px;
+        }
+        .trail-dropdown.show {
+            display: block;
+        }
+        .trail-dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+            font-size: 0.9em;
+        }
+        .trail-dropdown-item:hover {
+            background: #ecfdf5;
+        }
+        .trail-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .trail-dropdown-item.active {
+            background: #d1fae5;
+            font-weight: bold;
+        }
+        .trail-color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .trail-dropdown-header {
+            padding: 8px 15px;
+            font-weight: 600;
+            color: #059669;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85em;
+        }
+        .trail-dropdown-empty {
+            padding: 15px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9em;
+        }
+
+        /* Tablet */
+        @media screen and (max-width: 1024px) {
+            body {
+                padding: 10px;
+            }
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 15px;
+            }
+            .sidebar {
+                height: auto;
+                max-height: none;
+                min-height: 300px;
+                order: 2;
+            }
+            .map-area {
+                order: 1;
+                height: auto;
+            }
+            .map-area .controls {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .btn {
+                padding: 12px 14px;
+                font-size: 0.88em;
+                min-height: 48px;
+            }
+        }
+
+        /* Phone */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 5px;
+            }
+            .header {
+                padding: 15px;
+            }
+            .header h1 {
+                font-size: 1.2em;
+                margin-bottom: 8px;
+            }
+            .sidebar {
+                max-height: none;
+                min-height: 300px;
+                padding: 12px;
+            }
+            .map-area {
+                min-height: 400px !important;
+            }
+            .map-wrapper {
+                min-height: 300px !important;
+                max-height: none !important;
+                touch-action: manipulation !important;
+            }
+            .map-area .controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .map-area .btn {
+                padding: 12px 10px;
+                font-size: 0.8em;
+                min-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🥾 Bogus Basin Summer Trail Map</h1>
+            <p>Explore Bogus Basin's summer multi-use trail network! Click a trail name to highlight it, or use Trace Trail to watch the route animate.</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <h2>Trail List <span style="font-size: 0.7em; color: #64748b; font-weight: normal;">(click to highlight)</span></h2>
+                
+                <!-- Search box -->
+                <div style="margin-bottom: 10px; position: relative;">
+                    <input type="text" id="locationSearch" placeholder="🔍 Search trails..." 
+                           style="width: 100%; padding: 8px 30px 8px 12px; border: 2px solid #e2e8f0; border-radius: 6px; font-size: 14px; background: #f8fafc;" 
+                           oninput="filterLocations()" onkeydown="handleSearchKeydown(event)" />
+                    <button onclick="clearSearch()" id="clearSearchBtn" 
+                            style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 16px; color: #64748b; display: none;"
+                            title="Clear search">✕</button>
+                    <div id="searchResults" style="font-size: 12px; color: #64748b; margin-top: 4px;"></div>
+                </div>
+                
+                <div class="name-list-container">
+                    <div id="namesList"></div>
+                </div>
+            </div>
+
+            <div class="map-area">
+                <div class="controls map-controls">
+                    <div class="trail-dropdown-wrapper">
+                        <button class="btn btn-secondary" onclick="toggleTrailMenu()" id="trailBtn" title="Select a trail to trace on the map">🥾 Trace Trail ▾</button>
+                        <div id="trailDropdown" class="trail-dropdown"></div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="zoomIn()" title="Zoom in on the map">🔍+ Zoom In</button>
+                    <button class="btn btn-secondary" onclick="zoomOut()" title="Zoom out on the map">🔍- Zoom Out</button>
+                    <button class="btn btn-secondary" onclick="resetZoom()" title="Reset zoom level back to 100%">↺ Reset Map</button>
+                </div>
+                
+                <div style="background: #ecfdf5; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    <strong>Zoom Level:</strong> <span id="zoomLevel">100%</span> | 
+                    <strong>Tip:</strong> Use Ctrl+Scroll to zoom, drag to pan
+                </div>
+
+                <div class="map-wrapper" id="mapWrapper">
+                    <canvas id="mapCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== State =====
+        let locations = [];
+        let displayOrder = [];
+        let canvasScale = 1;
+        let zoomLevel = 1.0;
+        let highlightedLocationIndices = [];
+        let textOverlays = [];
+        let routes = [];
+        let activeTrailIndex = -1;
+        
+        // Route animation
+        let routeAnimating = false;
+        let animationSegment = 0;
+        let animationProgress = 0;
+        let animationStartTime = 0;
+        let flashPhase = 0;
+        let flashStartTime = 0;
+        let animationFrameId = null;
+
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        // ===== Load Image & Config =====
+        img.onload = function() {
+            canvasScale = 1;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
+            
+            const VERSION = 'summer25';
+            const cacheBuster = new Date().getTime();
+            
+            fetch(`SummerBB.json?v=${VERSION}_${cacheBuster}`, {
+                cache: 'no-cache',
+                headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Could not load JSON file');
+                return response.json();
+            })
+            .then(config => {
+                locations = config.locations;
+                console.log('Loaded', locations.length, 'locations');
+                
+                if (locations.length === 0) {
+                    showEmptyState();
+                    return Promise.reject('NO_LOCATIONS');
+                }
+                
+                return fetch('text_overlays.json?v=' + cacheBuster, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }
+                });
+            })
+            .then(response => {
+                if (!response || !response.ok) { textOverlays = []; return null; }
+                return response.json();
+            })
+            .then(overlayConfig => {
+                if (overlayConfig) textOverlays = overlayConfig.overlays || [];
+                
+                return fetch('routes.json?v=' + new Date().getTime(), {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache', 'Expires': '0' }
+                });
+            })
+            .then(response => {
+                if (!response || !response.ok) { routes = []; initialize(); return null; }
+                return response.json();
+            })
+            .then(routesConfig => {
+                if (routesConfig && routesConfig.routes) {
+                    routes = routesConfig.routes;
+                    console.log('Loaded', routes.length, 'route(s)');
+                }
+                initialize();
+            })
+            .catch(err => {
+                if (err === 'NO_LOCATIONS') return;
+                console.error('Error loading config:', err);
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 600px; z-index: 10000;';
+                errorDiv.innerHTML = `
+                    <h2 style="color: #ef4444; margin-top: 0;">⚠️ Cannot Load Configuration</h2>
+                    <p><strong>This app needs to run from a web server, not by opening the file directly.</strong></p>
+                    <h3>Quick Fix (Python):</h3>
+                    <ol>
+                        <li>Open PowerShell in this folder</li>
+                        <li>Run: <code style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">python -m http.server 8000</code></li>
+                        <li>Open browser to: <a href="http://localhost:8000/learn.html" target="_blank">http://localhost:8000/learn.html</a></li>
+                    </ol>
+                    <button onclick="this.parentElement.remove()" style="padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 15px;">Close</button>
+                `;
+                document.body.appendChild(errorDiv);
+            });
+        };
+        img.src = 'trail_map.png';
+
+        // ===== Empty State =====
+        function showEmptyState() {
+            document.getElementById('namesList').innerHTML = `
+                <div class="empty-state">
+                    <h3>🗺️ No Trail Locations Yet</h3>
+                    <p>Use the <a href="location_manager.html">Location Manager</a> to add trail locations to the summer map.</p>
+                </div>
+            `;
+            drawMap();
+        }
+
+        // ===== Initialize =====
+        function initialize() {
+            if (locations.length === 0) return;
+            
+            // Sort alphabetically
+            locations = [...locations].sort((a, b) => a.name.localeCompare(b.name));
+            displayOrder = locations.map((_, index) => index);
+            
+            updateList();
+            drawMap();
+        }
+
+        // ===== Draw Map =====
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Draw location markers (red dots)
+            locations.forEach((loc, index) => {
+                ctx.fillStyle = '#ef4444';
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+            });
+            
+            // Draw active trail route
+            if (activeTrailIndex >= 0 && activeTrailIndex < routes.length) {
+                const route = routes[activeTrailIndex];
+                if (route && route.waypoints && route.waypoints.length > 1) {
+                    ctx.save();
+                    const trailColor = route.color || '#059669';
+                    
+                    let segmentsToDraw = route.waypoints.length - 1;
+                    let partialProgress = 1;
+                    
+                    if (routeAnimating && flashPhase === 1) {
+                        segmentsToDraw = animationSegment;
+                        partialProgress = animationProgress;
+                    }
+                    
+                    // Draw trail line
+                    ctx.strokeStyle = trailColor;
+                    ctx.lineWidth = 6;
+                    ctx.setLineDash([]);
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    
+                    for (let i = 0; i < segmentsToDraw; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(route.waypoints[i].x * canvasScale, route.waypoints[i].y * canvasScale);
+                        ctx.lineTo(route.waypoints[i + 1].x * canvasScale, route.waypoints[i + 1].y * canvasScale);
+                        ctx.stroke();
+                    }
+                    
+                    // Partial segment during animation
+                    if (routeAnimating && flashPhase === 1 && segmentsToDraw < route.waypoints.length - 1) {
+                        const from = route.waypoints[segmentsToDraw];
+                        const to = route.waypoints[segmentsToDraw + 1];
+                        const partialX = from.x + (to.x - from.x) * partialProgress;
+                        const partialY = from.y + (to.y - from.y) * partialProgress;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(from.x * canvasScale, from.y * canvasScale);
+                        ctx.lineTo(partialX * canvasScale, partialY * canvasScale);
+                        ctx.stroke();
+                    }
+                    
+                    // Draw direction arrows
+                    const arrowSize = 20;
+                    ctx.fillStyle = trailColor;
+                    ctx.strokeStyle = '#000000';
+                    ctx.lineWidth = 2;
+                    
+                    const arrowsToDraw = routeAnimating && flashPhase === 1 ? segmentsToDraw : route.waypoints.length - 1;
+                    
+                    for (let i = 0; i < arrowsToDraw; i++) {
+                        const from = route.waypoints[i];
+                        const to = route.waypoints[i + 1];
+                        const midX = ((from.x + to.x) / 2) * canvasScale;
+                        const midY = ((from.y + to.y) / 2) * canvasScale;
+                        const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                        
+                        ctx.save();
+                        ctx.translate(midX, midY);
+                        ctx.rotate(angle);
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(-arrowSize, -arrowSize / 2);
+                        ctx.lineTo(-arrowSize, arrowSize / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                    
+                    // Draw waypoint markers (START, FINISH, dots)
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    for (let i = 0; i < route.waypoints.length; i++) {
+                        const wp = route.waypoints[i];
+                        const x = wp.x * canvasScale;
+                        const y = wp.y * canvasScale;
+                        
+                        if (i === 0) {
+                            // START marker
+                            ctx.save();
+                            let opacity = 1;
+                            if (routeAnimating && flashPhase === 0) {
+                                const elapsed = Date.now() - flashStartTime;
+                                opacity = 0.3 + 0.7 * Math.abs(Math.sin((elapsed % 300) / 300 * Math.PI));
+                            }
+                            ctx.globalAlpha = opacity;
+                            
+                            ctx.strokeStyle = '#000000'; ctx.lineWidth = 5;
+                            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 55); ctx.stroke();
+                            
+                            ctx.fillStyle = '#22c55e'; ctx.strokeStyle = '#000000'; ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y - 55); ctx.lineTo(x + 40, y - 42); ctx.lineTo(x, y - 29);
+                            ctx.closePath(); ctx.fill(); ctx.stroke();
+                            
+                            ctx.fillStyle = '#22c55e'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4;
+                            ctx.font = 'bold 22px Arial';
+                            ctx.strokeText('START', x, y + 25); ctx.fillText('START', x, y + 25);
+                            ctx.restore();
+                            
+                        } else if (i === route.waypoints.length - 1) {
+                            // FINISH marker
+                            ctx.save();
+                            let opacity = 1;
+                            if (routeAnimating && flashPhase === 2) {
+                                const elapsed = Date.now() - flashStartTime;
+                                opacity = 0.3 + 0.7 * Math.abs(Math.sin((elapsed % 300) / 300 * Math.PI));
+                            }
+                            ctx.globalAlpha = opacity;
+                            
+                            ctx.strokeStyle = '#000000'; ctx.lineWidth = 5;
+                            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y - 55); ctx.stroke();
+                            
+                            const checkSize = 10;
+                            for (let row = 0; row < 2; row++) {
+                                for (let col = 0; col < 4; col++) {
+                                    ctx.fillStyle = (row + col) % 2 === 0 ? '#000000' : '#ffffff';
+                                    ctx.fillRect(x + (col * checkSize), y - 55 + (row * checkSize) + 7, checkSize, checkSize);
+                                }
+                            }
+                            ctx.strokeStyle = '#000000'; ctx.lineWidth = 3;
+                            ctx.strokeRect(x, y - 55 + 7, 40, 24);
+                            
+                            ctx.fillStyle = '#ef4444'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 4;
+                            ctx.font = 'bold 22px Arial';
+                            ctx.strokeText('FINISH', x + 20, y + 25); ctx.fillText('FINISH', x + 20, y + 25);
+                            ctx.restore();
+                            
+                        } else {
+                            // Intermediate waypoint dot
+                            ctx.fillStyle = trailColor; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                            ctx.beginPath(); ctx.arc(x, y, 4, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+                        }
+                    }
+                    
+                    ctx.restore();
+                }
+            }
+            
+            // Draw red highlight circles (LAST - on top of everything)
+            if (highlightedLocationIndices.length > 0) {
+                highlightedLocationIndices.forEach(highlightIndex => {
+                    if (highlightIndex < locations.length) {
+                        const loc = locations[highlightIndex];
+                        ctx.save();
+                        
+                        ctx.strokeStyle = '#dc2626';
+                        ctx.lineWidth = 6;
+                        ctx.setLineDash([8, 4]);
+                        
+                        for (let i = 1; i <= 3; i++) {
+                            ctx.beginPath();
+                            ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 20 + (i * 8), 0, 2 * Math.PI);
+                            ctx.globalAlpha = 0.9 - (i * 0.15);
+                            ctx.stroke();
+                        }
+                        
+                        ctx.setLineDash([]);
+                        ctx.lineWidth = 4;
+                        ctx.globalAlpha = 1.0;
+                        ctx.beginPath();
+                        ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 15, 0, 2 * Math.PI);
+                        ctx.stroke();
+                        
+                        ctx.restore();
+                    }
+                });
+            }
+        }
+
+        // ===== Trail List =====
+        function updateList() {
+            const list = document.getElementById('namesList');
+            list.innerHTML = '';
+            const shownNames = new Set();
+            
+            displayOrder.forEach(index => {
+                const loc = locations[index];
+                // Deduplicate: show each trail name once in the list
+                if (shownNames.has(loc.name)) return;
+                shownNames.add(loc.name);
+                
+                const item = document.createElement('div');
+                item.className = 'name-list-item';
+                
+                // Highlight active trail
+                const matching = getMatchingLocationIndices(loc.name);
+                const isHighlighted = matching.some(mi => highlightedLocationIndices.includes(mi));
+                if (isHighlighted) {
+                    item.classList.add('active');
+                }
+                
+                item.innerHTML = loc.name;
+                item.onclick = function() {
+                    const matchingIndices = getMatchingLocationIndices(loc.name);
+                    const isCurrentlyHighlighted = matchingIndices.some(mi => highlightedLocationIndices.includes(mi));
+                    
+                    // Toggle highlight
+                    if (isCurrentlyHighlighted) {
+                        highlightedLocationIndices = [];
+                    } else {
+                        highlightedLocationIndices = matchingIndices;
+                    }
+                    
+                    updateList();
+                    drawMap();
+                };
+                
+                list.appendChild(item);
+            });
+        }
+
+        // ===== Search =====
+        function filterLocations() {
+            const searchTerm = document.getElementById('locationSearch').value.toLowerCase();
+            const searchResults = document.getElementById('searchResults');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            if (searchTerm === '') {
+                displayOrder = [...Array(locations.length).keys()];
+                updateList();
+                searchResults.textContent = '';
+                clearBtn.style.display = 'none';
+                return;
+            }
+            
+            const matchingIndices = [];
+            locations.forEach((location, index) => {
+                if (location.name.toLowerCase().includes(searchTerm)) {
+                    matchingIndices.push(index);
+                }
+            });
+            
+            displayOrder = matchingIndices;
+            updateList();
+            
+            const uniqueNames = new Set(matchingIndices.map(i => locations[i].name));
+            if (uniqueNames.size === 0) {
+                searchResults.textContent = 'No trails found';
+                searchResults.style.color = '#ef4444';
+            } else {
+                searchResults.textContent = `${uniqueNames.size} trail${uniqueNames.size === 1 ? '' : 's'} found`;
+                searchResults.style.color = '#22c55e';
+            }
+            
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+        }
+        
+        function clearSearch() {
+            document.getElementById('locationSearch').value = '';
+            filterLocations();
+            document.getElementById('locationSearch').focus();
+        }
+        
+        function handleSearchKeydown(event) {
+            if (event.key === 'Escape') {
+                clearSearch();
+            } else if (event.key === 'Enter') {
+                const firstVisible = displayOrder[0];
+                if (firstVisible !== undefined) {
+                    highlightedLocationIndices = getMatchingLocationIndices(locations[firstVisible].name);
+                    updateList();
+                    drawMap();
+                }
+            }
+        }
+
+        // ===== Trail Trace Menu =====
+        function toggleTrailMenu() {
+            const dropdown = document.getElementById('trailDropdown');
+            dropdown.classList.toggle('show');
+            if (dropdown.classList.contains('show')) {
+                renderTrailList();
+            }
+        }
+
+        function renderTrailList() {
+            const dropdown = document.getElementById('trailDropdown');
+            if (routes.length === 0) {
+                dropdown.innerHTML = '<div class="trail-dropdown-empty">No trails traced yet.<br>Use the <a href="location_manager.html">Location Manager</a> to trace trails.</div>';
+                return;
+            }
+            let html = '<div class="trail-dropdown-header">🥾 Select a trail to trace</div>';
+            routes.forEach((route, index) => {
+                const isActive = activeTrailIndex === index;
+                const color = route.color || '#059669';
+                html += `<div class="trail-dropdown-item ${isActive ? 'active' : ''}" onclick="traceTrail(${index}); event.stopPropagation();">
+                    <span class="trail-color-dot" style="background: ${color};"></span>
+                    <span>${isActive ? '⏹ ' : '▶ '}${route.name}</span>
+                </div>`;
+            });
+            if (activeTrailIndex >= 0) {
+                html += `<div class="trail-dropdown-item" onclick="stopTrailTrace(); event.stopPropagation();" style="color: #ef4444; justify-content: center; font-weight: 600;">⏹ Stop Tracing</div>`;
+            }
+            dropdown.innerHTML = html;
+        }
+
+        function traceTrail(index) {
+            if (activeTrailIndex === index) {
+                stopTrailTrace();
+                return;
+            }
+            stopRouteAnimation();
+            activeTrailIndex = index;
+            
+            // Highlight matching location markers
+            const trailName = routes[index].name;
+            highlightedLocationIndices = getMatchingLocationIndices(trailName);
+            
+            const btn = document.getElementById('trailBtn');
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-primary');
+            btn.textContent = '🥾 ' + routes[index].name + ' ▾';
+            startRouteAnimation();
+            renderTrailList();
+            updateList();
+        }
+
+        function stopTrailTrace() {
+            stopRouteAnimation();
+            activeTrailIndex = -1;
+            highlightedLocationIndices = [];
+            const btn = document.getElementById('trailBtn');
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-secondary');
+            btn.textContent = '🥾 Trace Trail ▾';
+            drawMap();
+            renderTrailList();
+            updateList();
+            document.getElementById('trailDropdown').classList.remove('show');
+        }
+
+        // Close trail dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.trail-dropdown-wrapper')) {
+                const dd = document.getElementById('trailDropdown');
+                if (dd) dd.classList.remove('show');
+            }
+        });
+
+        // ===== Route Animation =====
+        function startRouteAnimation() {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            routeAnimating = true;
+            animationSegment = 0;
+            animationProgress = 0;
+            flashPhase = 0;
+            flashStartTime = Date.now();
+            animationStartTime = Date.now();
+            animateRouteFrame();
+        }
+        
+        function stopRouteAnimation() {
+            routeAnimating = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+        
+        function animateRouteFrame() {
+            if (!routeAnimating || activeTrailIndex < 0) return;
+            
+            const currentTime = Date.now();
+            const route = routes[activeTrailIndex];
+            
+            if (!route || !route.waypoints || route.waypoints.length < 2) {
+                stopRouteAnimation();
+                return;
+            }
+            
+            // Phase 0: Flash START
+            if (flashPhase === 0) {
+                if (currentTime - flashStartTime >= 1000) {
+                    flashPhase = 1;
+                    animationStartTime = currentTime;
+                }
+                drawMap();
+                animationFrameId = requestAnimationFrame(animateRouteFrame);
+                return;
+            }
+            
+            // Phase 1: Trace segments
+            if (flashPhase === 1) {
+                const totalPoints = route.waypoints.length;
+                const segmentDuration = totalPoints > 20 ? 200 : totalPoints > 10 ? 400 : 800;
+                const elapsed = currentTime - animationStartTime;
+                
+                animationSegment = Math.floor(elapsed / segmentDuration);
+                animationProgress = (elapsed % segmentDuration) / segmentDuration;
+                
+                if (animationSegment >= route.waypoints.length - 1) {
+                    animationSegment = route.waypoints.length - 1;
+                    animationProgress = 1;
+                    flashPhase = 2;
+                    flashStartTime = currentTime;
+                }
+                
+                drawMap();
+                animationFrameId = requestAnimationFrame(animateRouteFrame);
+                return;
+            }
+            
+            // Phase 2: Flash FINISH
+            if (flashPhase === 2) {
+                if (currentTime - flashStartTime >= 1000) {
+                    stopRouteAnimation();
+                    drawMap();
+                    return;
+                }
+                drawMap();
+                animationFrameId = requestAnimationFrame(animateRouteFrame);
+                return;
+            }
+        }
+
+        // ===== Helpers =====
+        function getMatchingLocationIndices(name) {
+            const indices = [];
+            locations.forEach((loc, i) => {
+                if (loc.name === name) indices.push(i);
+            });
+            return indices;
+        }
+
+        // ===== Zoom =====
+        function zoomIn() {
+            zoomLevel = Math.min(10.0, zoomLevel + 0.25);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            zoomLevel = Math.max(1.0, zoomLevel - 0.25);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            zoomLevel = 1.0;
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
+            canvas.style.transform = '';
+            
+            const wrapper = document.getElementById('mapWrapper');
+            wrapper.scrollLeft = 0;
+            wrapper.scrollTop = 0;
+            
+            document.getElementById('zoomLevel').textContent = '100%';
+            drawMap();
+        }
+
+        function applyZoom() {
+            canvas.style.width = (100 * zoomLevel) + '%';
+            canvas.style.height = 'auto';
+            canvas.style.transform = 'none';
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+        }
+
+        // ===== Mouse Panning =====
+        let isPanning = false;
+        let hasDragged = false;
+        let panStartX = 0, panStartY = 0;
+        let scrollStartX = 0, scrollStartY = 0;
+        const MIN_DRAG_DISTANCE = 10;
+
+        const mapWrapper = document.getElementById('mapWrapper');
+
+        mapWrapper.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            isPanning = true;
+            hasDragged = false;
+            panStartX = e.clientX;
+            panStartY = e.clientY;
+            scrollStartX = mapWrapper.scrollLeft;
+            scrollStartY = mapWrapper.scrollTop;
+        });
+
+        mapWrapper.addEventListener('mousemove', function(e) {
+            if (!isPanning) return;
+            const deltaX = panStartX - e.clientX;
+            const deltaY = panStartY - e.clientY;
+            if (Math.sqrt(deltaX * deltaX + deltaY * deltaY) > MIN_DRAG_DISTANCE) {
+                hasDragged = true;
+                mapWrapper.style.cursor = 'grabbing';
+            }
+            if (hasDragged) {
+                mapWrapper.scrollLeft = scrollStartX + deltaX;
+                mapWrapper.scrollTop = scrollStartY + deltaY;
+            }
+        });
+
+        mapWrapper.addEventListener('mouseup', function() {
+            if (isPanning) {
+                isPanning = false;
+                mapWrapper.style.cursor = 'grab';
+                setTimeout(() => { hasDragged = false; }, 100);
+            }
+        });
+
+        mapWrapper.addEventListener('mouseleave', function() {
+            if (isPanning) {
+                isPanning = false;
+                mapWrapper.style.cursor = 'grab';
+                setTimeout(() => { hasDragged = false; }, 100);
+            }
+        });
+
+        // ===== Ctrl+Scroll Zoom =====
+        canvas.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                if (e.deltaY < 0) zoomIn(); else zoomOut();
+            }
+        }, { passive: false });
+
+        // ===== Pinch-to-Zoom =====
+        let initialPinchDistance = null;
+        let initialZoomLevel = 1.0;
+
+        canvas.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const t1 = e.touches[0], t2 = e.touches[1];
+                initialPinchDistance = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+                initialZoomLevel = zoomLevel;
+            }
+        });
+
+        canvas.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const t1 = e.touches[0], t2 = e.touches[1];
+                const currentDistance = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+                if (initialPinchDistance) {
+                    zoomLevel = Math.max(1.0, Math.min(10.0, initialZoomLevel * (currentDistance / initialPinchDistance)));
+                    document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+                    applyZoom();
+                    drawMap();
+                }
+            }
+        });
+
+        canvas.addEventListener('touchend', function(e) {
+            if (e.touches.length < 2) initialPinchDistance = null;
+        });
+    </script>
+</body>
+</html>

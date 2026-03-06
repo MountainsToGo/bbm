@@ -1,0 +1,205 @@
+{
+  "mapImageSrc": "trail_map.png",
+  "imageWidth": 3456,
+  "imageHeight": 1728,
+  "locations": [
+    {
+      "name": "Around the Mountain",
+      "x": 1741,
+      "y": 1481,
+      "enabled": true
+    },
+    {
+      "name": "Around the Mountain",
+      "x": 1210,
+      "y": 420,
+      "enabled": true
+    },
+    {
+      "name": "Around the Mountain",
+      "x": 424,
+      "y": 1102,
+      "enabled": true
+    },
+    {
+      "name": "Around the Mountain",
+      "x": 640,
+      "y": 1552,
+      "enabled": true
+    },
+    {
+      "name": "Bogus Creek Connector",
+      "x": 1167,
+      "y": 1053,
+      "enabled": true
+    },
+    {
+      "name": "Bogus Creen",
+      "x": 1204,
+      "y": 958,
+      "enabled": true
+    },
+    {
+      "name": "Brewer's Byway",
+      "x": 1112,
+      "y": 740,
+      "enabled": true
+    },
+    {
+      "name": "Brewer's Cut Off",
+      "x": 1025,
+      "y": 900,
+      "enabled": true
+    },
+    {
+      "name": "Deer Point",
+      "x": 1790,
+      "y": 1190,
+      "enabled": true
+    },
+    {
+      "name": "Deer Point Express Lift",
+      "x": 1280,
+      "y": 1296,
+      "enabled": true
+    },
+    {
+      "name": "Deerpoint Trail",
+      "x": 1291,
+      "y": 1406,
+      "enabled": true
+    },
+    {
+      "name": "Deerpoint Trail",
+      "x": 1440,
+      "y": 1240,
+      "enabled": true
+    },
+    {
+      "name": "Deerpoint Trail",
+      "x": 1658,
+      "y": 1064,
+      "enabled": true
+    },
+    {
+      "name": "Elk Meadows",
+      "x": 1169,
+      "y": 605,
+      "enabled": true
+    },
+    {
+      "name": "Elk Meadows Junction",
+      "x": 1499,
+      "y": 789,
+      "enabled": true
+    },
+    {
+      "name": "Face",
+      "x": 1029,
+      "y": 634,
+      "enabled": true
+    },
+    {
+      "name": "Frontier Point Lodge",
+      "x": 805,
+      "y": 1638,
+      "enabled": true
+    },
+    {
+      "name": "Highway 40",
+      "x": 623,
+      "y": 1354,
+      "enabled": true
+    },
+    {
+      "name": "Lodge Cat Road",
+      "x": 589,
+      "y": 1020,
+      "enabled": true
+    },
+    {
+      "name": "Morning Star Express Lift",
+      "x": 881,
+      "y": 1177,
+      "enabled": true
+    },
+    {
+      "name": "Morning Star Junction",
+      "x": 712,
+      "y": 1051,
+      "enabled": true
+    },
+    {
+      "name": "New to This",
+      "x": 535,
+      "y": 1317,
+      "enabled": true
+    },
+    {
+      "name": "Packing Trail",
+      "x": 745,
+      "y": 668,
+      "enabled": true
+    },
+    {
+      "name": "Return Road",
+      "x": 227,
+      "y": 1529,
+      "enabled": true
+    },
+    {
+      "name": "Shafer Butte",
+      "x": 908,
+      "y": 588,
+      "enabled": true
+    },
+    {
+      "name": "Shindig",
+      "x": 1289,
+      "y": 834,
+      "enabled": true
+    },
+    {
+      "name": "Simplot Lodge",
+      "x": 1080,
+      "y": 1337,
+      "enabled": true
+    },
+    {
+      "name": "Sunshine",
+      "x": 965,
+      "y": 981,
+      "enabled": true
+    },
+    {
+      "name": "Sunshine",
+      "x": 1105,
+      "y": 1101,
+      "enabled": true
+    },
+    {
+      "name": "Sunshine Junction",
+      "x": 1075,
+      "y": 938,
+      "enabled": true
+    },
+    {
+      "name": "Tempest",
+      "x": 699,
+      "y": 793,
+      "enabled": true
+    },
+    {
+      "name": "Walking Road",
+      "x": 773,
+      "y": 1230,
+      "enabled": true
+    },
+    {
+      "name": "War Eagle Road",
+      "x": 521,
+      "y": 1052,
+      "enabled": true
+    }
+  ]
+}

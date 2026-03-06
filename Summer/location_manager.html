@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Manager - Summer Trail Map</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2334d399;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23059669;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23sky)' width='64' height='64'/%3E%3Cpath fill='%23047857' d='M0 64 L20 30 L45 64 Z'/%3E%3Cpath fill='%23065f46' d='M15 64 L32 15 L55 64 Z'/%3E%3Cpath fill='%23fbbf24' d='M32 10 A5 5 0 1 0 32 20 A5 5 0 1 0 32 10'/%3E%3Cpath fill='%23047857' d='M35 64 L48 35 L64 64 Z'/%3E%3C/svg%3E">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            color: #059669;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 20px;
+            height: calc(100vh - 200px);
+        }
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+        .sidebar h2 {
+            color: #059669;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #334155;
+        }
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #059669;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            color: white;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: white;
+        }
+        .btn-secondary {
+            background: #94a3b8;
+            color: white;
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .location-list {
+            flex: 1;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 0;
+        }
+        .location-list::-webkit-scrollbar {
+            width: 10px;
+        }
+        .location-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .location-list::-webkit-scrollbar-thumb {
+            background: #059669;
+            border-radius: 10px;
+        }
+        .location-list::-webkit-scrollbar-thumb:hover {
+            background: #047857;
+        }
+        .location-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            background: #f8fafc;
+            border-left: 4px solid #059669;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .location-item:hover {
+            background: #f1f5f9;
+        }
+        .location-name {
+            font-weight: 600;
+            color: #334155;
+        }
+        .location-coords {
+            font-size: 0.85em;
+            color: #64748b;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        .map-area {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .map-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: crosshair;
+        }
+        #mapCanvas {
+            display: block;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        .instruction {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: none;
+        }
+        .status-message.show {
+            display: block;
+        }
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #22c55e;
+        }
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #3b82f6;
+        }
+        .click-mode-box {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #059669;
+            flex-shrink: 0;
+        }
+        .click-mode-box.active {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .stat-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #059669;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        #locationsPanel, #overlaysPanel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+            min-height: 0;
+        }
+        
+        @media screen and (max-width: 1024px) {
+            body { padding: 10px; }
+            .main-content {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 15px;
+            }
+            .sidebar { height: auto; max-height: none; order: 2; }
+            .map-area { order: 1; height: auto; }
+            .map-wrapper { height: 60vh; max-height: 600px; }
+            .header h1 { font-size: 1.5em; }
+            .controls { flex-wrap: wrap; gap: 8px; }
+            .btn { padding: 10px 15px; font-size: 0.9em; }
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat-value { font-size: 1.8em; }
+        }
+        
+        @media screen and (max-width: 600px) {
+            body { padding: 5px; }
+            .header { padding: 15px; }
+            .header h1 { font-size: 1.2em; }
+            .sidebar { padding: 15px; }
+            .sidebar h2 { font-size: 1.1em; }
+            .map-wrapper { height: 50vh; }
+            .btn { padding: 8px 12px; font-size: 0.85em; min-width: auto; }
+            .stats { gap: 6px; }
+            .stat-box { padding: 10px; }
+            .stat-value { font-size: 1.4em; }
+            .stat-label { font-size: 0.8em; }
+            .form-group input { padding: 8px; font-size: 0.95em; }
+            .location-item { padding: 10px; font-size: 0.9em; }
+            .click-mode-box { padding: 12px; font-size: 0.9em; }
+            button, .btn { min-height: 44px; }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            button, .btn, .location-item { min-height: 44px; }
+            * { touch-action: manipulation; }
+            .btn:hover, .location-item:hover { transform: none; }
+            .btn:active { transform: scale(0.95); }
+            .location-item:active { background: #d1fae5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Location Manager - Summer Trail Map</h1>
+            <p>Add, edit, and manage summer trail map locations</p>
+        </div>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-shrink: 0;">
+                    <button class="btn btn-primary" id="locationsTab" onclick="switchMode('locations')" style="flex: 1;">
+                        📍 Locations
+                    </button>
+                    <button class="btn btn-secondary" id="overlaysTab" onclick="switchMode('overlays')" style="flex: 1;">
+                        🙈 Text Overlays
+                    </button>
+                    <button class="btn btn-secondary" id="routesTab" onclick="switchMode('routes')" style="flex: 1;">
+                        🥾 Trace Trails
+                    </button>
+                </div>
+
+                <div id="locationsPanel">
+                    <h2>Add New Location</h2>
+                    
+                    <div class="form-group">
+                        <label for="locationName">Trail/Location Name:</label>
+                        <input type="text" id="locationName" placeholder="Enter trail name...">
+                    </div>
+
+                    <div class="click-mode-box" id="clickModeBox">
+                        <strong>📍 Click Mode:</strong>
+                        <p id="clickModeText">Enter a name above, then click on the map to set coordinates</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Selected Coordinates:</label>
+                        <input type="text" id="coordsDisplay" readonly placeholder="Click on map after entering name">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addLocation()" id="addButton" disabled>
+                        ➕ Add Location
+                    </button>
+
+                    <hr style="border: 1px solid #e2e8f0;">
+
+                    <h2>Current Locations</h2>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalLocations">0</div>
+                            <div class="stat-label">Total Locations</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="enabledLocations">0</div>
+                            <div class="stat-label">Enabled</div>
+                        </div>
+                    </div>
+
+                    <div class="location-list" id="locationList">
+                        <p style="color: #64748b; text-align: center;">Loading locations...</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                        <button class="btn btn-success" onclick="saveToFile()">
+                            💾 Save All Changes
+                        </button>
+                        <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                            ← Back to Learning App
+                        </button>
+                    </div>
+                </div>
+
+                <div id="overlaysPanel" style="display: none;">
+                    <h2>Add Text Overlay</h2>
+                    
+                    <div class="instruction" style="font-size: 0.9em; margin-bottom: 10px;">
+                        <strong>How to add overlays:</strong><br>
+                        1. Click and drag on the map to draw a rectangle<br>
+                        2. Adjust rotation if needed using the slider<br>
+                        3. Click "Add Overlay" to save it<br>
+                        <strong>💡 Tip:</strong> Click and drag existing overlays to move them!
+                    </div>
+
+                    <div class="click-mode-box" id="overlayModeBox">
+                        <strong>✏️ Drawing Mode:</strong>
+                        <p id="overlayModeText">Click and drag on the map to draw an overlay rectangle</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="overlayNote">Note (optional):</label>
+                        <input type="text" id="overlayNote" placeholder="e.g., 'Covers trail name'">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="overlayRotation">Rotation Angle (degrees):</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="range" id="overlayRotation" min="-180" max="180" value="0" step="1" 
+                                   style="flex: 1;" oninput="updatePendingOverlayRotation(this.value)" disabled>
+                            <input type="number" id="overlayRotationValue" min="-180" max="180" value="0" step="1"
+                                   style="width: 70px; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px;"
+                                   oninput="updatePendingOverlayRotation(this.value)" disabled>
+                        </div>
+                        <small style="color: #64748b;">Rotate the overlay to match angled text (0° = horizontal)</small>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="addOverlay()" id="addOverlayButton" disabled style="flex: 1;">
+                            ➕ Add Overlay
+                        </button>
+                        <button class="btn btn-secondary" onclick="cancelOverlay()" id="cancelOverlayButton" disabled style="flex: 1;">
+                            ✖ Cancel
+                        </button>
+                    </div>
+
+                    <hr style="border: 1px solid #e2e8f0;">
+
+                    <h2>Current Overlays</h2>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalOverlays">0</div>
+                            <div class="stat-label">Total Overlays</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="coverageArea">0</div>
+                            <div class="stat-label">Coverage (px²)</div>
+                        </div>
+                    </div>
+
+                    <div class="location-list" id="overlayList">
+                        <p style="color: #64748b; text-align: center;">No overlays yet. Draw one!</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                        <button class="btn btn-success" onclick="saveOverlaysToFile()">
+                            💾 Save Overlays
+                        </button>
+                        <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                            ← Back to Learning App
+                        </button>
+                    </div>
+                </div>
+
+                <div id="routesPanel" style="display: none;">
+                    <h2>Trace Trail</h2>
+                    
+                    <div class="instruction" style="font-size: 0.9em; margin-bottom: 10px;">
+                        <strong>How to trace a trail:</strong><br>
+                        1. Enter the trail name and pick a color<br>
+                        2. With Free Click Mode on, click along the trail path<br>
+                        3. Place waypoints to follow curves (more = smoother)<br>
+                        4. Click "Complete Route" when finished<br>
+                        <strong>💡 Tip:</strong> Use Zoom to get more precise waypoint placement!
+                    </div>
+
+                    <div class="form-group">
+                        <label for="routeName">Trail Name:</label>
+                        <input type="text" id="routeName" placeholder="e.g., Around the Mountain" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="routeColor">Trail Color:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="color" id="routeColor" value="#059669" 
+                                   oninput="document.getElementById('routeColorLabel').textContent=this.value"
+                                   style="width: 50px; height: 35px; border: 2px solid #e2e8f0; border-radius: 6px; cursor: pointer;">
+                            <span id="routeColorLabel" style="color: #64748b; font-size: 0.85em;">#059669</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; color: #334155;">
+                            <input type="checkbox" id="freeClickCheckbox" checked onchange="toggleFreeClick()" style="width: 18px; height: 18px; cursor: pointer;">
+                            🎯 Free Click Mode
+                        </label>
+                        <small style="color: #64748b;">(place waypoints anywhere)</small>
+                    </div>
+
+                    <div class="click-mode-box" id="routeModeBox">
+                        <strong>🥾 Trail Tracing Mode:</strong>
+                        <p id="routeModeText">Click along the trail on the map to place waypoints that trace its path</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Route Waypoints (<span id="waypointCount">0</span>):</label>
+                        <div id="waypointsList" style="max-height: 200px; overflow-y: auto; border: 2px solid #e2e8f0; border-radius: 6px; padding: 10px; background: #f8fafc;">
+                            <p style="color: #64748b; text-align: center; margin: 0;">No waypoints yet. Click locations on the map.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="completeRoute()" id="completeRouteButton" disabled style="flex: 1;">
+                            ✓ Complete Route
+                        </button>
+                        <button class="btn btn-primary" onclick="updateRoute()" id="updateRouteButton" disabled style="flex: 1; display: none;">
+                            💾 Update Route
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearCurrentRoute()" id="clearRouteButton" disabled style="flex: 1;">
+                            🗑️ Clear
+                        </button>
+                    </div>
+
+                    <hr style="border: 1px solid #e2e8f0;">
+
+                    <h2>Saved Trails</h2>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalRoutes">0</div>
+                            <div class="stat-label">Total Trails</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalWaypoints">0</div>
+                            <div class="stat-label">Total Waypoints</div>
+                        </div>
+                    </div>
+
+                    <div class="location-list" id="routeList">
+                        <p style="color: #64748b; text-align: center;">No routes yet. Create one!</p>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; flex-shrink: 0;">
+                        <button class="btn btn-success" onclick="saveRoutesToFile()">
+                            💾 Save Trails
+                        </button>
+                        <button class="btn btn-primary" onclick="document.getElementById('routesFileInput').click()">
+                            📂 Import Trails from File
+                        </button>
+                        <input type="file" id="routesFileInput" accept=".json" style="display: none;" onchange="loadRoutesFromFile(event)">
+                        <button class="btn btn-warning" onclick="window.location.href='learn.html'">
+                            ← Back to Learning App
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-area">
+                <div class="status-message" id="statusMessage"></div>
+
+                <div class="instruction">
+                    👆 <strong>Instructions:</strong> Type a trail name, then click on the map to place it. Click "Add Location" to save.
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="toggleLabels()">🏷️ Toggle Labels</button>
+                    <button class="btn btn-primary" onclick="zoomIn()">🔍 Zoom In</button>
+                    <button class="btn btn-primary" onclick="zoomOut()">🔍 Zoom Out</button>
+                    <button class="btn btn-primary" onclick="resetZoom()">↺ Reset Zoom</button>
+                </div>
+                
+                <div style="background: #ecfdf5; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    <strong>Zoom Level:</strong> <span id="zoomLevel">100%</span> | 
+                    <strong>Tip:</strong> Use Ctrl+Scroll to zoom
+                </div>
+
+                <div class="map-wrapper">
+                    <canvas id="mapCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let locations = [];
+        let textOverlays = [];
+        let routes = [];
+        let currentRoute = { name: '', waypoints: [] };
+        let editingRouteIndex = -1;
+        let insertAtIndex = -1;
+        let showLabels = true;
+        let canvasScale = 1;
+        let zoomLevel = 1.0;
+        let pendingCoords = null;
+        let currentMode = 'locations';
+        let overlayDrawStart = null;
+        let pendingOverlay = null;
+        let draggingOverlayIndex = null;
+        let dragOffset = { x: 0, y: 0 };
+        let freeClickMode = true;
+
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+
+        img.onload = function() {
+            canvasScale = 1;
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            const cacheBuster = new Date().getTime();
+            fetch(`SummerBB.json?v=${cacheBuster}`)
+                .then(response => response.json())
+                .then(config => {
+                    locations = config.locations || [];
+                    console.log('Loaded locations:', locations.length);
+                    updateLocationList();
+                    updateStats();
+                    
+                    return fetch(`text_overlays.json?v=${cacheBuster}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('No overlays file found');
+                        textOverlays = [];
+                        drawMap();
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(overlayConfig => {
+                    if (overlayConfig) {
+                        textOverlays = overlayConfig.overlays || [];
+                        console.log('Loaded overlays:', textOverlays.length);
+                    }
+                    
+                    return fetch(`routes.json?v=${cacheBuster}`);
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('No routes file found');
+                        routes = [];
+                        drawMap();
+                        return null;
+                    }
+                    return response.json();
+                })
+                .then(routeConfig => {
+                    if (routeConfig) {
+                        routes = routeConfig.routes || [];
+                        console.log('Loaded routes:', routes.length);
+                        updateRouteList();
+                        updateRouteStats();
+                    }
+                    drawMap();
+                })
+                .catch(err => {
+                    console.error('Error loading config:', err);
+                    showStatus('Could not load configuration file. Starting with empty list.', 'error');
+                    locations = [];
+                    textOverlays = [];
+                    routes = [];
+                    updateLocationList();
+                    drawMap();
+                });
+        };
+        img.src = 'trail_map.png';
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            if (currentMode === 'overlays') {
+                textOverlays.forEach(overlay => {
+                    ctx.save();
+                    const centerX = overlay.x + overlay.width / 2;
+                    const centerY = overlay.y + overlay.height / 2;
+                    if (overlay.rotation) {
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate((overlay.rotation * Math.PI) / 180);
+                        ctx.translate(-centerX, -centerY);
+                    }
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(overlay.x, overlay.y, overlay.width, overlay.height);
+                    ctx.strokeRect(overlay.x, overlay.y, overlay.width, overlay.height);
+                    ctx.restore();
+                });
+                
+                if (pendingOverlay) {
+                    ctx.save();
+                    const centerX = pendingOverlay.x + pendingOverlay.width / 2;
+                    const centerY = pendingOverlay.y + pendingOverlay.height / 2;
+                    if (pendingOverlay.rotation) {
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate((pendingOverlay.rotation * Math.PI) / 180);
+                        ctx.translate(-centerX, -centerY);
+                    }
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.4)';
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([10, 5]);
+                    ctx.fillRect(pendingOverlay.x, pendingOverlay.y, pendingOverlay.width, pendingOverlay.height);
+                    ctx.strokeRect(pendingOverlay.x, pendingOverlay.y, pendingOverlay.width, pendingOverlay.height);
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = '#22c55e';
+                    ctx.font = 'bold 14px Arial';
+                    const label = `${pendingOverlay.width}×${pendingOverlay.height}px @ ${pendingOverlay.rotation || 0}°`;
+                    ctx.fillText(label, pendingOverlay.x + 5, pendingOverlay.y + 20);
+                    ctx.restore();
+                }
+                
+                if (overlayDrawStart && pendingCoords) {
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 2;
+                    const x = Math.min(overlayDrawStart.x, pendingCoords.x);
+                    const y = Math.min(overlayDrawStart.y, pendingCoords.y);
+                    const width = Math.abs(pendingCoords.x - overlayDrawStart.x);
+                    const height = Math.abs(pendingCoords.y - overlayDrawStart.y);
+                    ctx.fillRect(x, y, width, height);
+                    ctx.strokeRect(x, y, width, height);
+                }
+            }
+            
+            if (currentMode === 'locations') {
+                locations.forEach((loc, index) => {
+                    if (loc.enabled === false) return;
+                    ctx.fillStyle = '#059669';
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(loc.x * canvasScale, loc.y * canvasScale, 8, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    if (showLabels) {
+                        ctx.fillStyle = 'white';
+                        ctx.strokeStyle = '#059669';
+                        ctx.lineWidth = 3;
+                        ctx.font = 'bold 12px Arial';
+                        const text = loc.name;
+                        ctx.strokeText(text, loc.x * canvasScale + 12, loc.y * canvasScale + 4);
+                        ctx.fillText(text, loc.x * canvasScale + 12, loc.y * canvasScale + 4);
+                    }
+                });
+
+                if (pendingCoords && !overlayDrawStart) {
+                    ctx.fillStyle = 'rgba(34, 197, 94, 0.5)';
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.arc(pendingCoords.x, pendingCoords.y, 12, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(pendingCoords.x - 20, pendingCoords.y);
+                    ctx.lineTo(pendingCoords.x + 20, pendingCoords.y);
+                    ctx.moveTo(pendingCoords.x, pendingCoords.y - 20);
+                    ctx.lineTo(pendingCoords.x, pendingCoords.y + 20);
+                    ctx.stroke();
+                }
+            }
+
+            if (currentMode === 'routes' || routes.length > 0) {
+                routes.forEach(route => {
+                    if (route.waypoints.length < 2) return;
+                    ctx.save();
+                    ctx.strokeStyle = route.color || '#059669';
+                    ctx.lineWidth = 4;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(route.waypoints[0].x * canvasScale, route.waypoints[0].y * canvasScale);
+                    for (let i = 1; i < route.waypoints.length; i++) {
+                        ctx.lineTo(route.waypoints[i].x * canvasScale, route.waypoints[i].y * canvasScale);
+                    }
+                    ctx.stroke();
+                    
+                    for (let i = 0; i < route.waypoints.length - 1; i++) {
+                        const from = route.waypoints[i];
+                        const to = route.waypoints[i + 1];
+                        const midX = (from.x + to.x) / 2 * canvasScale;
+                        const midY = (from.y + to.y) / 2 * canvasScale;
+                        const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                        const arrowSize = 15;
+                        ctx.fillStyle = route.color || '#059669';
+                        ctx.strokeStyle = '#000000';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(midX, midY);
+                        ctx.lineTo(midX - arrowSize * Math.cos(angle - Math.PI / 6), midY - arrowSize * Math.sin(angle - Math.PI / 6));
+                        ctx.lineTo(midX - arrowSize * Math.cos(angle + Math.PI / 6), midY - arrowSize * Math.sin(angle + Math.PI / 6));
+                        ctx.closePath();
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                    ctx.restore();
+                });
+                
+                if (currentMode === 'routes' && currentRoute.waypoints.length > 0) {
+                    ctx.save();
+                    ctx.strokeStyle = '#22c55e';
+                    ctx.lineWidth = 4;
+                    ctx.setLineDash([10, 5]);
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(currentRoute.waypoints[0].x * canvasScale, currentRoute.waypoints[0].y * canvasScale);
+                    for (let i = 1; i < currentRoute.waypoints.length; i++) {
+                        ctx.lineTo(currentRoute.waypoints[i].x * canvasScale, currentRoute.waypoints[i].y * canvasScale);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    ctx.fillStyle = '#22c55e';
+                    for (let i = 0; i < currentRoute.waypoints.length - 1; i++) {
+                        const from = currentRoute.waypoints[i];
+                        const to = currentRoute.waypoints[i + 1];
+                        const midX = (from.x + to.x) / 2 * canvasScale;
+                        const midY = (from.y + to.y) / 2 * canvasScale;
+                        const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                        const arrowSize = 15;
+                        ctx.beginPath();
+                        ctx.moveTo(midX, midY);
+                        ctx.lineTo(midX - arrowSize * Math.cos(angle - Math.PI / 6), midY - arrowSize * Math.sin(angle - Math.PI / 6));
+                        ctx.lineTo(midX - arrowSize * Math.cos(angle + Math.PI / 6), midY - arrowSize * Math.sin(angle + Math.PI / 6));
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                    
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    currentRoute.waypoints.forEach((wp, index) => {
+                        const x = wp.x * canvasScale;
+                        const y = wp.y * canvasScale;
+                        if (index === 0) {
+                            ctx.save();
+                            ctx.strokeStyle = '#22c55e';
+                            ctx.lineWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y); ctx.lineTo(x, y - 55);
+                            ctx.stroke();
+                            ctx.fillStyle = '#22c55e';
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y - 55); ctx.lineTo(x + 40, y - 42); ctx.lineTo(x, y - 29);
+                            ctx.closePath(); ctx.fill(); ctx.stroke();
+                            ctx.fillStyle = '#22c55e';
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 4;
+                            ctx.font = 'bold 20px Arial';
+                            ctx.strokeText('START', x, y + 23);
+                            ctx.fillText('START', x, y + 23);
+                            ctx.restore();
+                        } else if (index === currentRoute.waypoints.length - 1 && currentRoute.waypoints.length > 1) {
+                            ctx.save();
+                            ctx.strokeStyle = '#22c55e';
+                            ctx.lineWidth = 5;
+                            ctx.beginPath();
+                            ctx.moveTo(x, y); ctx.lineTo(x, y - 55);
+                            ctx.stroke();
+                            const checkSize = 10;
+                            for (let row = 0; row < 2; row++) {
+                                for (let col = 0; col < 4; col++) {
+                                    ctx.fillStyle = (row + col) % 2 === 0 ? '#000000' : '#ffffff';
+                                    ctx.fillRect(x + (col * checkSize), y - 55 + (row * checkSize) + 7, checkSize, checkSize);
+                                }
+                            }
+                            ctx.strokeStyle = '#000000';
+                            ctx.lineWidth = 3;
+                            ctx.strokeRect(x, y - 55 + 7, 40, 24);
+                            ctx.fillStyle = '#ef4444';
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 4;
+                            ctx.font = 'bold 20px Arial';
+                            ctx.strokeText('FINISH', x + 20, y + 23);
+                            ctx.fillText('FINISH', x + 20, y + 23);
+                            ctx.restore();
+                        } else {
+                            ctx.fillStyle = '#22c55e';
+                            ctx.strokeStyle = 'white';
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.arc(x, y, 12, 0, 2 * Math.PI);
+                            ctx.fill(); ctx.stroke();
+                            ctx.fillStyle = 'white';
+                            ctx.font = 'bold 12px Arial';
+                            ctx.fillText(String(index + 1), x, y);
+                        }
+                    });
+                    ctx.restore();
+                }
+            }
+        }
+
+        canvas.addEventListener('click', function(e) {
+            if (currentMode === 'overlays') return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+
+            if (currentMode === 'routes') {
+                if (freeClickMode) {
+                    // Free click mode - place waypoint anywhere on the trail
+                    const wpNum = currentRoute.waypoints.length + 1;
+                    const newWaypoint = { name: `Point ${wpNum}`, x: x, y: y };
+                    if (insertAtIndex >= 0 && insertAtIndex <= currentRoute.waypoints.length) {
+                        currentRoute.waypoints.splice(insertAtIndex, 0, newWaypoint);
+                        showStatus(`Inserted point at position ${insertAtIndex + 1}`, 'success');
+                        insertAtIndex = -1;
+                    } else {
+                        currentRoute.waypoints.push(newWaypoint);
+                        showStatus(`Added waypoint ${wpNum} at (${x}, ${y})`, 'success');
+                    }
+                    updateWaypointsList();
+                    drawMap();
+                } else {
+                    // Snap to existing locations
+                    const tolerance = 20;
+                    let clickedLocation = null;
+                    for (const loc of locations) {
+                        if (loc.enabled === false) continue;
+                        const dist = Math.sqrt(Math.pow(x - loc.x, 2) + Math.pow(y - loc.y, 2));
+                        if (dist < tolerance) { clickedLocation = loc; break; }
+                    }
+                    if (clickedLocation) {
+                        const newWaypoint = { name: clickedLocation.name, x: clickedLocation.x, y: clickedLocation.y };
+                        if (insertAtIndex >= 0 && insertAtIndex <= currentRoute.waypoints.length) {
+                            currentRoute.waypoints.splice(insertAtIndex, 0, newWaypoint);
+                            showStatus(`Inserted ${clickedLocation.name} at position ${insertAtIndex + 1}`, 'success');
+                            insertAtIndex = -1;
+                        } else {
+                            currentRoute.waypoints.push(newWaypoint);
+                            showStatus(`Added ${clickedLocation.name} to route`, 'success');
+                        }
+                        updateWaypointsList();
+                        drawMap();
+                    } else {
+                        showStatus('Click on an existing location, or enable Free Click Mode', 'error');
+                    }
+                }
+                return;
+            }
+            
+            const name = document.getElementById('locationName').value.trim();
+            if (!name) {
+                showStatus('Please enter a trail name first!', 'error');
+                return;
+            }
+
+            pendingCoords = { x, y };
+            document.getElementById('coordsDisplay').value = `X: ${x}, Y: ${y}`;
+            document.getElementById('addButton').disabled = false;
+            document.getElementById('clickModeBox').classList.add('active');
+            document.getElementById('clickModeText').textContent = `Coordinates set! Click "Add Location" to save.`;
+            drawMap();
+        });
+
+        function isPointInRotatedRect(px, py, overlay) {
+            const centerX = overlay.x + overlay.width / 2;
+            const centerY = overlay.y + overlay.height / 2;
+            if (overlay.rotation) {
+                const angle = -overlay.rotation * Math.PI / 180;
+                const dx = px - centerX;
+                const dy = py - centerY;
+                px = centerX + (dx * Math.cos(angle) - dy * Math.sin(angle));
+                py = centerY + (dx * Math.sin(angle) + dy * Math.cos(angle));
+            }
+            return px >= overlay.x && px <= overlay.x + overlay.width &&
+                   py >= overlay.y && py <= overlay.y + overlay.height;
+        }
+
+        canvas.addEventListener('mousedown', function(e) {
+            if (currentMode !== 'overlays') return;
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            for (let i = textOverlays.length - 1; i >= 0; i--) {
+                if (isPointInRotatedRect(x, y, textOverlays[i])) {
+                    draggingOverlayIndex = i;
+                    dragOffset.x = x - textOverlays[i].x;
+                    dragOffset.y = y - textOverlays[i].y;
+                    canvas.style.cursor = 'move';
+                    return;
+                }
+            }
+            if (pendingOverlay) {
+                pendingOverlay = null;
+                document.getElementById('addOverlayButton').disabled = true;
+                document.getElementById('cancelOverlayButton').disabled = true;
+                document.getElementById('overlayRotation').disabled = true;
+                document.getElementById('overlayRotationValue').disabled = true;
+                document.getElementById('overlayModeBox').classList.remove('active');
+                document.getElementById('overlayModeText').textContent = 'Click and drag on the map to draw an overlay rectangle';
+            }
+            overlayDrawStart = { x, y };
+            pendingCoords = { x, y };
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (currentMode !== 'overlays') return;
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            if (draggingOverlayIndex !== null) {
+                textOverlays[draggingOverlayIndex].x = x - dragOffset.x;
+                textOverlays[draggingOverlayIndex].y = y - dragOffset.y;
+                drawMap();
+                return;
+            }
+            if (!overlayDrawStart) {
+                let hovering = false;
+                for (let i = textOverlays.length - 1; i >= 0; i--) {
+                    if (isPointInRotatedRect(x, y, textOverlays[i])) { hovering = true; break; }
+                }
+                canvas.style.cursor = hovering ? 'move' : 'crosshair';
+                return;
+            }
+            pendingCoords = { x, y };
+            drawMap();
+        });
+
+        canvas.addEventListener('mouseup', function(e) {
+            if (currentMode !== 'overlays') return;
+            if (draggingOverlayIndex !== null) {
+                showStatus('Overlay moved! Don\'t forget to save.', 'success');
+                updateOverlayList();
+                draggingOverlayIndex = null;
+                canvas.style.cursor = 'crosshair';
+                drawMap();
+                return;
+            }
+            if (!overlayDrawStart) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            const overlayX = Math.min(overlayDrawStart.x, x);
+            const overlayY = Math.min(overlayDrawStart.y, y);
+            const overlayWidth = Math.abs(x - overlayDrawStart.x);
+            const overlayHeight = Math.abs(y - overlayDrawStart.y);
+            if (overlayWidth > 10 && overlayHeight > 10) {
+                pendingOverlay = { x: overlayX, y: overlayY, width: overlayWidth, height: overlayHeight, rotation: 0 };
+                document.getElementById('overlayModeBox').classList.add('active');
+                document.getElementById('overlayModeText').textContent = `Rectangle drawn: ${overlayWidth}×${overlayHeight}px. Adjust rotation if needed, then click "Add Overlay".`;
+                document.getElementById('addOverlayButton').disabled = false;
+                document.getElementById('cancelOverlayButton').disabled = false;
+                document.getElementById('overlayRotation').disabled = false;
+                document.getElementById('overlayRotationValue').disabled = false;
+                document.getElementById('overlayRotation').value = 0;
+                document.getElementById('overlayRotationValue').value = 0;
+            } else {
+                showStatus('Overlay too small! Draw a larger rectangle (minimum 10×10px).', 'error');
+                pendingOverlay = null;
+            }
+            overlayDrawStart = null;
+            pendingCoords = null;
+            drawMap();
+        });
+
+        function addLocation() {
+            const name = document.getElementById('locationName').value.trim();
+            if (!name || !pendingCoords) {
+                showStatus('Please enter a name and click on the map!', 'error');
+                return;
+            }
+            // Check for exact same name AND coordinates (true duplicate)
+            if (locations.some(loc => loc.name.toLowerCase() === name.toLowerCase() && loc.x === pendingCoords.x && loc.y === pendingCoords.y)) {
+                showStatus(`Location "${name}" already exists at these coordinates!`, 'error');
+                return;
+            }
+            const isDuplicate = locations.some(loc => loc.name.toLowerCase() === name.toLowerCase());
+            const newLocation = { name: name, x: pendingCoords.x, y: pendingCoords.y, enabled: true };
+            locations.push(newLocation);
+            locations.sort((a, b) => a.name.localeCompare(b.name));
+            const msg = isDuplicate
+                ? `✓ Added another marker for "${name}"! Don't forget to save.`
+                : `✓ Location "${name}" added successfully! Don't forget to save.`;
+            showStatus(msg, 'success');
+            document.getElementById('locationName').value = '';
+            document.getElementById('coordsDisplay').value = '';
+            document.getElementById('addButton').disabled = true;
+            document.getElementById('clickModeBox').classList.remove('active');
+            document.getElementById('clickModeText').textContent = 'Enter a name above, then click on the map to set coordinates';
+            pendingCoords = null;
+            updateLocationList();
+            updateStats();
+            drawMap();
+        }
+
+        function updateLocationList() {
+            const list = document.getElementById('locationList');
+            if (locations.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No locations yet. Add one!</p>';
+                return;
+            }
+            list.innerHTML = '';
+            locations.forEach((loc, index) => {
+                const item = document.createElement('div');
+                item.className = 'location-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="location-name">${loc.name}</div>
+                        <div class="location-coords">X: ${loc.x}, Y: ${loc.y}</div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="deleteLocation(${index})">🗑️</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function deleteLocation(index) {
+            const loc = locations[index];
+            if (confirm(`Delete "${loc.name}"?`)) {
+                locations.splice(index, 1);
+                showStatus(`Deleted "${loc.name}". Don't forget to save!`, 'info');
+                updateLocationList();
+                updateStats();
+                drawMap();
+            }
+        }
+
+        function updateStats() {
+            const total = locations.length;
+            const enabled = locations.filter(loc => loc.enabled !== false).length;
+            document.getElementById('totalLocations').textContent = total;
+            document.getElementById('enabledLocations').textContent = enabled;
+        }
+
+        function saveToFile() {
+            const config = {
+                mapImageSrc: "trail_map.png",
+                imageWidth: img.width,
+                imageHeight: img.height,
+                locations: locations
+            };
+            const jsonString = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'SummerBB.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatus('✓ Configuration file downloaded! Replace the old file with this one.', 'success');
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message show ${type}`;
+            setTimeout(() => { statusEl.classList.remove('show'); }, 5000);
+        }
+
+        function toggleLabels() { showLabels = !showLabels; drawMap(); }
+        function zoomIn() { zoomLevel = Math.min(3.0, zoomLevel + 0.25); applyZoom(); }
+        function zoomOut() { zoomLevel = Math.max(0.5, zoomLevel - 0.25); applyZoom(); }
+        function resetZoom() { zoomLevel = 1.0; applyZoom(); }
+        function applyZoom() {
+            canvas.style.transform = `scale(${zoomLevel})`;
+            canvas.style.transformOrigin = 'top left';
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+        }
+
+        canvas.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) { e.preventDefault(); if (e.deltaY < 0) zoomIn(); else zoomOut(); }
+        }, { passive: false });
+
+        document.getElementById('locationName').addEventListener('input', function() {
+            const hasName = this.value.trim().length > 0;
+            document.getElementById('addButton').disabled = !hasName || !pendingCoords;
+        });
+
+        function switchMode(mode) {
+            currentMode = mode;
+            overlayDrawStart = null;
+            pendingCoords = null;
+            pendingOverlay = null;
+            document.getElementById('locationsPanel').style.display = 'none';
+            document.getElementById('overlaysPanel').style.display = 'none';
+            document.getElementById('routesPanel').style.display = 'none';
+            document.getElementById('locationsTab').className = 'btn btn-secondary';
+            document.getElementById('overlaysTab').className = 'btn btn-secondary';
+            document.getElementById('routesTab').className = 'btn btn-secondary';
+            if (mode === 'locations') {
+                document.getElementById('locationsPanel').style.display = 'flex';
+                document.getElementById('locationsTab').className = 'btn btn-primary';
+                canvas.style.cursor = 'crosshair';
+            } else if (mode === 'overlays') {
+                document.getElementById('overlaysPanel').style.display = 'flex';
+                document.getElementById('overlaysTab').className = 'btn btn-primary';
+                canvas.style.cursor = 'crosshair';
+                updateOverlayList();
+            } else if (mode === 'routes') {
+                document.getElementById('routesPanel').style.display = 'flex';
+                document.getElementById('routesTab').className = 'btn btn-primary';
+                canvas.style.cursor = freeClickMode ? 'crosshair' : 'pointer';
+                updateRouteList();
+                updateRouteStats();
+            }
+            drawMap();
+        }
+
+        function updatePendingOverlayRotation(value) {
+            const angle = parseInt(value) || 0;
+            document.getElementById('overlayRotation').value = angle;
+            document.getElementById('overlayRotationValue').value = angle;
+            if (pendingOverlay) { pendingOverlay.rotation = angle; drawMap(); }
+        }
+
+        function addOverlay() {
+            if (!pendingOverlay) { showStatus('Please draw a rectangle on the map first!', 'error'); return; }
+            const note = document.getElementById('overlayNote').value.trim();
+            const newOverlay = {
+                x: pendingOverlay.x, y: pendingOverlay.y,
+                width: pendingOverlay.width, height: pendingOverlay.height,
+                rotation: pendingOverlay.rotation || 0,
+                note: note || `Overlay at (${pendingOverlay.x}, ${pendingOverlay.y})`
+            };
+            textOverlays.push(newOverlay);
+            showStatus(`✓ Overlay added! Don't forget to save.`, 'success');
+            document.getElementById('overlayNote').value = '';
+            document.getElementById('addOverlayButton').disabled = true;
+            document.getElementById('cancelOverlayButton').disabled = true;
+            document.getElementById('overlayRotation').disabled = true;
+            document.getElementById('overlayRotationValue').disabled = true;
+            document.getElementById('overlayRotation').value = 0;
+            document.getElementById('overlayRotationValue').value = 0;
+            document.getElementById('overlayModeBox').classList.remove('active');
+            document.getElementById('overlayModeText').textContent = 'Click and drag on the map to draw an overlay rectangle';
+            pendingOverlay = null;
+            updateOverlayList();
+            updateOverlayStats();
+            drawMap();
+        }
+
+        function cancelOverlay() {
+            pendingOverlay = null;
+            document.getElementById('overlayNote').value = '';
+            document.getElementById('addOverlayButton').disabled = true;
+            document.getElementById('cancelOverlayButton').disabled = true;
+            document.getElementById('overlayRotation').disabled = true;
+            document.getElementById('overlayRotationValue').disabled = true;
+            document.getElementById('overlayRotation').value = 0;
+            document.getElementById('overlayRotationValue').value = 0;
+            document.getElementById('overlayModeBox').classList.remove('active');
+            document.getElementById('overlayModeText').textContent = 'Click and drag on the map to draw an overlay rectangle';
+            drawMap();
+        }
+
+        function updateOverlayList() {
+            const list = document.getElementById('overlayList');
+            if (textOverlays.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No overlays yet. Draw one!</p>';
+                updateOverlayStats();
+                return;
+            }
+            list.innerHTML = '';
+            textOverlays.forEach((overlay, index) => {
+                const item = document.createElement('div');
+                item.className = 'location-item';
+                const rotationText = overlay.rotation ? ` @ ${overlay.rotation}°` : '';
+                item.innerHTML = `
+                    <div>
+                        <div class="location-name">${overlay.note}</div>
+                        <div class="location-coords">${overlay.width}×${overlay.height}px${rotationText} at (${overlay.x}, ${overlay.y})</div>
+                    </div>
+                    <button class="btn btn-danger btn-small" onclick="deleteOverlay(${index})">🗑️</button>
+                `;
+                list.appendChild(item);
+            });
+            updateOverlayStats();
+        }
+
+        function deleteOverlay(index) {
+            if (confirm(`Delete overlay "${textOverlays[index].note}"?`)) {
+                textOverlays.splice(index, 1);
+                showStatus('Deleted overlay. Don\'t forget to save!', 'info');
+                updateOverlayList();
+                updateOverlayStats();
+                drawMap();
+            }
+        }
+
+        function updateOverlayStats() {
+            document.getElementById('totalOverlays').textContent = textOverlays.length;
+            document.getElementById('coverageArea').textContent = textOverlays.reduce((sum, o) => sum + (o.width * o.height), 0).toLocaleString();
+        }
+
+        function saveOverlaysToFile() {
+            const config = { overlays: textOverlays };
+            const jsonString = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'text_overlays.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatus('✓ Text overlays file downloaded! Replace the old file with this one.', 'success');
+        }
+
+        // Route management
+        function updateRouteStats() {
+            const totalWP = routes.reduce((sum, r) => sum + r.waypoints.length, 0);
+            document.getElementById('totalRoutes').textContent = routes.length;
+            document.getElementById('totalWaypoints').textContent = totalWP;
+        }
+
+        function updateRouteList() {
+            const list = document.getElementById('routeList');
+            if (routes.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center;">No routes yet. Create one!</p>';
+                return;
+            }
+            list.innerHTML = routes.map((route, index) => `
+                <div class="location-item" style="display: flex; flex-direction: column; gap: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${route.color || '#059669'};border:2px solid rgba(0,0,0,0.2);vertical-align:middle;margin-right:5px;"></span><strong>${route.name}</strong>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-primary" onclick="loadRoute(${index})" style="padding: 5px 10px; font-size: 0.85em;">📝 Load</button>
+                            <button class="btn btn-danger" onclick="deleteRoute(${index})" style="padding: 5px 10px; font-size: 0.85em;">🗑️</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.85em; color: #64748b;">${route.waypoints.length} waypoints</div>
+                    <div style="font-size: 0.75em; color: #94a3b8; max-height: 60px; overflow-y: auto;">
+                        ${route.waypoints.map((wp, i) => `${i + 1}. ${wp.name}`).join(' → ')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateWaypointsList() {
+            const list = document.getElementById('waypointsList');
+            const count = document.getElementById('waypointCount');
+            count.textContent = currentRoute.waypoints.length;
+            if (currentRoute.waypoints.length === 0) {
+                list.innerHTML = '<p style="color: #64748b; text-align: center; margin: 0;">No waypoints yet. Click locations on the map.</p>';
+                document.getElementById('clearRouteButton').disabled = true;
+                updateButtonStates();
+                return;
+            }
+            list.innerHTML = currentRoute.waypoints.map((wp, index) => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px; background: white; border-radius: 4px; margin-bottom: 5px;">
+                    <span><strong>${index + 1}.</strong> ${wp.name}</span>
+                    <div style="display: flex; gap: 3px;">
+                        <button onclick="moveWaypointUp(${index})" ${index === 0 ? 'disabled' : ''} style="background: #059669; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em; ${index === 0 ? 'opacity: 0.3; cursor: not-allowed;' : ''}" title="Move up">▲</button>
+                        <button onclick="moveWaypointDown(${index})" ${index === currentRoute.waypoints.length - 1 ? 'disabled' : ''} style="background: #059669; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em; ${index === currentRoute.waypoints.length - 1 ? 'opacity: 0.3; cursor: not-allowed;' : ''}" title="Move down">▼</button>
+                        <button onclick="removeWaypoint(${index})" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.85em;" title="Remove">✖</button>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('clearRouteButton').disabled = false;
+            updateButtonStates();
+        }
+
+        function removeWaypoint(index) { currentRoute.waypoints.splice(index, 1); insertAtIndex = -1; updateWaypointsList(); drawMap(); }
+        function moveWaypointUp(index) { if (index === 0) return; [currentRoute.waypoints[index], currentRoute.waypoints[index-1]] = [currentRoute.waypoints[index-1], currentRoute.waypoints[index]]; updateWaypointsList(); drawMap(); }
+        function moveWaypointDown(index) { if (index === currentRoute.waypoints.length-1) return; [currentRoute.waypoints[index], currentRoute.waypoints[index+1]] = [currentRoute.waypoints[index+1], currentRoute.waypoints[index]]; updateWaypointsList(); drawMap(); }
+
+        function clearCurrentRoute() {
+            if (currentRoute.waypoints.length > 0 && !confirm('Clear all waypoints from the current route?')) return;
+            currentRoute.waypoints = [];
+            editingRouteIndex = -1;
+            insertAtIndex = -1;
+            document.getElementById('routeName').value = '';
+            document.getElementById('routeColor').value = '#059669';
+            document.getElementById('routeColorLabel').textContent = '#059669';
+            updateWaypointsList();
+            updateButtonStates();
+            drawMap();
+            showStatus('Route cleared', 'info');
+        }
+
+        function updateButtonStates() {
+            const completeBtn = document.getElementById('completeRouteButton');
+            const updateBtn = document.getElementById('updateRouteButton');
+            if (editingRouteIndex >= 0) {
+                completeBtn.style.display = 'none';
+                updateBtn.style.display = 'block';
+                updateBtn.disabled = currentRoute.waypoints.length < 2;
+            } else {
+                completeBtn.style.display = 'block';
+                completeBtn.disabled = currentRoute.waypoints.length < 2;
+                updateBtn.style.display = 'none';
+            }
+        }
+
+        function loadRoute(index) {
+            if (currentRoute.waypoints.length > 0 && editingRouteIndex !== index) {
+                if (!confirm('Loading a route will clear your current work. Continue?')) return;
+            }
+            const route = routes[index];
+            currentRoute = { name: route.name, waypoints: [...route.waypoints.map(wp => ({...wp}))] };
+            editingRouteIndex = index;
+            document.getElementById('routeName').value = route.name;
+            document.getElementById('routeColor').value = route.color || '#059669';
+            document.getElementById('routeColorLabel').textContent = route.color || '#059669';
+            updateWaypointsList();
+            updateButtonStates();
+            drawMap();
+            showStatus(`Loaded "${route.name}" for editing`, 'success');
+        }
+
+        function updateRoute() {
+            const name = document.getElementById('routeName').value.trim();
+            if (!name) { showStatus('Please enter a route name!', 'error'); return; }
+            if (currentRoute.waypoints.length < 2) { showStatus('Route must have at least 2 waypoints!', 'error'); return; }
+            if (editingRouteIndex < 0 || editingRouteIndex >= routes.length) { showStatus('Error: Invalid route index', 'error'); return; }
+            routes[editingRouteIndex] = { name: name, color: document.getElementById('routeColor').value, waypoints: [...currentRoute.waypoints] };
+            showStatus(`✓ Trail "${name}" updated!`, 'success');
+            currentRoute = { name: '', waypoints: [] };
+            editingRouteIndex = -1;
+            document.getElementById('routeName').value = '';
+            document.getElementById('routeColor').value = '#059669';
+            document.getElementById('routeColorLabel').textContent = '#059669';
+            updateWaypointsList();
+            updateButtonStates();
+            updateRouteList();
+            updateRouteStats();
+            drawMap();
+        }
+
+        function completeRoute() {
+            const name = document.getElementById('routeName').value.trim();
+            if (!name) { showStatus('Please enter a route name!', 'error'); return; }
+            if (currentRoute.waypoints.length < 2) { showStatus('Route must have at least 2 waypoints!', 'error'); return; }
+            routes.push({ name: name, color: document.getElementById('routeColor').value, waypoints: [...currentRoute.waypoints] });
+            showStatus(`✓ Trail "${name}" saved with ${currentRoute.waypoints.length} waypoints!`, 'success');
+            currentRoute = { name: '', waypoints: [] };
+            editingRouteIndex = -1;
+            document.getElementById('routeName').value = '';
+            document.getElementById('routeColor').value = '#059669';
+            document.getElementById('routeColorLabel').textContent = '#059669';
+            updateWaypointsList();
+            updateButtonStates();
+            updateRouteList();
+            updateRouteStats();
+            drawMap();
+        }
+
+        function deleteRoute(index) {
+            if (!confirm(`Delete route "${routes[index].name}"?`)) return;
+            routes.splice(index, 1);
+            updateRouteList();
+            updateRouteStats();
+            drawMap();
+            showStatus('Route deleted', 'info');
+        }
+
+        function saveRoutesToFile() {
+            const config = { routes: routes };
+            const jsonString = JSON.stringify(config, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'routes.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatus('✓ Routes file downloaded! Place this in your project folder.', 'success');
+        }
+
+        function loadRoutesFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    if (!config.routes || !Array.isArray(config.routes)) { showStatus('Invalid routes file format!', 'error'); return; }
+                    if (routes.length > 0 && !confirm(`This will replace your ${routes.length} existing route(s). Continue?`)) { event.target.value = ''; return; }
+                    routes = config.routes;
+                    updateRouteList();
+                    updateRouteStats();
+                    drawMap();
+                    showStatus(`✓ Loaded ${routes.length} route(s) from file!`, 'success');
+                    event.target.value = '';
+                } catch (err) {
+                    console.error('Error parsing routes file:', err);
+                    showStatus('Error reading routes file.', 'error');
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function toggleFreeClick() {
+            freeClickMode = document.getElementById('freeClickCheckbox').checked;
+            const modeText = document.getElementById('routeModeText');
+            if (freeClickMode) {
+                modeText.textContent = 'Click along the trail on the map to place waypoints that trace its path';
+                canvas.style.cursor = 'crosshair';
+            } else {
+                modeText.textContent = 'Click on existing locations to build a route between them';
+                canvas.style.cursor = 'pointer';
+            }
+        }
+
+        document.getElementById('locationsPanel').style.display = 'flex';
+        document.getElementById('locationsPanel').style.flexDirection = 'column';
+        document.getElementById('locationsPanel').style.gap = '15px';
+        document.getElementById('overlaysPanel').style.flexDirection = 'column';
+        document.getElementById('overlaysPanel').style.gap = '15px';
+        document.getElementById('routesPanel').style.flexDirection = 'column';
+        document.getElementById('routesPanel').style.gap = '15px';
+    </script>
+</body>
+</html>
