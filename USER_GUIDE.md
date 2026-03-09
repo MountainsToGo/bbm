@@ -1,100 +1,87 @@
-# 🎿 Bogus Basin Interactive Map - User Guide
+# �️ Bogus Basin Interactive Maps - User Guide
 
 ## 📖 Overview
-Learn all 120 locations at Bogus Basin ski resort through an interactive, gamified map experience!
+Explore Bogus Basin with interactive maps for both winter and summer seasons.
+
+- **Winter Map**: Learn all 120 locations — lifts, runs, lodges, and landmarks — through a gamified quiz experience.
+- **Summer Map**: Explore the multi-use trail network with click-to-highlight and animated trail tracing.
 
 ---
 
-## 🎯 Getting Started
+## 🔗 Quick Links
 
-### 🖱️ Click the Map
+- **Landing Page**: [https://mountainstogo.github.io/bbm/](https://mountainstogo.github.io/bbm/)
+- **Winter Map**: [https://mountainstogo.github.io/bbm/Winter/learn.html](https://mountainstogo.github.io/bbm/Winter/learn.html)
+- **Summer Map**: [https://mountainstogo.github.io/bbm/Summer/learn.html](https://mountainstogo.github.io/bbm/Summer/learn.html)
+
+---
+
+## ⛷️ Winter Map
+
+### 🎯 Getting Started
 1. A location name appears at the top
 2. **Click** where you think that location is on the map
 3. Get instant feedback: ✅ Correct or ❌ Incorrect
 
-### 📱 Mobile & Tablet
-- **Pinch to Zoom**: Use two fingers to zoom in/out (100%-1000%)
-- **Drag to Pan**: Move around the map with one finger
-- **Tap**: Click locations just like on desktop
+### 🎮 Controls
+- **Search Box**: Filter locations by name; press Enter to jump to first result
+- **Auto-Zoom**: Automatically zooms to each new location when enabled
+- **Labels**: Show/hide location names on the map
+- **Zoom In/Out**: 100% to 1000% zoom range
+- **Reset Map**: Return to default view
+- **Skip**: Skip difficult locations and return later
+- **Scramble List**: Shuffle the location order
+- **Hide Map Text**: Cover trail/lift names with black overlays for advanced practice
+- **Know the Code**: View the ski/snowboard responsibility code
+- **Mountain Host Tour**: Animated route tracing of the guided tour
 
----
+### 📊 Progress Tracking
+- **Remaining**: Locations still to learn
+- **Complete %**: Overall progress
+- **Streak**: Consecutive correct answers
 
-## 🎮 Controls & Features
-
-### 🔎 Search Box
-- **Type to Search**: Filter locations by name (lifts, runs, lodges)
-- **Clear Button (✕)**: Appears when typing, click to clear search
-- **Results Counter**: Shows "X of 120 locations" while searching
-- **Keyboard Shortcuts**: 
-  - **Escape**: Clear the search
-  - **Enter**: Jump to first search result with auto-zoom
-
-### 🎯 Auto-Zoom Button
-- **OFF (Gray)**: Map stays still, you scroll manually
-- **ON (Green)**: Map automatically zooms to each new location
-- 💡 **Tip**: Turn ON for easier learning!
-
-### 🏷️ Labels Button
-- **OFF (Gray)**: Location labels are hidden (learning mode)
-- **ON (Green)**: Shows all location names on the map (study mode)
-
-### 🔍 Zoom Controls
-- **Zoom In**: Get a closer view (up to 1000%)
-- **Zoom Out**: See more of the map (minimum 100%)
-- **Reset Map**: Return to default view and scroll position
-
----
-
-## 📊 Progress Tracking
-
-### Stats Display
-- **Remaining**: How many locations you still need to learn
-- **Complete %**: Your overall progress percentage
-- **Streak**: Current streak of correct answers in a row
-
-### ✅ Location List
-- **Green** = Completed correctly
+### ✅ Location List Colors
 - **Purple** = Current location to find
+- **Green** = Completed correctly
 - **Gray** = Not yet attempted
-- **Red** = Previously incorrect
-- **Scrollable**: Shows 15 items at a time, scroll to see all
 
 ---
 
-## ⌨️ Keyboard Shortcuts
+## 🥾 Summer Map
 
-### Desktop Only
-- **Ctrl + Scroll Wheel**: Zoom in/out on the map
-- **Click & Drag**: Pan around the map
+### 🎯 Getting Started
+1. Browse the trail list in the sidebar
+2. **Click a trail name** to highlight all its markers on the map with red dashed circles
+3. Click again to remove the highlight
+
+### 🎮 Controls
+- **Search Box**: Filter trails by name
+- **Trace Trail**: Select a trail from the dropdown to watch an animated route trace (START → waypoints → FINISH)
+- **Zoom In/Out**: 100% to 1000% zoom range
+- **Reset Map**: Return to default view
+
+### 🗺️ Map Features
+- **Red dots**: Trail location markers
+- **Red dashed circles**: Highlighted trail markers (click a trail name to show)
+- **Trail animation**: 3-phase trace — START flag flashes, route draws segment by segment with direction arrows, FINISH flag flashes
 
 ---
 
-## 💡 Pro Tips
+## 📱 Mobile & Tablet
 
-1. **Use Search to Find Locations** 🔎
-   - Type "chair" to see all chairlifts
-   - Search "tubing" to find tubing areas
-   - Partial matches work: "nugget" finds "Upper Nugget", "Lower Nugget"
+Both maps support mobile and tablet:
+- **Pinch to Zoom**: Two fingers to zoom in/out
+- **Drag to Pan**: Move around the map
+- **Tap**: Click locations and buttons
 
-2. **Start with Auto-Zoom ON** 🎯
-   - Helps you learn where locations are faster
-   - Turn OFF once you're more confident
+---
 
-3. **Use Labels for Study** 🏷️
-   - Turn labels ON to familiarize yourself with the map
-   - Turn OFF to test your knowledge
+## ⌨️ Keyboard Shortcuts (Desktop)
 
-4. **Zoom In for Details** 🔍
-   - Zoom up to 1000% to see small details
-   - Reset Map to return to overview
-
-5. **Track Your Progress** 📈
-   - Watch your Complete % increase
-   - Try to build a high streak!
-
-6. **Click Precisely** 🎯
-   - The system measures distance from your click
-   - Closer clicks = better accuracy
+- **Ctrl + Scroll Wheel**: Zoom in/out
+- **Click & Drag**: Pan the map
+- **Escape**: Clear search box
+- **Enter**: Jump to first search result
 
 ---
 
@@ -114,73 +101,17 @@ Learn all 120 locations at Bogus Basin ski resort through an interactive, gamifi
 - Check internet connection
 
 ### Zoom Issues on Mobile
-- Make sure you're using two fingers to pinch
+- Use two fingers to pinch-to-zoom
 - Try closing and reopening the browser
-
-### Reset Not Working
-- Click "Reset Map" button
-- Refresh the page if issues persist
-
-### Mac Safari Specific
-- If map looks stretched, try refreshing the page
-- Use pinch-to-zoom instead of zoom buttons
-
----
-
-## 📍 Location Categories
-
-### Interactive Learning Features
-
-The map includes **120 locations** to identify on Bogus Basin's trail map:
-- ⛷️ **Ski Lifts**: Chair lifts and surface lifts
-- 🎿 **Runs**: Named ski runs and trails
-- 🏔️ **Terrain Features**: Notable areas and landmarks
-- 🏢 **Buildings**: Lodges, facilities, and structures
-
----
-
-## 🎓 Learning Strategy
-
-### Beginner
-1. Turn **Auto-Zoom ON** 🎯
-2. Turn **Labels ON** 🏷️ to study
-3. Practice with Labels OFF once familiar
-
-### Intermediate
-1. Turn **Auto-Zoom OFF**
-2. Use **Zoom controls** to navigate
-3. Focus on building your streak
-
-### Advanced
-1. **Labels OFF**, **Auto-Zoom OFF**
-2. Challenge yourself to get 100% complete
-3. Try to beat your streak record!
-
----
-
-## 📊 Statistics
-
-- **Total Locations**: 120
-- **Zoom Range**: 100% - 1000%
-- **Mobile Compatible**: Yes
-- **Offline Mode**: No (requires internet for first load)
 
 ---
 
 ## 🔗 Links
 
 - **GitHub Repository**: https://github.com/MountainsToGo/bbm
-- **Live App**: https://mountainstogo.github.io/bbm/
+- **Live Site**: https://mountainstogo.github.io/bbm/
 - **Bogus Basin**: https://www.bogusbasin.org/
 
 ---
 
-## 📝 Version History
-
-- **v1.0**: Initial release with 110 locations
-- **v1.1**: Expanded to 120 locations with additional trails and features
-- **Latest**: Auto-zoom, labels toggle, improved mobile support
-
----
-
-**Happy Learning! 🎿⛷️🏂**
+**Enjoy exploring the mountain!** ⛷️🥾
