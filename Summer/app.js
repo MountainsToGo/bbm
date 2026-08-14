@@ -2,16 +2,16 @@
     "use strict";
 
     const metadata = {
-        "Around the Mountain": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A signature cross-country route wrapping around the mountain with broad views and varied terrain." },
+        "Around the Mountain": { difficulty: "more", difficulties: ["easier", "more"], type: "XC", uses: ["Bike", "Hike"], direction: "one-way", description: "A signature one-way cross-country route wrapping around the mountain with broad views and varied terrain." },
         "Bogus Creek": { difficulty: "easier", type: "XC", uses: ["Bike", "Hike"], description: "A lower-mountain cross-country trail near the Morning Star area." },
         "Brewer's Byway": { difficulty: "easier", type: "XC", uses: ["Bike", "Hike"], description: "A flowing cross-country connection through the central trail network." },
         "Brewer's Cut Off": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A more difficult shortcut connecting into the Brewer's trail network." },
-        "Deerpoint Trail": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A long cross-country descent and traverse on the east side of the mountain." },
+        "Deer Point Trail": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A long cross-country descent and traverse on the east side of the mountain." },
         "Elk Meadows": { difficulty: "easier", type: "XC", uses: ["Bike", "Hike"], description: "An easier cross-country trail traversing the upper mountain." },
         "Face": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A more difficult cross-country line through the upper central mountain." },
         "Packing Trail": { difficulty: "most", type: "XC", uses: ["Bike", "Hike"], description: "A technical cross-country trail near Shafer Butte." },
         "Shindig": { difficulty: "most", type: "XC", uses: ["Bike", "Hike"], description: "A most-difficult cross-country trail with technical terrain." },
-        "Sunshine": { difficulty: "easier", type: "DH", uses: ["Bike"], description: "An easier downhill-only trail in the Morning Star zone." },
+        "Sunshine": { difficulty: "easier", type: "XC", uses: ["Bike", "Hike"], description: "An easier cross-country trail in the Morning Star zone." },
         "Tempest": { difficulty: "most", type: "XC", uses: ["Bike", "Hike"], description: "A most-difficult technical cross-country trail on the west side." },
         "Return Road": { difficulty: "easier", type: "Road", uses: ["Bike", "Hike"], description: "A 1.8-mile return road connecting the lower mountain back toward the base area." }
     };
@@ -43,6 +43,31 @@
 
     const difficultyLabels = { easier: "Easier", more: "More difficult", most: "Most difficult", unclassified: "Map feature" };
 
+    const featureIcons = {
+        Lift: { icons: ["cable-car"], label: "Chair lift" },
+        Lodge: { icons: ["house"], label: "Lodge" },
+        Road: { icons: ["route"], label: "Road" },
+        Junction: { icons: ["signpost"], label: "Trail junction" },
+        Trail: { icons: ["mountain"], label: "Trail or mountain feature" }
+    };
+
+    function getTravelInfo(trail) {
+        if (trail.type !== "XC" && trail.type !== "DH") return featureIcons[trail.type] || featureIcons.Trail;
+
+        const icons = [];
+        if (trail.uses.includes("Bike")) icons.push("bike");
+        if (trail.uses.includes("Hike")) icons.push("footprints");
+        icons.push(trail.type === "DH" ? "arrow-down" : trail.direction === "one-way" ? "arrow-right" : "arrow-up-down");
+
+        const travelers = trail.uses.length ? trail.uses.join(" + ") : "Trail";
+        const direction = trail.type === "DH" ? "Downhill only" : trail.direction === "one-way" ? "One way" : "Uphill + downhill";
+        return { icons, label: `${travelers} · ${direction}` };
+    }
+
+    function getDifficultyLabel(trail) {
+        return (trail.difficulties || [trail.difficulty]).map(difficulty => difficultyLabels[difficulty]).join(" + ");
+    }
+
     function pointToLatLng(point) {
         return [state.config.imageHeight - point.y, point.x];
     }
@@ -52,12 +77,13 @@
         const lowerName = name.toLowerCase();
         const isLift = lowerName.includes("lift");
         const isLodge = lowerName.includes("lodge");
+        const isRoad = lowerName.includes("road") || lowerName.startsWith("highway");
         const isJunction = lowerName.includes("junction") || lowerName.includes("connector");
         return {
             difficulty: "unclassified",
-            type: isLift ? "Lift" : isLodge ? "Lodge" : isJunction ? "Junction" : lowerName.includes("road") ? "Road" : "Trail",
+            type: isLift ? "Lift" : isRoad ? "Road" : isLodge ? "Lodge" : isJunction ? "Junction" : "Trail",
             uses: [],
-            description: isLift ? "Lift location shown on the official summer map." : isLodge ? "Lodge and visitor facility shown on the official summer map." : "A named location on the Bogus Basin summer trail map."
+            description: isLift ? "Lift location shown on the official summer map." : isRoad ? "Road shown on the official summer map." : isLodge ? "Lodge and visitor facility shown on the official summer map." : "A named location on the Bogus Basin summer trail map."
         };
     }
 
@@ -93,7 +119,7 @@
         const term = state.search.trim().toLowerCase();
         const visible = state.trails.filter(trail => {
             const matchesSearch = !term || trail.name.toLowerCase().includes(term) || trail.type.toLowerCase().includes(term);
-            const matchesDifficulty = state.activeFilter === "all" || trail.difficulty === state.activeFilter;
+            const matchesDifficulty = state.activeFilter === "all" || (trail.difficulties || [trail.difficulty]).includes(state.activeFilter);
             return matchesSearch && matchesDifficulty;
         });
 
@@ -113,11 +139,17 @@
             button.type = "button";
             button.className = `trail-row${state.selectedName === trail.name ? " active" : ""}`;
 
+            const travelInfo = getTravelInfo(trail);
             const icon = document.createElement("span");
-            icon.className = `trail-row-icon ${trail.difficulty}`;
-            const iconText = document.createElement("span");
-            iconText.textContent = trail.type === "XC" || trail.type === "DH" ? trail.type : "•";
-            icon.appendChild(iconText);
+            icon.className = `trail-row-icon ${trail.type.toLowerCase()}`;
+            icon.setAttribute("aria-label", travelInfo.label);
+            icon.title = travelInfo.label;
+            travelInfo.icons.forEach(iconName => {
+                const iconElement = document.createElement("i");
+                iconElement.dataset.lucide = iconName;
+                iconElement.setAttribute("aria-hidden", "true");
+                icon.appendChild(iconElement);
+            });
 
             const copy = document.createElement("span");
             copy.className = "trail-row-copy";
@@ -126,7 +158,9 @@
             name.textContent = trail.name;
             const meta = document.createElement("span");
             meta.className = "trail-row-meta";
-            meta.textContent = `${difficultyLabels[trail.difficulty]} · ${trail.type}`;
+            meta.textContent = trail.difficulty === "unclassified"
+                ? travelInfo.label
+                : `${getDifficultyLabel(trail)} · ${travelInfo.label}`;
             copy.append(name, meta);
 
             button.append(icon, copy);

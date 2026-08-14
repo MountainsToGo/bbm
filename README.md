@@ -27,6 +27,8 @@ An interactive, map-first explorer for Bogus Basin's summer multi-use trail netw
 
 - Full-screen Leaflet map with mouse, touch, and pinch navigation
 - Searchable trail and map-feature drawer with difficulty filters
+- Semantic icons for bike/hike access, travel direction, chairlifts, lodges, roads, and junctions
+- Trail classifications checked against the official Bogus Basin trail report and summer map
 - Trail selection that focuses the map and reveals only matching target markers
 - Multi-location support for trails that appear in several places
 - Contextual animated route tracing for routes defined in `routes.json`
@@ -120,6 +122,8 @@ The editor writes these source files independently:
 - `SummerBB.json` for named map locations
 - `text_overlays.json` for map-text cover regions
 - `routes.json` for traced route waypoints
+
+Public trail metadata in `app.js` should follow the [Bogus Basin trail report](https://bogusbasin.org/your-mountain/trails-grooming/) and the official `trail_map.png` legend. Cross-country trails are shared by hikers and bikers and are generally bidirectional. Preserve explicit map exceptions, including Around the Mountain's one-way direction and its easier/more-difficult segments. Downhill trails are one-directional; mark them bike-only only when the official map does so.
 
 Commit the updated JSON files together with any interface changes after testing both desktop and mobile layouts.
 

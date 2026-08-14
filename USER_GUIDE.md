@@ -78,6 +78,19 @@ Open `Winter/location_manager.html` from the local web server to add or remove m
 - **Trail animation**: The selected route draws progressively over the official trail map
 - **Multiple targets**: Some trails appear at several labeled points on the map
 
+### Trail and Place Icons
+- **Bicycle + footprints + up/down arrow**: Cross-country trail for biking and hiking in both directions
+- **Bicycle + footprints + right arrow**: Shared biking and hiking trail with one-way travel, including Around the Mountain
+- **Down arrow**: Downhill-only travel; bike-only access is shown only where officially marked
+- **Cable car**: Chairlift
+- **House**: Lodge
+- **Route line**: Road
+- **Signpost**: Trail junction or connector
+
+Difficulty remains separate from permitted use. Green circles are easier, blue squares are more difficult, and black diamonds are most difficult. Around the Mountain includes both easier and more-difficult segments, so it appears under both filters.
+
+Trail use, direction, and difficulty are based on the [official Bogus Basin trail report](https://bogusbasin.org/your-mountain/trails-grooming/) and summer map. Cross-country trails are shared by hikers and bikers and are generally bidirectional unless the map shows a directional exception.
+
 ---
 
 ## 📱 Mobile & Tablet

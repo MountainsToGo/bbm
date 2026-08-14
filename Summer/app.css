@@ -173,7 +173,7 @@
     min-height: 61px;
     padding: 9px 4px;
     display: grid;
-    grid-template-columns: 32px minmax(0, 1fr);
+    grid-template-columns: 52px minmax(0, 1fr);
     align-items: center;
     gap: 8px;
     border: 0;
@@ -187,10 +187,14 @@
 .trail-row:hover,
 .trail-row.active { background: var(--white); }
 .trail-row.active { box-shadow: inset 4px 0 0 var(--red); }
-.trail-row-icon { width: 28px; height: 28px; display: grid; place-items: center; color: var(--white); background: var(--green); font: 800 10px "Barlow Condensed", sans-serif; border-radius: 50%; }
-.trail-row-icon.more { background: var(--blue); border-radius: 1px; }
-.trail-row-icon.most { width: 22px; height: 22px; margin-left: 3px; background: var(--ink); border-radius: 1px; transform: rotate(45deg); }
-.trail-row-icon.most span { transform: rotate(-45deg); }
+.trail-row-icon { width: 48px; min-height: 30px; padding: 4px; display: flex; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line); background: var(--white); color: var(--ink); }
+.trail-row-icon svg { width: 15px; height: 15px; flex: 0 0 auto; stroke-width: 2.25; }
+.trail-row-icon.xc { border-color: var(--green); color: var(--green); }
+.trail-row-icon.dh { border-color: var(--blue); color: var(--blue); }
+.trail-row-icon.lift { border-color: var(--red); color: var(--red); }
+.trail-row-icon.lodge { border-color: #a45a17; color: #8b4810; }
+.trail-row-icon.road { border-color: #686966; color: #555651; }
+.trail-row-icon.junction { border-color: #8b7220; color: #715a0c; }
 .trail-row-copy { min-width: 0; display: grid; gap: 3px; }
 .trail-row-name { overflow: hidden; font: 700 17px "Barlow Condensed", sans-serif; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
 .trail-row-meta { color: var(--muted); font-size: 10px; text-transform: uppercase; }
@@ -239,9 +243,11 @@
 .guide-header { justify-content: space-between; margin: -6px -8px 5px 0; font-family: "Barlow Condensed", sans-serif; }
 .map-guide p { margin: 8px 0; display: flex; align-items: center; gap: 10px; font-size: 12px; }
 .map-guide hr { border: 0; border-top: 1px solid var(--line); }
-.type-key { width: 24px; height: 24px; display: inline-grid; place-items: center; color: var(--white); font: 700 9px "Manrope", sans-serif; }
-.type-key.xc { background: var(--green); border-radius: 50%; }
-.type-key.dh { background: var(--blue); }
+.type-key { width: 54px; min-height: 26px; padding: 3px; display: inline-flex; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line); background: var(--white); color: var(--ink); }
+.type-key svg { width: 14px; height: 14px; flex: 0 0 auto; }
+.type-key.xc { border-color: var(--green); color: var(--green); }
+.type-key.dh { border-color: var(--blue); color: var(--blue); }
+.type-key.place { border-color: #686966; color: #555651; }
 
 .trail-detail {
     position: absolute;
