@@ -402,6 +402,69 @@ summary:focus-visible,
     transform: rotate(45deg);
 }
 
+.location-type-icon {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    margin-right: 7px;
+    border: 1px solid #9bb1bc;
+    border-radius: 5px;
+    background: white;
+    color: var(--mountain);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    vertical-align: -6px;
+}
+
+.location-type-icon.magic-carpet {
+    color: #0d7c73;
+}
+
+.location-type-icon.condominium,
+.location-type-icon.lodge {
+    color: #9a5a18;
+}
+
+.location-type-icon.race-training {
+    color: var(--patrol);
+}
+
+.location-type-icon.food-truck {
+    color: #9b3e2d;
+}
+
+.location-type-icon.tubing {
+    color: #2377a5;
+}
+
+.location-type-icon.summit,
+.location-type-icon.mountain-landmark {
+    color: #465b66;
+}
+
+.location-type-icon.base-area {
+    color: #76551c;
+}
+
+.lift-number {
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    min-width: 14px;
+    height: 14px;
+    padding: 0 2px;
+    border: 1px solid white;
+    border-radius: 7px;
+    background: var(--mountain);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    line-height: 12px;
+    text-align: center;
+}
+
 .name-list-item:hover {
     transform: none;
     border-color: var(--line);

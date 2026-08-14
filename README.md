@@ -12,8 +12,8 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 **[Open Winter Map](https://mountainstogo.github.io/bbm/Winter/learn.html)**
 
 - Quiz workflow with forgiving map-click targets and immediate feedback
-- Filters for the full mountain, lifts, runs, lodges/bases, and each run difficulty
-- Matching green-circle, blue-square, and black-diamond icons in the category menu and run list
+- Filters for the full mountain, lifts/carpets, runs, places/facilities, and each run difficulty
+- Matching difficulty icons plus semantic icons for lifts, lodges, base areas, landmarks, and facilities
 - Search, shuffle, labels, map-text visibility, auto-zoom, and map zoom controls
 - Correct, incorrect, skipped, streak, remaining, and accuracy tracking
 - Progress restored from local browser storage between visits
@@ -46,8 +46,8 @@ bbm/
 │   ├── learn.html              # Main interactive winter map
 │   ├── modernization.css       # Responsive Winter layout and visual system
 │   ├── modernization.js        # Quiz navigation, persistence, and accessibility enhancements
-│   ├── location_manager.html   # Admin tool for locations, difficulties, overlays, and routes
-│   ├── bogus_basin_config.json # Location coordinates and run difficulty metadata
+│   ├── location_manager.html   # Admin tool for locations, difficulties/types, overlays, and routes
+│   ├── bogus_basin_config.json # Location coordinates, run difficulties, and place types
 │   ├── text_overlays.json      # Text overlay rectangles
 │   ├── routes.json             # Mountain Host Tour route
 │   ├── location_names.js       # Location names array
@@ -100,11 +100,11 @@ Opening the HTML files directly with a `file://` URL will prevent the JSON confi
 ## Winter Editor Workflow
 
 1. Open `http://localhost:8000/Winter/location_manager.html`.
-2. Choose a run difficulty before placing a new location, or update the difficulty selector on an existing location.
+2. Choose either a run difficulty or a place type before placing a new location, or update the matching selector on an existing location.
 3. Use **Save All Changes** to download the updated `bogus_basin_config.json`.
 4. Replace the source configuration and refresh `Winter/learn.html` to verify the category filters and run icons.
 
-Difficulty values are stored per location as `easier`, `more`, or `most`. Lifts, lodges, bases, landmarks, and unclassified features omit the field.
+Difficulty values are stored per run as `easier`, `more`, or `most`. Other locations use a semantic `type`, such as `chairlift`, `magic-carpet`, `lodge`, `base-area`, `food-truck`, `tubing`, or `summit`. A location should have a difficulty or a type, not both.
 
 ## Summer Editor Workflow
 

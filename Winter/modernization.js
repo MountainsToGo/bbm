@@ -10,8 +10,8 @@
 
     const categoryPredicates = {
         all: () => true,
-        lifts: location => /express|bitterroot #5|coach #7|showcase #4/i.test(location.name),
-        lodges: location => !location.difficulty && /lodge|base|condominiums|training center|tubing hill|the beach/i.test(location.name),
+        lifts: location => location.type === 'chairlift' || location.type === 'magic-carpet',
+        lodges: location => Boolean(location.type) && location.type !== 'chairlift' && location.type !== 'magic-carpet',
         runs: location => Boolean(location.difficulty),
         easier: location => location.difficulty === 'easier',
         more: location => location.difficulty === 'more',
@@ -24,10 +24,31 @@
         most: 'Most difficult'
     };
 
+    const locationTypes = {
+        chairlift: { label: 'Chairlift', icon: 'cable-car' },
+        'magic-carpet': { label: 'Magic carpet conveyor', icon: 'chevrons-up' },
+        condominium: { label: 'Condominiums', icon: 'building-2' },
+        lodge: { label: 'Lodge', icon: 'house' },
+        'race-training': { label: 'Ski racing training center', icon: 'flag-triangle-right' },
+        'food-truck': { label: 'Food truck', icon: 'truck' },
+        tubing: { label: 'Tubing hill', icon: 'circle-dot' },
+        summit: { label: 'Mountain summit', icon: 'mountain-snow' },
+        'base-area': { label: 'Base area and meeting point', icon: 'map-pin' },
+        'mountain-landmark': { label: 'Mountain landmark', icon: 'mountain' }
+    };
+
     function difficultyIcon(location) {
         if (!location.difficulty) return '';
         const label = difficultyLabels[location.difficulty];
         return `<span class="difficulty-icon ${location.difficulty}" aria-label="${label}" title="${label}"></span>`;
+    }
+
+    function locationIcon(location) {
+        if (location.difficulty) return difficultyIcon(location);
+        const type = locationTypes[location.type];
+        if (!type) return '';
+        const liftNumber = location.type === 'chairlift' ? location.name.match(/#(\d)/)?.[1] : null;
+        return `<span class="location-type-icon ${location.type}" aria-label="${type.label}" title="${type.label}"><i data-lucide="${type.icon}" aria-hidden="true"></i>${liftNumber ? `<span class="lift-number">${liftNumber}</span>` : ''}</span>`;
     }
 
     function readSavedState() {
@@ -185,23 +206,23 @@
             <label class="visually-hidden" for="categorySelect">Location category</label>
             <select class="visually-hidden" id="categorySelect" tabindex="-1" aria-hidden="true">
                 <option value="all">Full mountain</option>
-                <option value="lifts">Lifts</option>
+                <option value="lifts">Lifts & carpets</option>
                 <option value="runs">Runs</option>
                 <option value="easier">Easier runs</option>
                 <option value="more">More difficult runs</option>
                 <option value="most">Most difficult runs</option>
-                <option value="lodges">Lodges & bases</option>
+                <option value="lodges">Places & facilities</option>
             </select>
             <details class="category-menu">
                 <summary><span class="category-menu-icon"></span><span class="category-menu-label">Full mountain</span></summary>
                 <div class="category-menu-panel">
                     <button type="button" data-category="all">Full mountain</button>
-                    <button type="button" data-category="lifts">Lifts</button>
+                    <button type="button" data-category="lifts">Lifts & carpets</button>
                     <button type="button" data-category="runs">Runs</button>
                     <button type="button" data-category="easier"><span class="difficulty-icon easier" aria-hidden="true"></span>Easier runs</button>
                     <button type="button" data-category="more"><span class="difficulty-icon more" aria-hidden="true"></span>More difficult runs</button>
                     <button type="button" data-category="most"><span class="difficulty-icon most" aria-hidden="true"></span>Most difficult runs</button>
-                    <button type="button" data-category="lodges">Lodges & bases</button>
+                    <button type="button" data-category="lodges">Places & facilities</button>
                 </div>
             </details>`;
         header.appendChild(nav);
@@ -333,8 +354,10 @@
             originalUpdateList();
             document.querySelectorAll('#namesList .name-list-item').forEach((item, position) => {
                 const location = locations[displayOrder[position]];
-                if (location?.difficulty) item.insertAdjacentHTML('afterbegin', difficultyIcon(location));
+                const icon = location ? locationIcon(location) : '';
+                if (icon) item.insertAdjacentHTML('afterbegin', icon);
             });
+            if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 2, width: 16, height: 16 } });
         };
 
         const originalUpdateUI = updateUI;

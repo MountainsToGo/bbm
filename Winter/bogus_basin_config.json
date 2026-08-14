@@ -32,11 +32,13 @@
     },
     {
       "name": "Bitterroot #5",
+      "type": "chairlift",
       "x": 2570,
       "y": 1440
     },
     {
       "name": "Bitterroot Base",
+      "type": "base-area",
       "x": 2786,
       "y": 1708
     },
@@ -114,6 +116,7 @@
     },
     {
       "name": "Coach #7",
+      "type": "chairlift",
       "x": 2588,
       "y": 790
     },
@@ -132,6 +135,7 @@
     },
     {
       "name": "Condominiums",
+      "type": "condominium",
       "x": 2562,
       "y": 1236
     },
@@ -156,16 +160,19 @@
     },
     {
       "name": "Deer Point",
+      "type": "mountain-landmark",
       "x": 2142,
       "y": 113
     },
     {
       "name": "Deer Point Express #1",
+      "type": "chairlift",
       "x": 2334,
       "y": 525
     },
     {
       "name": "Easy Rider",
+      "type": "magic-carpet",
       "x": 2629,
       "y": 935
     },
@@ -183,12 +190,14 @@
     },
     {
       "name": "Explorer",
+      "type": "magic-carpet",
       "x": 2527,
       "y": 954,
       "enabled": true
     },
     {
       "name": "Frontier Point Lodge",
+      "type": "lodge",
       "x": 2949,
       "y": 1262
     },
@@ -230,11 +239,13 @@
     },
     {
       "name": "J.R. Simplot Lodge",
+      "type": "lodge",
       "x": 2561,
       "y": 999
     },
     {
       "name": "Jason Harper Training Center",
+      "type": "race-training",
       "x": 2473,
       "y": 1230
     },
@@ -355,6 +366,7 @@
     },
     {
       "name": "Morning Star Express #2",
+      "type": "chairlift",
       "x": 2380,
       "y": 982
     },
@@ -421,6 +433,7 @@
     },
     {
       "name": "Pine Creek Base",
+      "type": "base-area",
       "x": 330,
       "y": 1433
     },
@@ -432,11 +445,13 @@
     },
     {
       "name": "Pine Creek Express #6",
+      "type": "chairlift",
       "x": 841,
       "y": 1197
     },
     {
       "name": "Pioneer Lodge",
+      "type": "lodge",
       "x": 2349,
       "y": 1177
     },
@@ -472,6 +487,7 @@
     },
     {
       "name": "Shafer Butte",
+      "type": "summit",
       "x": 1466,
       "y": 897
     },
@@ -501,6 +517,7 @@
     },
     {
       "name": "Showcase #4",
+      "type": "chairlift",
       "x": 1981,
       "y": 372
     },
@@ -606,12 +623,14 @@
     },
     {
       "name": "Superior Base",
+      "type": "base-area",
       "x": 2225,
       "y": 1886,
       "enabled": true
     },
     {
       "name": "Superior Express #3",
+      "type": "chairlift",
       "x": 2039,
       "y": 1674
     },
@@ -623,6 +642,7 @@
     },
     {
       "name": "The Beach",
+      "type": "food-truck",
       "x": 350,
       "y": 1412
     },
@@ -652,6 +672,7 @@
     },
     {
       "name": "Tubing Hill",
+      "type": "tubing",
       "x": 2899,
       "y": 1026
     },

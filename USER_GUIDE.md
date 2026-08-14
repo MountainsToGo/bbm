@@ -25,7 +25,7 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 
 ### 🎮 Controls
 - **Search Box**: Filter locations by name; press Enter to jump to first result
-- **Location Selector**: Switch between the full mountain, lifts, all runs, lodges/bases, or a specific run difficulty
+- **Location Selector**: Switch between the full mountain, lifts/carpets, all runs, places/facilities, or a specific run difficulty
 - **Difficulty Filters**: Practice easier (green circle), more difficult (blue square), or most difficult (black diamond) runs; the dropdown and run list use the same icons
 - **Auto-Zoom**: Automatically zooms to each new location when enabled
 - **Labels**: Show/hide location names on the map
@@ -47,10 +47,12 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 - **Green** = Completed correctly
 - **Gray** = Not yet attempted
 
-Run names also show the official difficulty symbol. Single and double black-diamond runs are grouped under **Most difficult**.
+Run names show the official difficulty symbol. Single and double black-diamond runs are grouped under **Most difficult**.
+
+Other locations use icons that match what they represent: cable cars with numbered badges for chairlifts 1-7, chevrons for magic carpet conveyors, houses for lodges, a building for the condominiums, map pins for base areas, a flag for ski-racing training, a truck for The Beach, a tube for Tubing Hill, and mountain icons for summits and landmarks.
 
 ### 🛠️ Maintaining Locations
-Open `Winter/location_manager.html` from the local web server to add or remove map points. Choose a run difficulty before placing a new point, or change the selector beside an existing location, then use **Save All Changes** to download the updated `bogus_basin_config.json`. Refresh the Winter map to verify the filters and icons before publishing.
+Open `Winter/location_manager.html` from the local web server to add or remove map points. Choose either a run difficulty or a place type before placing a new point, or change the matching selector beside an existing location. Selecting one clears the other because a location cannot be both a run and a place. Use **Save All Changes** to download the updated `bogus_basin_config.json`, then refresh the Winter map to verify the filters and icons before publishing.
 
 ---
 
@@ -111,7 +113,7 @@ Both maps support mobile and tablet:
 - Clear browser cache
 - Check internet connection
 - Confirm the page is running from an HTTP server rather than a `file://` URL
-- The Summer map loads Leaflet, Lucide, and fonts from public CDNs
+- The maps load interface libraries and fonts from public CDNs
 
 ### Zoom Issues on Mobile
 - Use two fingers to pinch-to-zoom

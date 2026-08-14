@@ -474,11 +474,28 @@
 
                     <div class="form-group">
                         <label for="locationDifficulty">Run Difficulty:</label>
-                        <select id="locationDifficulty">
+                        <select id="locationDifficulty" onchange="if (this.value) document.getElementById('locationType').value = ''">
                             <option value="">Not a run / unclassified</option>
                             <option value="easier">● Easier</option>
                             <option value="more">■ More difficult</option>
                             <option value="most">◆ Most difficult</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="locationType">Place Type:</label>
+                        <select id="locationType" onchange="if (this.value) document.getElementById('locationDifficulty').value = ''">
+                            <option value="">Not a place / unclassified</option>
+                            <option value="chairlift">Chairlift</option>
+                            <option value="magic-carpet">Magic carpet conveyor</option>
+                            <option value="base-area">Base area / meeting point</option>
+                            <option value="condominium">Condominiums</option>
+                            <option value="lodge">Lodge</option>
+                            <option value="race-training">Ski racing training center</option>
+                            <option value="food-truck">Food truck</option>
+                            <option value="tubing">Tubing hill</option>
+                            <option value="summit">Mountain summit</option>
+                            <option value="mountain-landmark">Mountain landmark</option>
                         </select>
                     </div>
 
@@ -1331,6 +1348,7 @@
         function addLocation() {
             const name = document.getElementById('locationName').value.trim();
             const difficulty = document.getElementById('locationDifficulty').value;
+            const type = document.getElementById('locationType').value;
             if (!name || !pendingCoords) {
                 showStatus('Please enter a name and click on the map!', 'error');
                 return;
@@ -1349,6 +1367,7 @@
                 enabled: true
             };
             if (difficulty) newLocation.difficulty = difficulty;
+            else if (type) newLocation.type = type;
 
             locations.push(newLocation);
             locations.sort((a, b) => a.name.localeCompare(b.name));
@@ -1358,6 +1377,7 @@
             // Reset form
             document.getElementById('locationName').value = '';
             document.getElementById('locationDifficulty').value = '';
+            document.getElementById('locationType').value = '';
             document.getElementById('coordsDisplay').value = '';
             document.getElementById('addButton').disabled = true;
             document.getElementById('clickModeBox').classList.remove('active');
@@ -1391,6 +1411,20 @@
                             <option value="more" ${loc.difficulty === 'more' ? 'selected' : ''}>■ More difficult</option>
                             <option value="most" ${loc.difficulty === 'most' ? 'selected' : ''}>◆ Most difficult</option>
                         </select>
+                        <label class="location-coords" for="type-${index}">Place type</label>
+                        <select id="type-${index}" onchange="updateLocationType(${index}, this.value)">
+                            <option value="" ${!loc.type ? 'selected' : ''}>Not a place</option>
+                            <option value="chairlift" ${loc.type === 'chairlift' ? 'selected' : ''}>Chairlift</option>
+                            <option value="magic-carpet" ${loc.type === 'magic-carpet' ? 'selected' : ''}>Magic carpet conveyor</option>
+                            <option value="base-area" ${loc.type === 'base-area' ? 'selected' : ''}>Base area / meeting point</option>
+                            <option value="condominium" ${loc.type === 'condominium' ? 'selected' : ''}>Condominiums</option>
+                            <option value="lodge" ${loc.type === 'lodge' ? 'selected' : ''}>Lodge</option>
+                            <option value="race-training" ${loc.type === 'race-training' ? 'selected' : ''}>Ski racing training center</option>
+                            <option value="food-truck" ${loc.type === 'food-truck' ? 'selected' : ''}>Food truck</option>
+                            <option value="tubing" ${loc.type === 'tubing' ? 'selected' : ''}>Tubing hill</option>
+                            <option value="summit" ${loc.type === 'summit' ? 'selected' : ''}>Mountain summit</option>
+                            <option value="mountain-landmark" ${loc.type === 'mountain-landmark' ? 'selected' : ''}>Mountain landmark</option>
+                        </select>
                     </div>
                     <button class="btn btn-danger btn-small" onclick="deleteLocation(${index})">🗑️</button>
                 `;
@@ -1399,9 +1433,22 @@
         }
 
         function updateLocationDifficulty(index, difficulty) {
-            if (difficulty) locations[index].difficulty = difficulty;
+            if (difficulty) {
+                locations[index].difficulty = difficulty;
+                delete locations[index].type;
+            }
             else delete locations[index].difficulty;
             showStatus(`Updated "${locations[index].name}". Don't forget to save!`, 'info');
+            updateLocationList();
+        }
+
+        function updateLocationType(index, type) {
+            if (type) {
+                locations[index].type = type;
+                delete locations[index].difficulty;
+            } else delete locations[index].type;
+            showStatus(`Updated "${locations[index].name}". Don't forget to save!`, 'info');
+            updateLocationList();
         }
 
         function deleteLocation(index) {
