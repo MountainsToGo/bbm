@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Location Manager - Summer Trail Map</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2334d399;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23059669;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23sky)' width='64' height='64'/%3E%3Cpath fill='%23047857' d='M0 64 L20 30 L45 64 Z'/%3E%3Cpath fill='%23065f46' d='M15 64 L32 15 L55 64 Z'/%3E%3Cpath fill='%23fbbf24' d='M32 10 A5 5 0 1 0 32 20 A5 5 0 1 0 32 10'/%3E%3Cpath fill='%23047857' d='M35 64 L48 35 L64 64 Z'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -305,12 +308,21 @@
             .location-item:active { background: #d1fae5; }
         }
     </style>
+    <link rel="stylesheet" href="manager.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛠️ Location Manager - Summer Trail Map</h1>
-            <p>Add, edit, and manage summer trail map locations</p>
+            <div>
+                <p class="editor-eyebrow">BOGUS BASIN · MAP STUDIO</p>
+                <h1>Summer Trail Editor</h1>
+            </div>
+            <div class="editor-commandbar" aria-label="Editor commands">
+                <span class="save-state" id="saveState">Loading map data...</span>
+                <button class="command-button" id="undoButton" type="button" disabled title="Undo last change">Undo</button>
+                <button class="command-button" id="redoButton" type="button" disabled title="Redo last change">Redo</button>
+                <a class="command-button primary" href="learn.html">Preview map</a>
+            </div>
         </div>
 
         <div class="main-content">
@@ -889,8 +901,8 @@
             if (currentMode === 'overlays') return;
             
             const rect = canvas.getBoundingClientRect();
-            const x = Math.round((e.clientX - rect.left) / zoomLevel);
-            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            const x = Math.round((e.clientX - rect.left) * (canvas.width / rect.width));
+            const y = Math.round((e.clientY - rect.top) * (canvas.height / rect.height));
 
             if (currentMode === 'routes') {
                 if (freeClickMode) {
@@ -966,8 +978,8 @@
         canvas.addEventListener('mousedown', function(e) {
             if (currentMode !== 'overlays') return;
             const rect = canvas.getBoundingClientRect();
-            const x = Math.round((e.clientX - rect.left) / zoomLevel);
-            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            const x = Math.round((e.clientX - rect.left) * (canvas.width / rect.width));
+            const y = Math.round((e.clientY - rect.top) * (canvas.height / rect.height));
             for (let i = textOverlays.length - 1; i >= 0; i--) {
                 if (isPointInRotatedRect(x, y, textOverlays[i])) {
                     draggingOverlayIndex = i;
@@ -993,8 +1005,8 @@
         canvas.addEventListener('mousemove', function(e) {
             if (currentMode !== 'overlays') return;
             const rect = canvas.getBoundingClientRect();
-            const x = Math.round((e.clientX - rect.left) / zoomLevel);
-            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            const x = Math.round((e.clientX - rect.left) * (canvas.width / rect.width));
+            const y = Math.round((e.clientY - rect.top) * (canvas.height / rect.height));
             if (draggingOverlayIndex !== null) {
                 textOverlays[draggingOverlayIndex].x = x - dragOffset.x;
                 textOverlays[draggingOverlayIndex].y = y - dragOffset.y;
@@ -1025,8 +1037,8 @@
             }
             if (!overlayDrawStart) return;
             const rect = canvas.getBoundingClientRect();
-            const x = Math.round((e.clientX - rect.left) / zoomLevel);
-            const y = Math.round((e.clientY - rect.top) / zoomLevel);
+            const x = Math.round((e.clientX - rect.left) * (canvas.width / rect.width));
+            const y = Math.round((e.clientY - rect.top) * (canvas.height / rect.height));
             const overlayX = Math.min(overlayDrawStart.x, x);
             const overlayY = Math.min(overlayDrawStart.y, y);
             const overlayWidth = Math.abs(x - overlayDrawStart.x);
@@ -1151,8 +1163,9 @@
         function zoomOut() { zoomLevel = Math.max(0.5, zoomLevel - 0.25); applyZoom(); }
         function resetZoom() { zoomLevel = 1.0; applyZoom(); }
         function applyZoom() {
-            canvas.style.transform = `scale(${zoomLevel})`;
-            canvas.style.transformOrigin = 'top left';
+            canvas.style.width = `${zoomLevel * 100}%`;
+            canvas.style.height = 'auto';
+            canvas.style.transform = 'none';
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
         }
 
@@ -1503,5 +1516,6 @@
         document.getElementById('routesPanel').style.flexDirection = 'column';
         document.getElementById('routesPanel').style.gap = '15px';
     </script>
+    <script src="manager-enhancements.js"></script>
 </body>
 </html>

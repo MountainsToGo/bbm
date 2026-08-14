@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bogus Basin Summer Trail Map</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2334d399;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%23059669;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23sky)' width='64' height='64'/%3E%3Cpath fill='%23047857' d='M0 64 L20 30 L45 64 Z'/%3E%3Cpath fill='%23065f46' d='M15 64 L32 15 L55 64 Z'/%3E%3Cpath fill='%23fbbf24' d='M32 10 A5 5 0 1 0 32 20 A5 5 0 1 0 32 10'/%3E%3Cpath fill='%23047857' d='M35 64 L48 35 L64 64 Z'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+    <link rel="stylesheet" href="app.css">
     <style>
         * {
             margin: 0;
@@ -338,7 +343,85 @@
         }
     </style>
 </head>
-<body>
+<body class="modern-app">
+    <div class="app-shell" id="modernApp">
+        <header class="topbar">
+            <button class="icon-button mobile-only" id="openTrailsButton" type="button" aria-label="Open trail list" title="Trails">
+                <i data-lucide="list-filter"></i>
+            </button>
+            <a class="brand" href="learn.html" aria-label="Bogus Basin summer trails home">
+                <span class="brand-mark"><strong>BOGUS</strong><small>BASIN</small></span>
+                <span class="brand-copy"><strong>Summer Trails</strong><small>Mountain biking and hiking</small></span>
+            </a>
+            <div class="topbar-actions">
+                <span class="season-badge">SUMMER 2026</span>
+                <button class="icon-button" id="resetViewButton" type="button" aria-label="Reset map view" title="Reset map view">
+                    <i data-lucide="scan"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="workspace">
+            <aside class="trail-panel" id="trailPanel" aria-label="Trail explorer">
+                <div class="panel-heading">
+                    <div>
+                        <p class="eyebrow">EXPLORE THE MOUNTAIN</p>
+                        <h1>Find your trail</h1>
+                    </div>
+                    <button class="icon-button panel-close mobile-only" id="closeTrailsButton" type="button" aria-label="Close trail list">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <label class="search-field" for="trailSearch">
+                    <i data-lucide="search"></i>
+                    <input id="trailSearch" type="search" placeholder="Search trails and places" autocomplete="off">
+                </label>
+
+                <div class="filter-group" aria-label="Filter by difficulty">
+                    <button class="filter-chip active" type="button" data-filter="all">All</button>
+                    <button class="filter-chip" type="button" data-filter="easier"><span class="rating-symbol circle"></span>Easier</button>
+                    <button class="filter-chip" type="button" data-filter="more"><span class="rating-symbol square"></span>More</button>
+                    <button class="filter-chip" type="button" data-filter="most"><span class="rating-symbol diamond"></span>Most</button>
+                </div>
+
+                <div class="trail-summary">
+                    <span id="trailCount">Loading trails...</span>
+                    <button class="text-button" id="clearFiltersButton" type="button">Clear filters</button>
+                </div>
+                <div class="trail-list" id="trailList" role="list"></div>
+            </aside>
+
+            <section class="map-stage" aria-label="Interactive Bogus Basin summer trail map">
+                <div id="trailMap"></div>
+                <div class="map-status" id="mapStatus" role="status" aria-live="polite">Loading trail map...</div>
+
+                <div class="map-actions" aria-label="Map controls">
+                    <button class="icon-button map-button" id="zoomInButton" type="button" aria-label="Zoom in" title="Zoom in"><i data-lucide="plus"></i></button>
+                    <button class="icon-button map-button" id="zoomOutButton" type="button" aria-label="Zoom out" title="Zoom out"><i data-lucide="minus"></i></button>
+                    <button class="icon-button map-button" id="traceRouteButton" type="button" aria-label="Trace selected route" title="Trace selected route" hidden><i data-lucide="route"></i></button>
+                    <button class="icon-button map-button" id="legendButton" type="button" aria-label="Show map guide" title="Map guide"><i data-lucide="map"></i></button>
+                </div>
+
+                <div class="map-guide" id="mapGuide" hidden>
+                    <div class="guide-header">
+                        <strong>MAP GUIDE</strong>
+                        <button class="icon-button" id="closeLegendButton" type="button" aria-label="Close map guide"><i data-lucide="x"></i></button>
+                    </div>
+                    <p><span class="rating-symbol circle"></span>Easier</p>
+                    <p><span class="rating-symbol square"></span>More difficult</p>
+                    <p><span class="rating-symbol diamond"></span>Most difficult</p>
+                    <hr>
+                    <p><span class="type-key xc">XC</span>Cross country</p>
+                    <p><span class="type-key dh">DH</span>Downhill only</p>
+                </div>
+
+            </section>
+        </main>
+        <div class="drawer-scrim" id="drawerScrim" hidden></div>
+    </div>
+
+    <template id="legacySource">
     <div class="container">
         <div class="header">
             <h1>🥾 Bogus Basin Summer Trail Map</h1>
@@ -1076,5 +1159,9 @@
             if (e.touches.length < 2) initialPinchDistance = null;
         });
     </script>
+    </template>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 Explore Bogus Basin with interactive maps for both winter and summer seasons.
 
 - **Winter Map**: Learn all 120 locations — lifts, runs, lodges, and landmarks — through a gamified quiz experience.
-- **Summer Map**: Explore the multi-use trail network with click-to-highlight and animated trail tracing.
+- **Summer Map**: Explore the multi-use trail network with focused trail selection, difficulty filters, and animated route tracing.
 
 ---
 
@@ -50,20 +50,24 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 ## 🥾 Summer Map
 
 ### 🎯 Getting Started
-1. Browse the trail list in the sidebar
-2. **Click a trail name** to highlight all its markers on the map with red dashed circles
-3. Click again to remove the highlight
+1. Browse the trail list in the desktop sidebar, or open the trail drawer on mobile
+2. Search by name or filter by trail difficulty
+3. **Select a trail or map feature** to focus the map on its known locations
+4. Use Reset Map in the header to return to the full-map view
 
 ### 🎮 Controls
-- **Search Box**: Filter trails by name
-- **Trace Trail**: Select a trail from the dropdown to watch an animated route trace (START → waypoints → FINISH)
-- **Zoom In/Out**: 100% to 1000% zoom range
-- **Reset Map**: Return to default view
+- **Search Box**: Filter trails and named map features
+- **Difficulty Filters**: Show all, easier, more difficult, or most difficult trails
+- **Route Button**: Appears in the map toolbar when the selected trail has a traced route; click again to stop the trace
+- **Zoom In/Out**: Zoom the image map while preserving marker alignment
+- **Map Guide**: Open a compact guide to difficulty and trail-type symbols
+- **Reset Map**: Clear the selection and return to the complete map
 
 ### 🗺️ Map Features
-- **Red dots**: Trail location markers
-- **Red dashed circles**: Highlighted trail markers (click a trail name to show)
-- **Trail animation**: 3-phase trace — START flag flashes, route draws segment by segment with direction arrows, FINISH flag flashes
+- **Unselected map**: No overlay markers, leaving the official trail artwork unobstructed
+- **Selected targets**: Red-and-white circular targets with red pointers mark only the selected trail's known locations
+- **Trail animation**: The selected route draws progressively over the official trail map
+- **Multiple targets**: Some trails appear at several labeled points on the map
 
 ---
 
@@ -73,15 +77,15 @@ Both maps support mobile and tablet:
 - **Pinch to Zoom**: Two fingers to zoom in/out
 - **Drag to Pan**: Move around the map
 - **Tap**: Click locations and buttons
+- **Summer Trail Drawer**: Open the list from the header; it closes after selecting an item
 
 ---
 
 ## ⌨️ Keyboard Shortcuts (Desktop)
 
-- **Ctrl + Scroll Wheel**: Zoom in/out
+- **Scroll Wheel**: Zoom the Summer map
 - **Click & Drag**: Pan the map
-- **Escape**: Clear search box
-- **Enter**: Jump to first search result
+- **Tab / Enter / Space**: Navigate and activate map controls and trail selectors
 
 ---
 
@@ -99,6 +103,8 @@ Both maps support mobile and tablet:
 - Refresh the page (F5 or Cmd+R)
 - Clear browser cache
 - Check internet connection
+- Confirm the page is running from an HTTP server rather than a `file://` URL
+- The Summer map loads Leaflet, Lucide, and fonts from public CDNs
 
 ### Zoom Issues on Mobile
 - Use two fingers to pinch-to-zoom
