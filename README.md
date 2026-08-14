@@ -27,7 +27,7 @@ An interactive, map-first explorer for Bogus Basin's summer multi-use trail netw
 
 - Full-screen Leaflet map with mouse, touch, and pinch navigation
 - Searchable trail and map-feature drawer with difficulty filters
-- Semantic icons for bike/hike access, travel direction, chairlifts, lodges, roads, and junctions
+- Official difficulty symbols for trails, travel/use labels, and semantic icons for chairlifts, lodges, roads, and junctions
 - Trail classifications checked against the official Bogus Basin trail report and summer map
 - Trail selection that focuses the map and reveals only matching target markers
 - Multi-location support for trails that appear in several places

@@ -141,15 +141,26 @@
 
             const travelInfo = getTravelInfo(trail);
             const icon = document.createElement("span");
-            icon.className = `trail-row-icon ${trail.type.toLowerCase()}`;
-            icon.setAttribute("aria-label", travelInfo.label);
-            icon.title = travelInfo.label;
-            travelInfo.icons.forEach(iconName => {
-                const iconElement = document.createElement("i");
-                iconElement.dataset.lucide = iconName;
-                iconElement.setAttribute("aria-hidden", "true");
-                icon.appendChild(iconElement);
-            });
+            const isRatedTrail = trail.difficulty !== "unclassified";
+            icon.className = `trail-row-icon ${isRatedTrail ? "rating-icons" : trail.type.toLowerCase()}`;
+            icon.setAttribute("aria-label", isRatedTrail ? `${getDifficultyLabel(trail)}. ${travelInfo.label}` : travelInfo.label);
+            icon.title = icon.getAttribute("aria-label");
+            if (isRatedTrail) {
+                const ratingClasses = { easier: "circle", more: "square", most: "diamond" };
+                (trail.difficulties || [trail.difficulty]).forEach(difficulty => {
+                    const rating = document.createElement("span");
+                    rating.className = `rating-symbol ${ratingClasses[difficulty]}`;
+                    rating.setAttribute("aria-hidden", "true");
+                    icon.appendChild(rating);
+                });
+            } else {
+                travelInfo.icons.forEach(iconName => {
+                    const iconElement = document.createElement("i");
+                    iconElement.dataset.lucide = iconName;
+                    iconElement.setAttribute("aria-hidden", "true");
+                    icon.appendChild(iconElement);
+                });
+            }
 
             const copy = document.createElement("span");
             copy.className = "trail-row-copy";

@@ -189,8 +189,10 @@
 .trail-row.active { box-shadow: inset 4px 0 0 var(--red); }
 .trail-row-icon { width: 48px; min-height: 30px; padding: 4px; display: flex; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line); background: var(--white); color: var(--ink); }
 .trail-row-icon svg { width: 15px; height: 15px; flex: 0 0 auto; stroke-width: 2.25; }
-.trail-row-icon.xc { border-color: var(--green); color: var(--green); }
-.trail-row-icon.dh { border-color: var(--blue); color: var(--blue); }
+.trail-row-icon.rating-icons { gap: 7px; border: 0; background: transparent; }
+.trail-row-icon.rating-icons .rating-symbol { width: 22px; height: 22px; }
+.trail-row-icon.rating-icons .rating-symbol.diamond { transform: rotate(45deg) scale(.78); }
+.trail-row-icon.rating-icons:has(.rating-symbol + .rating-symbol) .rating-symbol { width: 17px; height: 17px; }
 .trail-row-icon.lift { border-color: var(--red); color: var(--red); }
 .trail-row-icon.lodge { border-color: #a45a17; color: #8b4810; }
 .trail-row-icon.road { border-color: #686966; color: #555651; }
