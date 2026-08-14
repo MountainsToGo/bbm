@@ -35,6 +35,7 @@
         list: document.getElementById("trailList"),
         count: document.getElementById("trailCount"),
         search: document.getElementById("trailSearch"),
+        category: document.getElementById("categorySelect"),
         traceButton: document.getElementById("traceRouteButton"),
         status: document.getElementById("mapStatus"),
         guide: document.getElementById("mapGuide"),
@@ -66,6 +67,23 @@
 
     function getDifficultyLabel(trail) {
         return (trail.difficulties || [trail.difficulty]).map(difficulty => difficultyLabels[difficulty]).join(" + ");
+    }
+
+    function matchesCategory(trail) {
+        const difficulties = trail.difficulties || [trail.difficulty];
+        const categories = {
+            all: true,
+            trails: trail.difficulty !== "unclassified",
+            easier: difficulties.includes("easier"),
+            more: difficulties.includes("more"),
+            most: difficulties.includes("most"),
+            lifts: trail.type === "Lift",
+            lodges: trail.type === "Lodge",
+            roads: trail.type === "Road",
+            junctions: trail.type === "Junction",
+            places: trail.difficulty === "unclassified" && trail.type === "Trail"
+        };
+        return categories[state.activeFilter] ?? true;
     }
 
     function pointToLatLng(point) {
@@ -119,8 +137,7 @@
         const term = state.search.trim().toLowerCase();
         const visible = state.trails.filter(trail => {
             const matchesSearch = !term || trail.name.toLowerCase().includes(term) || trail.type.toLowerCase().includes(term);
-            const matchesDifficulty = state.activeFilter === "all" || (trail.difficulties || [trail.difficulty]).includes(state.activeFilter);
-            return matchesSearch && matchesDifficulty;
+            return matchesSearch && matchesCategory(trail);
         });
 
         elements.list.replaceChildren();
@@ -309,16 +326,15 @@
 
     function bindEvents() {
         elements.search.addEventListener("input", event => { state.search = event.target.value; renderTrailList(); });
-        document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
-            state.activeFilter = button.dataset.filter;
-            document.querySelectorAll("[data-filter]").forEach(item => item.classList.toggle("active", item === button));
+        elements.category.addEventListener("change", event => {
+            state.activeFilter = event.target.value;
             renderTrailList();
-        }));
+        });
         document.getElementById("clearFiltersButton").addEventListener("click", () => {
             state.search = "";
             state.activeFilter = "all";
             elements.search.value = "";
-            document.querySelectorAll("[data-filter]").forEach(button => button.classList.toggle("active", button.dataset.filter === "all"));
+            elements.category.value = "all";
             renderTrailList();
         });
         document.getElementById("openTrailsButton").addEventListener("click", openDrawer);

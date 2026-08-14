@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-    <link rel="stylesheet" href="app.css?v=20260814-2">
+    <link rel="stylesheet" href="app.css?v=20260814-3">
     <style>
         * {
             margin: 0;
@@ -378,12 +378,21 @@
                     <input id="trailSearch" type="search" placeholder="Search trails and places" autocomplete="off">
                 </label>
 
-                <div class="filter-group" aria-label="Filter by difficulty">
-                    <button class="filter-chip active" type="button" data-filter="all">All</button>
-                    <button class="filter-chip" type="button" data-filter="easier"><span class="rating-symbol circle"></span>Easier</button>
-                    <button class="filter-chip" type="button" data-filter="more"><span class="rating-symbol square"></span>More</button>
-                    <button class="filter-chip" type="button" data-filter="most"><span class="rating-symbol diamond"></span>Most</button>
-                </div>
+                <label class="category-field" for="categorySelect">
+                    <span>Show</span>
+                    <select id="categorySelect">
+                        <option value="all">All trails &amp; places</option>
+                        <option value="trails">All trails</option>
+                        <option value="easier">Easier trails</option>
+                        <option value="more">More difficult trails</option>
+                        <option value="most">Most difficult trails</option>
+                        <option value="lifts">Chairlifts</option>
+                        <option value="lodges">Lodges</option>
+                        <option value="roads">Roads</option>
+                        <option value="junctions">Trail junctions</option>
+                        <option value="places">Other places</option>
+                    </select>
+                </label>
 
                 <div class="trail-summary">
                     <span id="trailCount">Loading trails...</span>
@@ -408,17 +417,18 @@
                         <strong>MAP GUIDE</strong>
                         <button class="icon-button" id="closeLegendButton" type="button" aria-label="Close map guide"><i data-lucide="x"></i></button>
                     </div>
+                    <p class="guide-section-label">TRAIL RATINGS</p>
                     <p><span class="rating-symbol circle"></span>Easier</p>
                     <p><span class="rating-symbol square"></span>More difficult</p>
                     <p><span class="rating-symbol diamond"></span>Most difficult</p>
                     <hr>
-                    <p><span class="type-key xc"><i data-lucide="bike"></i><i data-lucide="footprints"></i><i data-lucide="arrow-up-down"></i></span>Bike + hike, both ways</p>
-                    <p><span class="type-key xc"><i data-lucide="bike"></i><i data-lucide="footprints"></i><i data-lucide="arrow-right"></i></span>Bike + hike, one way</p>
-                    <p><span class="type-key dh"><i data-lucide="arrow-down"></i></span>Downhill only; bike-only where marked</p>
+                    <p class="guide-section-label">MAP FEATURES</p>
                     <p><span class="type-key place"><i data-lucide="cable-car"></i></span>Chair lift</p>
                     <p><span class="type-key place"><i data-lucide="house"></i></span>Lodge</p>
                     <p><span class="type-key place"><i data-lucide="route"></i></span>Road</p>
                     <p><span class="type-key place"><i data-lucide="signpost"></i></span>Trail junction</p>
+                    <p><span class="type-key place"><i data-lucide="mountain"></i></span>Other place</p>
+                    <p class="guide-note">Trail use and direction are written below each trail name.</p>
                 </div>
 
             </section>
@@ -1167,6 +1177,6 @@
     </template>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script src="app.js?v=20260814-2"></script>
+    <script src="app.js?v=20260814-3"></script>
 </body>
 </html>

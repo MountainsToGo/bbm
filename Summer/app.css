@@ -135,34 +135,13 @@
 .search-field svg { width: 18px; color: var(--muted); }
 .search-field input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font: 500 14px "Manrope", sans-serif; }
 
-.filter-group {
-    margin: 14px 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 5px;
-}
-
-.filter-chip {
-    min-height: 38px;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    border: 1px solid var(--line);
-    background: transparent;
-    color: #555651;
-    font: 700 11px "Manrope", sans-serif;
-    cursor: pointer;
-}
-
-.filter-chip:hover,
-.filter-chip.active { border-color: var(--ink); background: var(--ink); color: var(--white); }
+.category-field { margin: 14px 0; display: grid; gap: 5px; color: var(--muted); font: 700 10px "Manrope", sans-serif; text-transform: uppercase; }
+.category-field select { width: 100%; min-height: 42px; padding: 0 36px 0 12px; border: 1px solid #777873; border-radius: 0; outline: 0; background: var(--white); color: var(--ink); font: 700 13px "Manrope", sans-serif; text-transform: none; cursor: pointer; }
+.category-field select:focus { outline: 3px solid rgba(20, 123, 184, .22); border-color: var(--blue); }
 .rating-symbol { width: 10px; height: 10px; display: inline-block; flex: 0 0 auto; background: var(--green); }
 .rating-symbol.circle { border-radius: 50%; }
 .rating-symbol.square { background: var(--blue); }
 .rating-symbol.diamond { background: var(--ink); transform: rotate(45deg) scale(.8); }
-.filter-chip.active .rating-symbol.diamond { background: var(--white); }
 
 .trail-summary { justify-content: space-between; padding-bottom: 8px; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); }
 .text-button { border: 0; padding: 4px; background: transparent; color: var(--blue); font: 700 11px "Manrope", sans-serif; cursor: pointer; }
@@ -236,7 +215,7 @@
     z-index: 600;
     top: 16px;
     right: 68px;
-    width: 220px;
+    width: 250px;
     padding: 13px 15px 15px;
     background: var(--white);
     box-shadow: 0 8px 30px rgba(0, 0, 0, .28);
@@ -244,7 +223,10 @@
 .map-guide[hidden] { display: none; }
 .guide-header { justify-content: space-between; margin: -6px -8px 5px 0; font-family: "Barlow Condensed", sans-serif; }
 .map-guide p { margin: 8px 0; display: flex; align-items: center; gap: 10px; font-size: 12px; }
+.map-guide .rating-symbol { width: 14px; height: 14px; margin-left: 20px; }
 .map-guide hr { border: 0; border-top: 1px solid var(--line); }
+.map-guide .guide-section-label { margin-top: 12px; color: var(--muted); font: 800 10px "Manrope", sans-serif; letter-spacing: .08em; }
+.map-guide .guide-note { margin: 13px 0 0; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; line-height: 1.45; }
 .type-key { width: 54px; min-height: 26px; padding: 3px; display: inline-flex; align-items: center; justify-content: center; gap: 2px; border: 1px solid var(--line); background: var(--white); color: var(--ink); }
 .type-key svg { width: 14px; height: 14px; flex: 0 0 auto; }
 .type-key.xc { border-color: var(--green); color: var(--green); }

@@ -60,16 +60,16 @@ Open `Winter/location_manager.html` from the local web server to add or remove m
 
 ### 🎯 Getting Started
 1. Browse the trail list in the desktop sidebar, or open the trail drawer on mobile
-2. Search by name or filter by trail difficulty
+2. Search by name or choose a trail, difficulty, or place category
 3. **Select a trail or map feature** to focus the map on its known locations
 4. Use Reset Map in the header to return to the full-map view
 
 ### 🎮 Controls
 - **Search Box**: Filter trails and named map features
-- **Difficulty Filters**: Show all, easier, more difficult, or most difficult trails
+- **Category Selector**: Show all items, all trails, a specific trail difficulty, chairlifts, lodges, roads, trail junctions, or other places
 - **Route Button**: Appears in the map toolbar when the selected trail has a traced route; click again to stop the trace
 - **Zoom In/Out**: Zoom the image map while preserving marker alignment
-- **Map Guide**: Open a compact guide to difficulty and trail-type symbols
+- **Map Guide**: Open a compact guide to trail-rating and map-feature symbols; trail use and direction remain in the list text
 - **Reset Map**: Clear the selection and return to the complete map
 
 ### 🗺️ Map Features

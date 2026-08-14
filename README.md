@@ -26,7 +26,7 @@ An interactive, map-first explorer for Bogus Basin's summer multi-use trail netw
 **[Open Summer Map](https://mountainstogo.github.io/bbm/Summer/learn.html)**
 
 - Full-screen Leaflet map with mouse, touch, and pinch navigation
-- Searchable trail and map-feature drawer with difficulty filters
+- Searchable trail and map-feature drawer with categories for trails, difficulty ratings, chairlifts, lodges, roads, junctions, and other places
 - Official difficulty symbols for trails, travel/use labels, and semantic icons for chairlifts, lodges, roads, and junctions
 - Trail classifications checked against the official Bogus Basin trail report and summer map
 - Trail selection that focuses the map and reveals only matching target markers
