@@ -11,10 +11,13 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 
 **[Open Winter Map](https://mountainstogo.github.io/bbm/Winter/learn.html)**
 
-- 120 locations — lifts, runs, lodges, and landmarks
-- Auto-zoom, search, scramble, hide map text, progress tracking
-- Mountain Host Tour route animation
-- Fully responsive (phones, tablets, desktops)
+- Quiz workflow with forgiving map-click targets and immediate feedback
+- Filters for the full mountain, lifts, runs, and lodges/bases
+- Search, shuffle, labels, map-text visibility, auto-zoom, and map zoom controls
+- Correct, incorrect, skipped, streak, remaining, and accuracy tracking
+- Progress restored from local browser storage between visits
+- Mountain Host Tour route plus quick access to learning and safety resources
+- Responsive two-column desktop layout and mobile progress drawer
 
 ### 🥾 Summer Map
 An interactive explorer for Bogus Basin's summer multi-use trail network.
@@ -37,6 +40,8 @@ bbm/
 │   └── responsibility-code.jpg
 ├── Winter/                     # Winter map application
 │   ├── learn.html              # Main interactive winter map
+│   ├── modernization.css       # Responsive Winter layout and visual system
+│   ├── modernization.js        # Quiz navigation, persistence, and accessibility enhancements
 │   ├── location_manager.html   # Admin tool for locations & overlays
 │   ├── bogus_basin_config.json # Location data (120 locations)
 │   ├── text_overlays.json      # Text overlay rectangles
