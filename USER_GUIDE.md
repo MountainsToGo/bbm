@@ -1,4 +1,4 @@
-# �️ Bogus Basin Interactive Maps - User Guide
+# Bogus Basin Interactive Maps - User Guide
 
 ## 📖 Overview
 Explore Bogus Basin with interactive maps for both winter and summer seasons.
@@ -25,6 +25,8 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 
 ### 🎮 Controls
 - **Search Box**: Filter locations by name; press Enter to jump to first result
+- **Location Selector**: Switch between the full mountain, lifts, all runs, lodges/bases, or a specific run difficulty
+- **Difficulty Filters**: Practice easier (green circle), more difficult (blue square), or most difficult (black diamond) runs; the dropdown and run list use the same icons
 - **Auto-Zoom**: Automatically zooms to each new location when enabled
 - **Labels**: Show/hide location names on the map
 - **Zoom In/Out**: 100% to 1000% zoom range
@@ -44,6 +46,11 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 - **Purple** = Current location to find
 - **Green** = Completed correctly
 - **Gray** = Not yet attempted
+
+Run names also show the official difficulty symbol. Single and double black-diamond runs are grouped under **Most difficult**.
+
+### 🛠️ Maintaining Locations
+Open `Winter/location_manager.html` from the local web server to add or remove map points. Choose a run difficulty before placing a new point, or change the selector beside an existing location, then use **Save All Changes** to download the updated `bogus_basin_config.json`. Refresh the Winter map to verify the filters and icons before publishing.
 
 ---
 

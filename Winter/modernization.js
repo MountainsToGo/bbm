@@ -6,13 +6,29 @@
     let activeCategory = 'all';
     let firstInitialization = true;
     let suppressPersistence = true;
+    let syncCategoryControl = () => {};
 
     const categoryPredicates = {
         all: () => true,
         lifts: location => /express|bitterroot #5|coach #7|showcase #4/i.test(location.name),
-        lodges: location => /lodge|base|condominiums|training center|tubing hill|the beach/i.test(location.name),
-        runs: location => !/express|bitterroot #5|coach #7|showcase #4|lodge|base|condominiums|training center|tubing hill|the beach/i.test(location.name)
+        lodges: location => !location.difficulty && /lodge|base|condominiums|training center|tubing hill|the beach/i.test(location.name),
+        runs: location => Boolean(location.difficulty),
+        easier: location => location.difficulty === 'easier',
+        more: location => location.difficulty === 'more',
+        most: location => location.difficulty === 'most'
     };
+
+    const difficultyLabels = {
+        easier: 'Easier',
+        more: 'More difficult',
+        most: 'Most difficult'
+    };
+
+    function difficultyIcon(location) {
+        if (!location.difficulty) return '';
+        const label = difficultyLabels[location.difficulty];
+        return `<span class="difficulty-icon ${location.difficulty}" aria-label="${label}" title="${label}"></span>`;
+    }
 
     function readSavedState() {
         try {
@@ -167,15 +183,55 @@
         nav.setAttribute('aria-label', 'Location category');
         nav.innerHTML = `
             <label class="visually-hidden" for="categorySelect">Location category</label>
-            <select class="category-select" id="categorySelect">
+            <select class="visually-hidden" id="categorySelect" tabindex="-1" aria-hidden="true">
                 <option value="all">Full mountain</option>
                 <option value="lifts">Lifts</option>
                 <option value="runs">Runs</option>
+                <option value="easier">Easier runs</option>
+                <option value="more">More difficult runs</option>
+                <option value="most">Most difficult runs</option>
                 <option value="lodges">Lodges & bases</option>
-            </select>`;
+            </select>
+            <details class="category-menu">
+                <summary><span class="category-menu-icon"></span><span class="category-menu-label">Full mountain</span></summary>
+                <div class="category-menu-panel">
+                    <button type="button" data-category="all">Full mountain</button>
+                    <button type="button" data-category="lifts">Lifts</button>
+                    <button type="button" data-category="runs">Runs</button>
+                    <button type="button" data-category="easier"><span class="difficulty-icon easier" aria-hidden="true"></span>Easier runs</button>
+                    <button type="button" data-category="more"><span class="difficulty-icon more" aria-hidden="true"></span>More difficult runs</button>
+                    <button type="button" data-category="most"><span class="difficulty-icon most" aria-hidden="true"></span>Most difficult runs</button>
+                    <button type="button" data-category="lodges">Lodges & bases</button>
+                </div>
+            </details>`;
         header.appendChild(nav);
 
-        nav.querySelector('#categorySelect').addEventListener('change', event => setCategory(event.target.value));
+        const select = nav.querySelector('#categorySelect');
+        const menu = nav.querySelector('.category-menu');
+        const menuIcon = nav.querySelector('.category-menu-icon');
+        const menuLabel = nav.querySelector('.category-menu-label');
+        syncCategoryControl = () => {
+            const selectedOption = select.options[select.selectedIndex];
+            menuLabel.textContent = selectedOption.textContent;
+            menuIcon.className = `category-menu-icon${difficultyLabels[select.value] ? ` difficulty-icon ${select.value}` : ''}`;
+            menu.querySelectorAll('[data-category]').forEach(button => {
+                button.classList.toggle('active', button.dataset.category === select.value);
+            });
+        };
+        select.addEventListener('change', event => {
+            syncCategoryControl();
+            setCategory(event.target.value);
+        });
+        menu.querySelectorAll('[data-category]').forEach(button => button.addEventListener('click', () => {
+            select.value = button.dataset.category;
+            syncCategoryControl();
+            select.dispatchEvent(new Event('change'));
+            menu.open = false;
+        }));
+        document.addEventListener('pointerdown', event => {
+            if (menu.open && !menu.contains(event.target)) menu.open = false;
+        });
+        syncCategoryControl();
     }
 
     function buildTaskRow() {
@@ -272,6 +328,15 @@
     }
 
     function installStateHooks() {
+        const originalUpdateList = updateList;
+        updateList = function modernizedUpdateList() {
+            originalUpdateList();
+            document.querySelectorAll('#namesList .name-list-item').forEach((item, position) => {
+                const location = locations[displayOrder[position]];
+                if (location?.difficulty) item.insertAdjacentHTML('afterbegin', difficultyIcon(location));
+            });
+        };
+
         const originalUpdateUI = updateUI;
         updateUI = function modernizedUpdateUI() {
             originalUpdateUI();
@@ -301,6 +366,7 @@
             updateQuizCopy();
             const categorySelect = document.querySelector('#categorySelect');
             if (categorySelect) categorySelect.value = activeCategory;
+            syncCategoryControl();
             saveState();
         };
 

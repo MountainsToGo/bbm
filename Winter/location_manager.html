@@ -63,13 +63,18 @@
             font-weight: 600;
             color: #334155;
         }
-        .form-group input {
+        .form-group input,
+        .form-group select,
+        .location-item select {
             padding: 10px;
             border: 2px solid #e2e8f0;
             border-radius: 6px;
+            background: white;
             font-size: 1em;
         }
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus,
+        .location-item select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -150,6 +155,11 @@
         .location-coords {
             font-size: 0.85em;
             color: #64748b;
+        }
+        .location-item select {
+            margin-top: 4px;
+            padding: 5px 8px;
+            font-size: 0.8em;
         }
         .btn-small {
             padding: 6px 12px;
@@ -460,6 +470,16 @@
                     <div class="form-group">
                         <label for="locationName">Location Name:</label>
                         <input type="text" id="locationName" placeholder="Enter location name...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="locationDifficulty">Run Difficulty:</label>
+                        <select id="locationDifficulty">
+                            <option value="">Not a run / unclassified</option>
+                            <option value="easier">● Easier</option>
+                            <option value="more">■ More difficult</option>
+                            <option value="most">◆ Most difficult</option>
+                        </select>
                     </div>
 
                 <div class="click-mode-box" id="clickModeBox">
@@ -1310,6 +1330,7 @@
 
         function addLocation() {
             const name = document.getElementById('locationName').value.trim();
+            const difficulty = document.getElementById('locationDifficulty').value;
             if (!name || !pendingCoords) {
                 showStatus('Please enter a name and click on the map!', 'error');
                 return;
@@ -1327,6 +1348,7 @@
                 y: pendingCoords.y,
                 enabled: true
             };
+            if (difficulty) newLocation.difficulty = difficulty;
 
             locations.push(newLocation);
             locations.sort((a, b) => a.name.localeCompare(b.name));
@@ -1335,6 +1357,7 @@
             
             // Reset form
             document.getElementById('locationName').value = '';
+            document.getElementById('locationDifficulty').value = '';
             document.getElementById('coordsDisplay').value = '';
             document.getElementById('addButton').disabled = true;
             document.getElementById('clickModeBox').classList.remove('active');
@@ -1361,11 +1384,24 @@
                     <div>
                         <div class="location-name">${loc.name}</div>
                         <div class="location-coords">X: ${loc.x}, Y: ${loc.y}</div>
+                        <label class="location-coords" for="difficulty-${index}">Difficulty</label>
+                        <select id="difficulty-${index}" onchange="updateLocationDifficulty(${index}, this.value)">
+                            <option value="" ${!loc.difficulty ? 'selected' : ''}>Not a run</option>
+                            <option value="easier" ${loc.difficulty === 'easier' ? 'selected' : ''}>● Easier</option>
+                            <option value="more" ${loc.difficulty === 'more' ? 'selected' : ''}>■ More difficult</option>
+                            <option value="most" ${loc.difficulty === 'most' ? 'selected' : ''}>◆ Most difficult</option>
+                        </select>
                     </div>
                     <button class="btn btn-danger btn-small" onclick="deleteLocation(${index})">🗑️</button>
                 `;
                 list.appendChild(item);
             });
+        }
+
+        function updateLocationDifficulty(index, difficulty) {
+            if (difficulty) locations[index].difficulty = difficulty;
+            else delete locations[index].difficulty;
+            showStatus(`Updated "${locations[index].name}". Don't forget to save!`, 'info');
         }
 
         function deleteLocation(index) {

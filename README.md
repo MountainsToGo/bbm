@@ -12,7 +12,8 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 **[Open Winter Map](https://mountainstogo.github.io/bbm/Winter/learn.html)**
 
 - Quiz workflow with forgiving map-click targets and immediate feedback
-- Filters for the full mountain, lifts, runs, and lodges/bases
+- Filters for the full mountain, lifts, runs, lodges/bases, and each run difficulty
+- Matching green-circle, blue-square, and black-diamond icons in the category menu and run list
 - Search, shuffle, labels, map-text visibility, auto-zoom, and map zoom controls
 - Correct, incorrect, skipped, streak, remaining, and accuracy tracking
 - Progress restored from local browser storage between visits
@@ -45,8 +46,8 @@ bbm/
 │   ├── learn.html              # Main interactive winter map
 │   ├── modernization.css       # Responsive Winter layout and visual system
 │   ├── modernization.js        # Quiz navigation, persistence, and accessibility enhancements
-│   ├── location_manager.html   # Admin tool for locations & overlays
-│   ├── bogus_basin_config.json # Location data (120 locations)
+│   ├── location_manager.html   # Admin tool for locations, difficulties, overlays, and routes
+│   ├── bogus_basin_config.json # Location coordinates and run difficulty metadata
 │   ├── text_overlays.json      # Text overlay rectangles
 │   ├── routes.json             # Mountain Host Tour route
 │   ├── location_names.js       # Location names array
@@ -89,11 +90,21 @@ python -m http.server 8000
 # Open in browser
 # http://localhost:8000/                              (landing page)
 # http://localhost:8000/Winter/learn.html             (winter map)
+# http://localhost:8000/Winter/location_manager.html  (winter editor)
 # http://localhost:8000/Summer/learn.html             (summer map)
 # http://localhost:8000/Summer/location_manager.html  (summer editor)
 ```
 
 Opening the HTML files directly with a `file://` URL will prevent the JSON configuration files from loading. Always use a local HTTP server.
+
+## Winter Editor Workflow
+
+1. Open `http://localhost:8000/Winter/location_manager.html`.
+2. Choose a run difficulty before placing a new location, or update the difficulty selector on an existing location.
+3. Use **Save All Changes** to download the updated `bogus_basin_config.json`.
+4. Replace the source configuration and refresh `Winter/learn.html` to verify the category filters and run icons.
+
+Difficulty values are stored per location as `easier`, `more`, or `most`. Lifts, lodges, bases, landmarks, and unclassified features omit the field.
 
 ## Summer Editor Workflow
 

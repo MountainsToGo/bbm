@@ -87,14 +87,70 @@ summary:focus-visible,
     gap: 10px;
 }
 
-.category-select {
+.category-menu {
+    position: relative;
+}
+
+.category-menu summary {
     min-height: 40px;
-    padding: 0 34px 0 12px;
+    min-width: 172px;
+    padding: 8px 30px 8px 12px;
     border: 1px solid #60717b;
     border-radius: 6px;
     background: white;
     color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+.category-menu summary::after {
+    position: absolute;
+    right: 11px;
+    content: '▾';
+}
+
+.category-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.category-menu-panel {
+    position: absolute;
+    z-index: 60;
+    top: calc(100% + 5px);
+    right: 0;
+    width: 210px;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    background: white;
+}
+
+.category-menu-panel button {
+    width: 100%;
+    min-height: 38px;
+    padding: 7px 9px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    text-align: left;
+    cursor: pointer;
+}
+
+.category-menu-panel button:hover,
+.category-menu-panel button.active {
+    background: var(--surface-muted);
+}
+
+.category-menu-icon:not(.difficulty-icon) {
+    display: none;
 }
 
 #practiceMode {
@@ -317,6 +373,35 @@ summary:focus-visible,
     font-size: 0.82rem;
 }
 
+.difficulty-icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    display: inline-block;
+    flex: 0 0 auto;
+    vertical-align: -1px;
+    background: #168744;
+    border: 1px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #168744;
+}
+
+.difficulty-icon.more {
+    background: #1674b8;
+    border-radius: 1px;
+    box-shadow: 0 0 0 1px #1674b8;
+}
+
+.difficulty-icon.most {
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+    background: #18242c;
+    border-radius: 1px;
+    box-shadow: 0 0 0 1px #18242c;
+    transform: rotate(45deg);
+}
+
 .name-list-item:hover {
     transform: none;
     border-color: var(--line);
@@ -516,10 +601,17 @@ summary:focus-visible,
         margin-left: auto;
     }
 
-    .category-select {
-        width: 118px;
+    .category-menu summary {
+        min-width: 126px;
+        max-width: 150px;
         min-height: 36px;
         font-size: 0.76rem;
+    }
+
+    .category-menu-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .main-content {

@@ -5,23 +5,27 @@
   "locations": [
     {
       "name": "Alpine",
+      "difficulty": "more",
       "x": 1827,
       "y": 329
     },
     {
       "name": "B-2",
+      "difficulty": "more",
       "x": 2847,
       "y": 1343,
       "enabled": true
     },
     {
       "name": "B-3",
+      "difficulty": "more",
       "x": 2936,
       "y": 1410,
       "enabled": true
     },
     {
       "name": "Bear Paw",
+      "difficulty": "most",
       "x": 2659,
       "y": 1501,
       "enabled": true
@@ -38,61 +42,72 @@
     },
     {
       "name": "Bitterroot Basin",
+      "difficulty": "more",
       "x": 2743,
       "y": 1307,
       "enabled": true
     },
     {
       "name": "Blackbird",
+      "difficulty": "most",
       "x": 1725,
       "y": 727,
       "enabled": true
     },
     {
       "name": "Bogus Creek Trail",
+      "difficulty": "easier",
       "x": 2049,
       "y": 813
     },
     {
       "name": "Bonanza",
+      "difficulty": "more",
       "x": 1547,
       "y": 1203
     },
     {
       "name": "Bowl",
+      "difficulty": "most",
       "x": 2471,
       "y": 716,
       "enabled": true
     },
     {
       "name": "Buckhorn",
+      "difficulty": "most",
       "x": 244,
       "y": 1294
     },
     {
       "name": "Buttercup Trail",
+      "difficulty": "easier",
       "x": 2684,
       "y": 1268,
       "enabled": true
     },
     {
       "name": "Cabin Traverse",
+      "difficulty": "more",
       "x": 1359,
       "y": 571
     },
     {
       "name": "Cabin Traverse (2nd location)",
+      "difficulty": "more",
       "x": 1438,
       "y": 971,
       "enabled": true
     },
     {
       "name": "Cascade",
+      "difficulty": "most",
       "x": 1862,
       "y": 576
     },
     {
       "name": "Claim Jumper",
+      "difficulty": "more",
       "x": 2138,
       "y": 360,
       "enabled": true
@@ -104,12 +119,14 @@
     },
     {
       "name": "Coach's Corner",
+      "difficulty": "easier",
       "x": 2891,
       "y": 683,
       "enabled": true
     },
     {
       "name": "Comeback",
+      "difficulty": "more",
       "x": 1753,
       "y": 1760
     },
@@ -120,17 +137,20 @@
     },
     {
       "name": "Connector",
+      "difficulty": "easier",
       "x": 2048,
       "y": 945,
       "enabled": true
     },
     {
       "name": "Corn Patch",
+      "difficulty": "most",
       "x": 1577,
       "y": 570
     },
     {
       "name": "Deadwood",
+      "difficulty": "most",
       "x": 556,
       "y": 1036
     },
@@ -151,11 +171,13 @@
     },
     {
       "name": "Easy Way Down",
+      "difficulty": "more",
       "x": 137,
       "y": 1363
     },
     {
       "name": "Eureka",
+      "difficulty": "most",
       "x": 401,
       "y": 1128
     },
@@ -172,31 +194,37 @@
     },
     {
       "name": "Good Enough",
+      "difficulty": "more",
       "x": 448,
       "y": 1634
     },
     {
       "name": "Greenie's Run",
+      "difficulty": "most",
       "x": 1959,
       "y": 1081
     },
     {
       "name": "Grooming Trail",
+      "difficulty": "more",
       "x": 1420,
       "y": 1722
     },
     {
       "name": "Hogsback",
+      "difficulty": "more",
       "x": 2240,
       "y": 1044
     },
     {
       "name": "Ida Belle",
+      "difficulty": "more",
       "x": 2709,
       "y": 661
     },
     {
       "name": "Independance",
+      "difficulty": "more",
       "x": 1620,
       "y": 672
     },
@@ -212,97 +240,116 @@
     },
     {
       "name": "Lando's Mojo",
+      "difficulty": "most",
       "x": 2242,
       "y": 627
     },
     {
       "name": "Last Chance",
+      "difficulty": "most",
       "x": 1623,
       "y": 865
     },
     {
       "name": "Lazy Mary",
+      "difficulty": "more",
       "x": 2555,
       "y": 1291
     },
     {
       "name": "Liberty",
+      "difficulty": "most",
       "x": 1374,
       "y": 809
     },
     {
       "name": "Lightning",
+      "difficulty": "most",
       "x": 1024,
       "y": 1069
     },
     {
       "name": "Lower Bonanza",
+      "difficulty": "more",
       "x": 1479,
       "y": 1551
     },
     {
       "name": "Lower Majestic",
+      "difficulty": "most",
       "x": 1461,
       "y": 1692
     },
     {
       "name": "Lower Nugget",
+      "difficulty": "most",
       "x": 477,
       "y": 1122
     },
     {
       "name": "Lower Paradise",
+      "difficulty": "more",
       "x": 453,
       "y": 1501
     },
     {
       "name": "Lower Ridge",
+      "difficulty": "more",
       "x": 2386,
       "y": 816
     },
     {
       "name": "Lucky Friday",
+      "difficulty": "most",
       "x": 761,
       "y": 1354
     },
     {
       "name": "LuLu",
+      "difficulty": "easier",
       "x": 2358,
       "y": 1103
     },
     {
       "name": "Majestic",
+      "difficulty": "most",
       "x": 1452,
       "y": 1082
     },
     {
       "name": "Mambo Meadows",
+      "difficulty": "more",
       "x": 1922,
       "y": 688
     },
     {
       "name": "Mary's Ridge",
+      "difficulty": "most",
       "x": 637,
       "y": 961,
       "enabled": true
     },
     {
       "name": "Matchless",
+      "difficulty": "most",
       "x": 1780,
       "y": 1405
     },
     {
       "name": "Mid-Paradise Cut-Off",
+      "difficulty": "more",
       "x": 1226,
       "y": 1293
     },
     {
       "name": "Mike's Mambo",
+      "difficulty": "more",
       "x": 1946,
       "y": 599
     },
     {
       "name": "Morning Star",
+      "difficulty": "more",
       "x": 2163,
       "y": 1093
     },
@@ -313,52 +360,62 @@
     },
     {
       "name": "Mother Lode",
+      "difficulty": "most",
       "x": 532,
       "y": 1473
     },
     {
       "name": "Night Hawk",
+      "difficulty": "most",
       "x": 1635,
       "y": 1148
     },
     {
       "name": "Nighthawk Cut-Off",
+      "difficulty": "more",
       "x": 1521,
       "y": 1488,
       "enabled": true
     },
     {
       "name": "Nitro",
+      "difficulty": "most",
       "x": 2674,
       "y": 1315
     },
     {
       "name": "Northslope",
+      "difficulty": "more",
       "x": 2065,
       "y": 580
     },
     {
       "name": "Nugget Bowls",
+      "difficulty": "most",
       "x": 1066,
       "y": 582
     },
     {
       "name": "Nugget Cat Track",
+      "difficulty": "more",
       "x": 1368,
       "y": 472
     },
     {
       "name": "Omar's Inspiration",
+      "difficulty": "most",
       "x": 1793,
       "y": 980
     },
     {
       "name": "Paradise",
+      "difficulty": "more",
       "x": 921,
       "y": 1468
     },
     {
       "name": "Paradise Cat Track",
+      "difficulty": "more",
       "x": 1075,
       "y": 1537
     },
@@ -369,6 +426,7 @@
     },
     {
       "name": "Pine Creek Bowl",
+      "difficulty": "most",
       "x": 1170,
       "y": 1093
     },
@@ -384,26 +442,31 @@
     },
     {
       "name": "Pioneer Lodge Cat Track",
+      "difficulty": "more",
       "x": 1874,
       "y": 1268
     },
     {
       "name": "Pioneer Trail",
+      "difficulty": "easier",
       "x": 1999,
       "y": 857
     },
     {
       "name": "Playground",
+      "difficulty": "more",
       "x": 2101,
       "y": 358
     },
     {
       "name": "Power Line",
+      "difficulty": "most",
       "x": 1715,
       "y": 930
     },
     {
       "name": "Second Chance",
+      "difficulty": "most",
       "x": 316,
       "y": 1149
     },
@@ -414,21 +477,25 @@
     },
     {
       "name": "Shaker Ridge",
+      "difficulty": "more",
       "x": 2030,
       "y": 350
     },
     {
       "name": "Shamrock",
+      "difficulty": "easier",
       "x": 2994,
       "y": 1576
     },
     {
       "name": "Shindig",
+      "difficulty": "more",
       "x": 1450,
       "y": 629
     },
     {
       "name": "Showcase",
+      "difficulty": "more",
       "x": 1844,
       "y": 501
     },
@@ -439,85 +506,101 @@
     },
     {
       "name": "Silver Queen",
+      "difficulty": "easier",
       "x": 2394,
       "y": 1086
     },
     {
       "name": "Sleepy Connector",
+      "difficulty": "more",
       "x": 2309,
       "y": 1309
     },
     {
       "name": "Sleepy Hollow",
+      "difficulty": "more",
       "x": 2440,
       "y": 1324
     },
     {
       "name": "Sleepy Hollow (Lower)",
+      "difficulty": "more",
       "x": 2616,
       "y": 1549,
       "enabled": true
     },
     {
       "name": "Smuggler",
+      "difficulty": "more",
       "x": 2282,
       "y": 1379
     },
     {
       "name": "Smuggler (Lower)",
+      "difficulty": "more",
       "x": 2264,
       "y": 1748,
       "enabled": true
     },
     {
       "name": "Smuggler Cut-Off",
+      "difficulty": "more",
       "x": 2230,
       "y": 1717,
       "enabled": true
     },
     {
       "name": "Snoozer",
+      "difficulty": "more",
       "x": 2377,
       "y": 1501
     },
     {
       "name": "Sourdough",
+      "difficulty": "more",
       "x": 2466,
       "y": 565
     },
     {
       "name": "Stewart's Bowl",
+      "difficulty": "more",
       "x": 2552,
       "y": 847
     },
     {
       "name": "Stump Bowl",
+      "difficulty": "most",
       "x": 1147,
       "y": 1460
     },
     {
       "name": "Sunbeam",
+      "difficulty": "most",
       "x": 1912,
       "y": 1565
     },
     {
       "name": "Sunset",
+      "difficulty": "more",
       "x": 1961,
       "y": 739
     },
     {
       "name": "Sunshine (Lower)",
+      "difficulty": "easier",
       "x": 1806,
       "y": 830
     },
     {
       "name": "Sunshine",
+      "difficulty": "easier",
       "x": 2058,
       "y": 996,
       "enabled": true
     },
     {
       "name": "Superior",
+      "difficulty": "most",
       "x": 1936,
       "y": 1434
     },
@@ -534,6 +617,7 @@
     },
     {
       "name": "Tempest",
+      "difficulty": "most",
       "x": 1998,
       "y": 1150
     },
@@ -544,21 +628,25 @@
     },
     {
       "name": "The Triangle",
+      "difficulty": "most",
       "x": 1258,
       "y": 1242
     },
     {
       "name": "The Triangle (Lower)",
+      "difficulty": "most",
       "x": 1175,
       "y": 1384
     },
     {
       "name": "Tiger",
+      "difficulty": "most",
       "x": 1294,
       "y": 727
     },
     {
       "name": "Triumph",
+      "difficulty": "most",
       "x": 1752,
       "y": 1542
     },
@@ -569,56 +657,67 @@
     },
     {
       "name": "Uphill Skin Track",
+      "difficulty": "more",
       "x": 2786,
       "y": 592
     },
     {
       "name": "Upper Nugget",
+      "difficulty": "more",
       "x": 532,
       "y": 799
     },
     {
       "name": "Upper Paradise",
+      "difficulty": "most",
       "x": 1210,
       "y": 1236
     },
     {
       "name": "Upper Ridge",
+      "difficulty": "more",
       "x": 2326,
       "y": 272
     },
     {
       "name": "Upper Triumph",
+      "difficulty": "most",
       "x": 1698,
       "y": 1149
     },
     {
       "name": "Wake Up Jim",
+      "difficulty": "more",
       "x": 2422,
       "y": 1602
     },
     {
       "name": "War Eagle",
+      "difficulty": "most",
       "x": 2132,
       "y": 1345
     },
     {
       "name": "War Eagle Cat Track",
+      "difficulty": "most",
       "x": 2201,
       "y": 1273
     },
     {
       "name": "Widowmaker",
+      "difficulty": "most",
       "x": 2304,
       "y": 705
     },
     {
       "name": "Wildcat",
+      "difficulty": "most",
       "x": 878,
       "y": 1044
     },
     {
       "name": "Wildcat (Top)",
+      "difficulty": "most",
       "x": 1120,
       "y": 769,
       "enabled": true
