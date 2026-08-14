@@ -330,17 +330,80 @@ summary:focus-visible,
     background: #fff0ee;
 }
 
-.search-shell {
-    position: relative;
-    margin-bottom: 8px !important;
+.location-search {
+    margin-bottom: 8px;
+}
+
+.search-field {
+    min-height: 46px;
+    padding: 0 13px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid #c9c9c4;
+    background: white;
+}
+
+.search-field:focus-within {
+    border-color: var(--mountain);
+    outline: 3px solid rgba(18, 103, 130, 0.22);
+}
+
+.search-field > svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    color: var(--ink-soft);
 }
 
 #locationSearch {
-    min-height: 40px;
-    padding: 8px 34px 8px 10px !important;
-    border: 1px solid var(--line) !important;
-    border-radius: 6px !important;
-    background: white !important;
+    width: 100%;
+    min-width: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0;
+    background: transparent !important;
+    color: var(--ink);
+    font-size: 0.875rem;
+}
+
+#locationSearch::-webkit-search-cancel-button {
+    display: none;
+}
+
+#clearSearchBtn {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    cursor: pointer;
+}
+
+#clearSearchBtn[hidden] {
+    display: none;
+}
+
+#clearSearchBtn:hover {
+    color: var(--ink);
+    background: var(--surface-muted);
+}
+
+#clearSearchBtn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.search-results {
+    min-height: 16px;
+    margin-top: 4px;
+    color: var(--ink-soft);
+    font-size: 0.75rem;
 }
 
 .name-list-container {

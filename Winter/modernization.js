@@ -328,9 +328,7 @@
     function improveSemantics() {
         const search = document.querySelector('#locationSearch');
         if (search) {
-            search.placeholder = 'Search locations';
             search.setAttribute('aria-label', 'Search locations');
-            search.closest('div')?.classList.add('search-shell');
         }
 
         const canvasElement = document.querySelector('#mapCanvas');
