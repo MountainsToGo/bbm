@@ -11,7 +11,11 @@
     const categoryPredicates = {
         all: () => true,
         lifts: location => location.type === 'chairlift' || location.type === 'magic-carpet',
-        lodges: location => Boolean(location.type) && location.type !== 'chairlift' && location.type !== 'magic-carpet',
+        places: location => Boolean(location.type) && location.type !== 'chairlift' && location.type !== 'magic-carpet',
+        lodges: location => location.type === 'lodge' || location.type === 'condominium',
+        bases: location => location.type === 'base-area',
+        landmarks: location => location.type === 'summit' || location.type === 'mountain-landmark',
+        activities: location => location.type === 'race-training' || location.type === 'food-truck' || location.type === 'tubing',
         runs: location => Boolean(location.difficulty),
         easier: location => location.difficulty === 'easier',
         more: location => location.difficulty === 'more',
@@ -196,61 +200,33 @@
     }
 
     function buildNavigation() {
-        const header = document.querySelector('.header');
-        if (!header) return;
+        const search = document.querySelector('.location-search');
+        if (!search) return;
 
-        const nav = document.createElement('nav');
-        nav.className = 'modern-nav';
-        nav.setAttribute('aria-label', 'Location category');
-        nav.innerHTML = `
-            <label class="visually-hidden" for="categorySelect">Location category</label>
-            <select class="visually-hidden" id="categorySelect" tabindex="-1" aria-hidden="true">
+        const field = document.createElement('label');
+        field.className = 'category-field';
+        field.htmlFor = 'categorySelect';
+        field.innerHTML = `
+            <span>Show</span>
+            <select id="categorySelect">
                 <option value="all">Full mountain</option>
                 <option value="lifts">Lifts & carpets</option>
                 <option value="runs">Runs</option>
                 <option value="easier">Easier runs</option>
                 <option value="more">More difficult runs</option>
                 <option value="most">Most difficult runs</option>
-                <option value="lodges">Places & facilities</option>
-            </select>
-            <details class="category-menu">
-                <summary><span class="category-menu-icon"></span><span class="category-menu-label">Full mountain</span></summary>
-                <div class="category-menu-panel">
-                    <button type="button" data-category="all">Full mountain</button>
-                    <button type="button" data-category="lifts">Lifts & carpets</button>
-                    <button type="button" data-category="runs">Runs</button>
-                    <button type="button" data-category="easier"><span class="difficulty-icon easier" aria-hidden="true"></span>Easier runs</button>
-                    <button type="button" data-category="more"><span class="difficulty-icon more" aria-hidden="true"></span>More difficult runs</button>
-                    <button type="button" data-category="most"><span class="difficulty-icon most" aria-hidden="true"></span>Most difficult runs</button>
-                    <button type="button" data-category="lodges">Places & facilities</button>
-                </div>
-            </details>`;
-        header.appendChild(nav);
+                <option value="places">Places & facilities</option>
+                <option value="lodges">Lodges & condominiums</option>
+                <option value="bases">Base areas</option>
+                <option value="landmarks">Summits & landmarks</option>
+                <option value="activities">Activities & services</option>
+            </select>`;
+        search.insertAdjacentElement('afterend', field);
 
-        const select = nav.querySelector('#categorySelect');
-        const menu = nav.querySelector('.category-menu');
-        const menuIcon = nav.querySelector('.category-menu-icon');
-        const menuLabel = nav.querySelector('.category-menu-label');
-        syncCategoryControl = () => {
-            const selectedOption = select.options[select.selectedIndex];
-            menuLabel.textContent = selectedOption.textContent;
-            menuIcon.className = `category-menu-icon${difficultyLabels[select.value] ? ` difficulty-icon ${select.value}` : ''}`;
-            menu.querySelectorAll('[data-category]').forEach(button => {
-                button.classList.toggle('active', button.dataset.category === select.value);
-            });
-        };
+        const select = field.querySelector('#categorySelect');
+        syncCategoryControl = () => { select.value = activeCategory; };
         select.addEventListener('change', event => {
-            syncCategoryControl();
             setCategory(event.target.value);
-        });
-        menu.querySelectorAll('[data-category]').forEach(button => button.addEventListener('click', () => {
-            select.value = button.dataset.category;
-            syncCategoryControl();
-            select.dispatchEvent(new Event('change'));
-            menu.open = false;
-        }));
-        document.addEventListener('pointerdown', event => {
-            if (menu.open && !menu.contains(event.target)) menu.open = false;
         });
         syncCategoryControl();
     }

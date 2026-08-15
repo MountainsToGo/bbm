@@ -30,12 +30,14 @@ body {
 
 button,
 input,
+select,
 summary {
     font: inherit;
 }
 
 button:focus-visible,
 input:focus-visible,
+select:focus-visible,
 summary:focus-visible,
 .name-list-item:focus-visible {
     outline: 3px solid var(--sun);
@@ -78,79 +80,6 @@ summary:focus-visible,
     margin: 0;
     color: #cfdae0;
     font-size: 0.9rem;
-}
-
-.modern-nav {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.category-menu {
-    position: relative;
-}
-
-.category-menu summary {
-    min-height: 40px;
-    min-width: 172px;
-    padding: 8px 30px 8px 12px;
-    border: 1px solid #60717b;
-    border-radius: 6px;
-    background: white;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    list-style: none;
-}
-
-.category-menu summary::after {
-    position: absolute;
-    right: 11px;
-    content: '▾';
-}
-
-.category-menu summary::-webkit-details-marker {
-    display: none;
-}
-
-.category-menu-panel {
-    position: absolute;
-    z-index: 60;
-    top: calc(100% + 5px);
-    right: 0;
-    width: 210px;
-    padding: 5px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    box-shadow: var(--shadow);
-    background: white;
-}
-
-.category-menu-panel button {
-    width: 100%;
-    min-height: 38px;
-    padding: 7px 9px;
-    border: 0;
-    border-radius: 4px;
-    background: transparent;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    text-align: left;
-    cursor: pointer;
-}
-
-.category-menu-panel button:hover,
-.category-menu-panel button.active {
-    background: var(--surface-muted);
-}
-
-.category-menu-icon:not(.difficulty-icon) {
-    display: none;
 }
 
 #practiceMode {
@@ -279,6 +208,30 @@ summary:focus-visible,
 
 .sidebar .controls #hideMapTextBtn {
     display: none;
+}
+
+.category-field {
+    margin: 0 0 10px;
+    display: grid;
+    gap: 5px;
+    color: var(--ink-soft);
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.category-field select {
+    width: 100%;
+    min-height: 40px;
+    padding: 0 34px 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: white;
+    color: var(--ink);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: none;
+    cursor: pointer;
 }
 
 .btn,
@@ -720,24 +673,6 @@ summary:focus-visible,
 
     .header p {
         display: none;
-    }
-
-    .modern-nav {
-        width: auto;
-        margin-left: auto;
-    }
-
-    .category-menu summary {
-        min-width: 126px;
-        max-width: 150px;
-        min-height: 36px;
-        font-size: 0.76rem;
-    }
-
-    .category-menu-label {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .main-content {

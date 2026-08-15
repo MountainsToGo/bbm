@@ -25,7 +25,8 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 
 ### 🎮 Controls
 - **Search Box**: Filter locations by name or type, such as chairlift, lodge, or food truck; press Enter to jump to the first result
-- **Location Selector**: Switch between the full mountain, lifts/carpets, all runs, places/facilities, or a specific run difficulty
+- **Category Selector**: Located below Search in the location panel; switch between the full mountain, lifts/carpets, all runs, places/facilities, or a specific run difficulty
+- **Place Filters**: Narrow places/facilities to lodges/condominiums, base areas, summits/landmarks, or activities/services
 - **Difficulty Filters**: Practice easier (green circle), more difficult (blue square), or most difficult (black diamond) runs; the dropdown and run list use the same icons
 - **Auto-Zoom**: Automatically zooms to each new location when enabled
 - **Labels**: Show/hide location names on the map
@@ -100,6 +101,7 @@ Both maps support mobile and tablet:
 - **Pinch to Zoom**: Two fingers to zoom in/out
 - **Drag to Pan**: Move around the map
 - **Tap**: Click locations and buttons
+- **Winter Progress Drawer**: Open the location panel to search, choose a category, or select a location
 - **Summer Trail Drawer**: Open the list from the header; it closes after selecting an item
 
 ---

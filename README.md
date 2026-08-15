@@ -12,7 +12,8 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 **[Open Winter Map](https://mountainstogo.github.io/bbm/Winter/learn.html)**
 
 - Quiz workflow with forgiving map-click targets and immediate feedback
-- Filters for the full mountain, lifts/carpets, runs, places/facilities, and each run difficulty
+- Sidebar category selector below search, with filters for the full mountain, lifts/carpets, runs, and each run difficulty
+- Place filters for all places/facilities, lodges/condominiums, base areas, summits/landmarks, and activities/services
 - Matching difficulty icons plus semantic icons for lifts, lodges, base areas, landmarks, and facilities
 - Search, shuffle, labels, map-text visibility, auto-zoom, and map zoom controls
 - Correct, incorrect, skipped, streak, remaining, and accuracy tracking
