@@ -9,11 +9,12 @@
         "Deer Point Trail": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A long cross-country descent and traverse on the east side of the mountain." },
         "Elk Meadows": { difficulty: "easier", type: "XC", uses: ["Bike", "Hike"], description: "An easier cross-country trail traversing the upper mountain." },
         "Face": { difficulty: "more", type: "XC", uses: ["Bike", "Hike"], description: "A more difficult cross-country line through the upper central mountain." },
+        "New to This": { difficulty: "easier", type: "DH", uses: ["Bike"], description: "An easier downhill mountain bike run." },
         "Packing Trail": { difficulty: "most", type: "XC", uses: ["Bike", "Hike"], description: "A technical cross-country trail near Shafer Butte." },
         "Shindig": { difficulty: "most", type: "XC", uses: ["Bike", "Hike"], description: "A most-difficult cross-country trail with technical terrain." },
         "Sunshine": { difficulty: "easier", type: "XC", uses: ["Bike", "Hike"], description: "An easier cross-country trail in the Morning Star zone." },
         "Tempest": { difficulty: "most", type: "XC", uses: ["Bike", "Hike"], description: "A most-difficult technical cross-country trail on the west side." },
-        "Return Road": { difficulty: "easier", type: "Road", uses: ["Bike", "Hike"], description: "A 1.8-mile return road connecting the lower mountain back toward the base area." }
+        "Return Road": { difficulty: "unclassified", type: "Road", uses: ["Bike", "Hike"], description: "A 1.8-mile return road connecting the lower mountain back toward the base area." }
     };
 
     const state = {
