@@ -476,9 +476,10 @@
                         <label for="locationDifficulty">Run Difficulty:</label>
                         <select id="locationDifficulty" onchange="if (this.value) document.getElementById('locationType').value = ''">
                             <option value="">Not a run / unclassified</option>
-                            <option value="easier">● Easier</option>
-                            <option value="more">■ More difficult</option>
-                            <option value="most">◆ Most difficult</option>
+                            <option value="easier">● Green run</option>
+                            <option value="more">■ Blue run</option>
+                            <option value="most">◆ Diamond</option>
+                            <option value="double">◆◆ Double Diamond</option>
                         </select>
                     </div>
 
@@ -1407,9 +1408,10 @@
                         <label class="location-coords" for="difficulty-${index}">Difficulty</label>
                         <select id="difficulty-${index}" onchange="updateLocationDifficulty(${index}, this.value)">
                             <option value="" ${!loc.difficulty ? 'selected' : ''}>Not a run</option>
-                            <option value="easier" ${loc.difficulty === 'easier' ? 'selected' : ''}>● Easier</option>
-                            <option value="more" ${loc.difficulty === 'more' ? 'selected' : ''}>■ More difficult</option>
-                            <option value="most" ${loc.difficulty === 'most' ? 'selected' : ''}>◆ Most difficult</option>
+                            <option value="easier" ${loc.difficulty === 'easier' ? 'selected' : ''}>● Green run</option>
+                            <option value="more" ${loc.difficulty === 'more' ? 'selected' : ''}>■ Blue run</option>
+                            <option value="most" ${loc.difficulty === 'most' ? 'selected' : ''}>◆ Diamond</option>
+                            <option value="double" ${loc.difficulty === 'double' ? 'selected' : ''}>◆◆ Double Diamond</option>
                         </select>
                         <label class="location-coords" for="type-${index}">Place type</label>
                         <select id="type-${index}" onchange="updateLocationType(${index}, this.value)">

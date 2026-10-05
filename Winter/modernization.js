@@ -19,13 +19,15 @@
         runs: location => Boolean(location.difficulty),
         easier: location => location.difficulty === 'easier',
         more: location => location.difficulty === 'more',
-        most: location => location.difficulty === 'most'
+        most: location => location.difficulty === 'most',
+        double: location => location.difficulty === 'double'
     };
 
     const difficultyLabels = {
-        easier: 'Easier',
-        more: 'More difficult',
-        most: 'Most difficult'
+        easier: 'Green',
+        more: 'Blue',
+        most: 'Diamond',
+        double: 'Double Diamond'
     };
 
     const locationTypes = {
@@ -203,30 +205,78 @@
         const search = document.querySelector('.location-search');
         if (!search) return;
 
-        const field = document.createElement('label');
+        const categoryOptions = [
+            ['all', 'Full mountain'],
+            ['lifts', 'Lifts & carpets'],
+            ['runs', 'Runs'],
+            ['easier', '🟢 Green runs'],
+            ['more', '🟦 Blue runs'],
+            ['most', '◆ Diamond runs'],
+            ['double', '◆◆ Double Diamond runs'],
+            ['places', 'Places & facilities'],
+            ['lodges', 'Lodges & condominiums'],
+            ['bases', 'Base areas'],
+            ['landmarks', 'Summits & landmarks'],
+            ['activities', 'Activities & services']
+        ];
+        const field = document.createElement('div');
         field.className = 'category-field';
-        field.htmlFor = 'categorySelect';
         field.innerHTML = `
-            <span>Show</span>
-            <select id="categorySelect">
-                <option value="all">Full mountain</option>
-                <option value="lifts">Lifts & carpets</option>
-                <option value="runs">Runs</option>
-                <option value="easier">Easier runs</option>
-                <option value="more">More difficult runs</option>
-                <option value="most">Most difficult runs</option>
-                <option value="places">Places & facilities</option>
-                <option value="lodges">Lodges & condominiums</option>
-                <option value="bases">Base areas</option>
-                <option value="landmarks">Summits & landmarks</option>
-                <option value="activities">Activities & services</option>
-            </select>`;
+            <span id="categoryLabel">Show</span>
+            <div class="category-picker">
+                <button type="button" id="categorySelect" aria-labelledby="categoryLabel categorySelectValue" aria-haspopup="listbox" aria-expanded="false">
+                    <span id="categorySelectValue">Full mountain</span>
+                    <span class="category-chevron" aria-hidden="true">⌄</span>
+                </button>
+                <div id="categoryMenu" class="category-menu" role="listbox" aria-labelledby="categoryLabel" hidden>
+                    ${categoryOptions.map(([value, label]) => `<button type="button" class="category-option" role="option" data-value="${value}">${label}</button>`).join('')}
+                </div>
+            </div>`;
         search.insertAdjacentElement('afterend', field);
 
+        const picker = field.querySelector('.category-picker');
         const select = field.querySelector('#categorySelect');
-        syncCategoryControl = () => { select.value = activeCategory; };
-        select.addEventListener('change', event => {
-            setCategory(event.target.value);
+        const valueLabel = field.querySelector('#categorySelectValue');
+        const menu = field.querySelector('#categoryMenu');
+        const options = [...field.querySelectorAll('.category-option')];
+        const setMenuOpen = open => {
+            if (open) {
+                menu.hidden = false;
+                menu.classList.remove('opens-up');
+                const pickerBounds = picker.getBoundingClientRect();
+                const sidebarBounds = picker.closest('.sidebar').getBoundingClientRect();
+                const spaceAbove = pickerBounds.top - sidebarBounds.top;
+                const spaceBelow = sidebarBounds.bottom - pickerBounds.bottom;
+                const opensUp = spaceBelow < 120 && spaceAbove > spaceBelow;
+                menu.classList.toggle('opens-up', opensUp);
+                const availableSpace = opensUp ? spaceAbove : spaceBelow;
+                menu.style.maxHeight = `${Math.max(120, Math.min(360, availableSpace - 8))}px`;
+            } else {
+                menu.hidden = true;
+            }
+            select.setAttribute('aria-expanded', String(open));
+        };
+        syncCategoryControl = () => {
+            const selected = categoryOptions.find(([value]) => value === activeCategory) || categoryOptions[0];
+            valueLabel.textContent = selected[1];
+            options.forEach(option => option.setAttribute('aria-selected', String(option.dataset.value === activeCategory)));
+        };
+        select.addEventListener('click', () => {
+            setMenuOpen(menu.hidden);
+        });
+        options.forEach(option => option.addEventListener('click', () => {
+            setMenuOpen(false);
+            setCategory(option.dataset.value);
+            select.focus();
+        }));
+        field.addEventListener('keydown', event => {
+            if (event.key === 'Escape') {
+                setMenuOpen(false);
+                select.focus();
+            }
+        });
+        document.addEventListener('pointerdown', event => {
+            if (!picker.contains(event.target)) setMenuOpen(false);
         });
         syncCategoryControl();
     }
@@ -328,8 +378,33 @@
             originalUpdateList();
             document.querySelectorAll('#namesList .name-list-item').forEach((item, position) => {
                 const location = locations[displayOrder[position]];
-                const icon = location ? locationIcon(location) : '';
-                if (icon) item.insertAdjacentHTML('afterbegin', icon);
+                if (!location) return;
+
+                const icon = locationIcon(location);
+                const prefix = item.classList.contains('completed') ? '✓' : item.classList.contains('current') ? '→' : item.classList.contains('pending') && skippedIndices.has(displayOrder[position]) ? '⏭️' : '';
+                const copy = document.createElement('span');
+                copy.className = 'name-list-item-copy';
+
+                if (prefix) {
+                    const prefixNode = document.createElement('span');
+                    prefixNode.className = 'name-list-item-prefix';
+                    prefixNode.textContent = prefix;
+                    copy.appendChild(prefixNode);
+                }
+
+                const name = document.createElement('span');
+                name.className = 'name-list-item-name';
+                name.textContent = location.name;
+                copy.appendChild(name);
+
+                item.replaceChildren();
+                if (icon) {
+                    const iconWrapper = document.createElement('span');
+                    iconWrapper.className = 'name-list-item-icon';
+                    iconWrapper.innerHTML = icon;
+                    item.appendChild(iconWrapper);
+                }
+                item.appendChild(copy);
             });
             if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 2, width: 16, height: 16 } });
         };

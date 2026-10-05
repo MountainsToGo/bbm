@@ -27,7 +27,7 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 - **Search Box**: Filter locations by name or type, such as chairlift, lodge, or food truck; press Enter to jump to the first result
 - **Category Selector**: Located below Search in the location panel; switch between the full mountain, lifts/carpets, all runs, places/facilities, or a specific run difficulty
 - **Place Filters**: Narrow places/facilities to lodges/condominiums, base areas, summits/landmarks, or activities/services
-- **Difficulty Filters**: Practice easier (green circle), more difficult (blue square), or most difficult (black diamond) runs; the dropdown and run list use the same icons
+- **Difficulty Filters**: Practice Green, Blue, Diamond, or Double Diamond runs; the dropdown and run list use the matching official symbols
 - **Auto-Zoom**: Automatically zooms to each new location when enabled
 - **Labels**: Show/hide location names on the map
 - **Zoom In/Out**: 100% to 1000% zoom range
@@ -48,7 +48,7 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 - **Green** = Completed correctly
 - **Gray** = Not yet attempted
 
-Run names show the official difficulty symbol. Single and double black-diamond runs are grouped under **Most difficult**.
+Run names show only the official difficulty symbol: green circle, blue square, black diamond, or double black diamond.
 
 Other locations use icons that match what they represent: cable cars with numbered badges for chairlifts 1-7, chevrons for magic carpet conveyors, houses for lodges, a building for the condominiums, map pins for base areas, a flag for ski-racing training, a truck for The Beach, a tube for Tubing Hill, and mountain icons for summits and landmarks.
 

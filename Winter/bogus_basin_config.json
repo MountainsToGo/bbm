@@ -209,7 +209,7 @@
     },
     {
       "name": "Greenie's Run",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1959,
       "y": 1081
     },
@@ -257,7 +257,7 @@
     },
     {
       "name": "Last Chance",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1623,
       "y": 865
     },
@@ -269,13 +269,13 @@
     },
     {
       "name": "Liberty",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1374,
       "y": 809
     },
     {
       "name": "Lightning",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1024,
       "y": 1069
     },
@@ -311,7 +311,7 @@
     },
     {
       "name": "Lucky Friday",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 761,
       "y": 1354
     },
@@ -415,7 +415,7 @@
     },
     {
       "name": "Omar's Inspiration",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1793,
       "y": 980
     },
@@ -439,7 +439,7 @@
     },
     {
       "name": "Pine Creek Bowl",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1170,
       "y": 1093
     },
@@ -475,7 +475,7 @@
     },
     {
       "name": "Power Line",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1715,
       "y": 930
     },
@@ -636,7 +636,7 @@
     },
     {
       "name": "Tempest",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1998,
       "y": 1150
     },
@@ -660,7 +660,7 @@
     },
     {
       "name": "Tiger",
-      "difficulty": "most",
+      "difficulty": "double",
       "x": 1294,
       "y": 727
     },
