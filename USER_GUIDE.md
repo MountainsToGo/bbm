@@ -35,7 +35,7 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 - **Skip**: Skip difficult locations and return later
 - **Scramble List**: Shuffle the location order
 - **Hide Map Text**: Cover trail/lift names with black overlays for advanced practice
-- **Know the Code**: View the ski/snowboard responsibility code
+- **Know the Code**: Open the [ski/snowboard responsibility-code image](images/responsibility-code.jpg) in a new tab
 - **Mountain Host Tour**: Animated route tracing of the guided tour
 
 ### 📊 Progress Tracking

@@ -19,6 +19,7 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 - Correct, incorrect, skipped, streak, remaining, and accuracy tracking
 - Progress restored from local browser storage between visits
 - Mountain Host Tour route plus quick access to learning and safety resources
+- **Know the Code** opens the bundled [ski/snowboard responsibility-code image](images/responsibility-code.jpg) in a new tab
 - Responsive two-column desktop layout and mobile progress drawer
 
 ### 🥾 Summer Map
