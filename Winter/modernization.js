@@ -1,11 +1,9 @@
 (() => {
     'use strict';
 
-    const STORAGE_KEY = 'bogus-basin-learning-state-v2';
     let sourceLocations = [];
     let activeCategory = 'all';
-    let firstInitialization = true;
-    let suppressPersistence = true;
+    const visitProgress = new Map();
     let syncCategoryControl = () => {};
 
     const categoryPredicates = {
@@ -57,53 +55,26 @@
         return `<span class="location-type-icon ${location.type}" aria-label="${type.label}" title="${type.label}"><i data-lucide="${type.icon}" aria-hidden="true"></i>${liftNumber ? `<span class="lift-number">${liftNumber}</span>` : ''}</span>`;
     }
 
-    function readSavedState() {
-        try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-        } catch (error) {
-            console.warn('Could not read saved learning state.', error);
-            return null;
-        }
+    function rememberProgress() {
+        locations.forEach((location, index) => {
+            visitProgress.set(location.name, {
+                completed: completedIndices.has(index),
+                skipped: skippedIndices.has(index),
+                missed: missedIndices.has(index)
+            });
+        });
     }
 
-    function saveState() {
-        if (suppressPersistence || !locations.length) return;
-
-        const state = {
-            category: activeCategory,
-            currentName: currentIndex < locations.length ? locations[currentIndex].name : null,
-            completedNames: [...completedIndices].map(index => locations[index]?.name).filter(Boolean),
-            skippedNames: [...skippedIndices].map(index => locations[index]?.name).filter(Boolean),
-            missedNames: [...missedIndices].map(index => locations[index]?.name).filter(Boolean),
-            correctCount,
-            incorrectCount,
-            streak,
-            updatedAt: new Date().toISOString()
-        };
-
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    function restoreState() {
-        const state = readSavedState();
-        if (!state || state.category !== activeCategory) return;
-
-        const indexByName = new Map(locations.map((location, index) => [location.name, index]));
-        completedIndices = new Set((state.completedNames || []).map(name => indexByName.get(name)).filter(Number.isInteger));
-        skippedIndices = new Set((state.skippedNames || []).map(name => indexByName.get(name)).filter(Number.isInteger));
-        missedIndices = new Set((state.missedNames || []).map(name => indexByName.get(name)).filter(Number.isInteger));
-        correctCount = Number(state.correctCount) || completedIndices.size;
-        incorrectCount = Number(state.incorrectCount) || 0;
-        streak = Number(state.streak) || 0;
-
-        if (state.currentName && indexByName.has(state.currentName)) {
-            currentIndex = indexByName.get(state.currentName);
-        } else if (completedIndices.size === locations.length) {
-            currentIndex = locations.length;
-        } else {
-            currentIndex = locations.findIndex((_, index) => !completedIndices.has(index) && !skippedIndices.has(index));
-            if (currentIndex < 0) currentIndex = locations.length;
-        }
+    function restoreProgress() {
+        completedIndices = new Set();
+        skippedIndices = new Set();
+        missedIndices = new Set();
+        locations.forEach((location, index) => {
+            const progress = visitProgress.get(location.name);
+            if (progress?.completed) completedIndices.add(index);
+            if (progress?.skipped) skippedIndices.add(index);
+            if (progress?.missed) missedIndices.add(index);
+        });
     }
 
     function updateAccuracy() {
@@ -119,18 +90,39 @@
         if (!instruction || !targetLabel) return;
 
         document.body.dataset.experienceMode = 'quiz';
-        const name = currentIndex < locations.length ? locations[currentIndex].name : 'All locations learned';
-        targetLabel.textContent = 'Find this location';
-        instruction.innerHTML = `<strong>Click the map</strong> where “<span id="instructionName">${name}</span>” is located.`;
+        const hasTarget = currentIndex < locations.length;
+        targetLabel.textContent = hasTarget ? 'Find this location' : 'Progress';
+        instruction.innerHTML = hasTarget
+            ? '<strong>Click the map</strong> where <span id="instructionName"></span> is located.'
+            : '<span id="instructionName"></span>';
+        instruction.querySelector('#instructionName').textContent = hasTarget ? locations[currentIndex].name
+            : !locations.length ? 'No locations in this category.'
+            : completedIndices.size === locations.length ? 'All locations learned' : 'Select a skipped location to retry.';
     }
 
     function setCategory(category) {
         if (!categoryPredicates[category] || !sourceLocations.length) return;
+        if (category === activeCategory) return;
+        rememberProgress();
+        const currentName = locations[currentIndex]?.name;
         activeCategory = category;
         locations = sourceLocations.filter(categoryPredicates[category]);
-        localStorage.removeItem(STORAGE_KEY);
-        initializeMode();
-        updateQuizCopy();
+        displayOrder = locations.map((_, index) => index);
+        restoreProgress();
+        currentIndex = locations.findIndex(location => location.name === currentName);
+        if (currentIndex < 0 || completedIndices.has(currentIndex) || skippedIndices.has(currentIndex)) {
+            currentIndex = locations.findIndex((_, index) => !completedIndices.has(index) && !skippedIndices.has(index));
+        }
+        if (currentIndex < 0) currentIndex = locations.length;
+        highlightedLocationIndex = null;
+        clickMarkers = [];
+        celebrationActive = false;
+        document.querySelector('#locationSearch').value = '';
+        syncCategoryControl();
+        updateUI();
+        filterLocations();
+        if (autoZoomEnabled && currentIndex < locations.length) zoomToLocation(currentIndex);
+        drawMap();
     }
 
     function decorateToolbar() {
@@ -302,12 +294,33 @@
         toggle.title = 'Open progress and locations';
         toggle.setAttribute('aria-label', 'Open progress and locations');
         toggle.setAttribute('aria-expanded', 'false');
+        sidebar.id = sidebar.id || 'progressSidebar';
+        toggle.setAttribute('aria-controls', sidebar.id);
+        const drawerMedia = window.matchMedia('(max-width: 900px)');
+        const syncDrawer = () => {
+            const open = sidebar.classList.contains('is-open');
+            sidebar.inert = drawerMedia.matches && !open;
+            if (drawerMedia.matches && open) {
+                sidebar.setAttribute('role', 'dialog');
+                sidebar.setAttribute('aria-modal', 'true');
+                sidebar.setAttribute('aria-label', 'Progress and locations');
+            } else {
+                sidebar.removeAttribute('role');
+                sidebar.removeAttribute('aria-modal');
+                sidebar.removeAttribute('aria-label');
+            }
+        };
         const setDrawerOpen = open => {
             sidebar.classList.toggle('is-open', open);
             toggle.setAttribute('aria-expanded', String(open));
             toggle.textContent = open ? '×' : '☰';
             toggle.title = open ? 'Close progress and locations' : 'Open progress and locations';
             toggle.setAttribute('aria-label', open ? 'Close progress and locations' : 'Open progress and locations');
+            syncDrawer();
+            if (drawerMedia.matches) {
+                if (open) closeButton.focus();
+                else toggle.focus();
+            }
         };
         toggle.addEventListener('click', () => setDrawerOpen(!sidebar.classList.contains('is-open')));
         taskRow.appendChild(toggle);
@@ -324,11 +337,29 @@
         sidebar.insertBefore(closeButton, sidebar.firstChild);
 
         document.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && sidebar.classList.contains('is-open')) {
+            if (!drawerMedia.matches || !sidebar.classList.contains('is-open')) return;
+            if (event.key === 'Escape') {
+                if (event.defaultPrevented) return;
                 setDrawerOpen(false);
-                toggle.focus();
+            } else if (event.key === 'Tab') {
+                const controls = [...sidebar.querySelectorAll('button, input, select, a[href], [tabindex]')]
+                    .filter(control => !control.disabled && control.tabIndex >= 0 && control.getClientRects().length);
+                const first = controls[0];
+                const last = controls[controls.length - 1];
+                if (event.shiftKey && (document.activeElement === first || !sidebar.contains(document.activeElement))) {
+                    event.preventDefault();
+                    last?.focus();
+                } else if (!event.shiftKey && (document.activeElement === last || !sidebar.contains(document.activeElement))) {
+                    event.preventDefault();
+                    first?.focus();
+                }
             }
         });
+        drawerMedia.addEventListener('change', () => {
+            sidebar.classList.remove('is-open');
+            setDrawerOpen(false);
+        });
+        syncDrawer();
 
         const listHeading = sidebar.querySelector('h2');
         if (listHeading) {
@@ -376,37 +407,40 @@
         const originalUpdateList = updateList;
         updateList = function modernizedUpdateList() {
             originalUpdateList();
-            document.querySelectorAll('#namesList .name-list-item').forEach((item, position) => {
-                const location = locations[displayOrder[position]];
+            let iconsChanged = false;
+            document.querySelectorAll('#namesList .name-list-item').forEach(item => {
+                const locationIndex = Number(item.dataset.locationIndex);
+                const location = locations[locationIndex];
                 if (!location) return;
 
-                const icon = locationIcon(location);
-                const prefix = item.classList.contains('completed') ? '✓' : item.classList.contains('current') ? '→' : item.classList.contains('pending') && skippedIndices.has(displayOrder[position]) ? '⏭️' : '';
-                const copy = document.createElement('span');
-                copy.className = 'name-list-item-copy';
-
-                if (prefix) {
+                const prefix = item.classList.contains('completed') ? '✓' : item.classList.contains('current') ? '→' : item.classList.contains('pending') && skippedIndices.has(locationIndex) ? '⏭️' : '';
+                if (item.dataset.decoratedName !== location.name) {
+                    const icon = locationIcon(location);
+                    const copy = document.createElement('span');
+                    copy.className = 'name-list-item-copy';
                     const prefixNode = document.createElement('span');
                     prefixNode.className = 'name-list-item-prefix';
-                    prefixNode.textContent = prefix;
                     copy.appendChild(prefixNode);
+                    const name = document.createElement('span');
+                    name.className = 'name-list-item-name';
+                    name.textContent = location.name;
+                    copy.appendChild(name);
+                    item.replaceChildren();
+                    if (icon) {
+                        const iconWrapper = document.createElement('span');
+                        iconWrapper.className = 'name-list-item-icon';
+                        iconWrapper.innerHTML = icon;
+                        item.appendChild(iconWrapper);
+                        iconsChanged = true;
+                    }
+                    item.appendChild(copy);
+                    item.dataset.decoratedName = location.name;
                 }
-
-                const name = document.createElement('span');
-                name.className = 'name-list-item-name';
-                name.textContent = location.name;
-                copy.appendChild(name);
-
-                item.replaceChildren();
-                if (icon) {
-                    const iconWrapper = document.createElement('span');
-                    iconWrapper.className = 'name-list-item-icon';
-                    iconWrapper.innerHTML = icon;
-                    item.appendChild(iconWrapper);
-                }
-                item.appendChild(copy);
+                const prefixNode = item.querySelector('.name-list-item-prefix');
+                if (prefixNode.textContent !== prefix) prefixNode.textContent = prefix;
+                prefixNode.hidden = !prefix;
             });
-            if (window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 2, width: 16, height: 16 } });
+            if (iconsChanged && window.lucide) lucide.createIcons({ attrs: { 'stroke-width': 2, width: 16, height: 16 } });
         };
 
         const originalUpdateUI = updateUI;
@@ -414,40 +448,28 @@
             originalUpdateUI();
             updateAccuracy();
             updateQuizCopy();
-            saveState();
+            rememberProgress();
         };
 
         const originalInitializeMode = initializeMode;
         initializeMode = function modernizedInitializeMode() {
-            suppressPersistence = true;
+            visitProgress.clear();
+            highlightedLocationIndex = null;
+            document.querySelector('#locationSearch').value = '';
             originalInitializeMode();
             if (!sourceLocations.length) sourceLocations = [...locations];
-            if (firstInitialization) {
-                const saved = readSavedState();
-                if (saved?.category && categoryPredicates[saved.category] && saved.category !== 'all') {
-                    activeCategory = saved.category;
-                    locations = sourceLocations.filter(categoryPredicates[activeCategory]);
-                    originalInitializeMode();
-                }
-                restoreState();
-                firstInitialization = false;
-            }
-            suppressPersistence = false;
-            originalUpdateUI();
-            updateAccuracy();
-            updateQuizCopy();
-            const categorySelect = document.querySelector('#categorySelect');
-            if (categorySelect) categorySelect.value = activeCategory;
             syncCategoryControl();
-            saveState();
+            filterLocations();
         };
 
         resetPractice = function modernizedResetPractice() {
             if (confirm('Start over from the beginning?')) {
-                localStorage.removeItem(STORAGE_KEY);
                 initializeMode();
             }
         };
+        window.addEventListener('pageshow', event => {
+            if (event.persisted) initializeMode();
+        });
     }
 
     function initializeModernUI() {

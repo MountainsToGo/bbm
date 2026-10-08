@@ -922,6 +922,9 @@
         const canvas = document.getElementById('mapCanvas');
         const ctx = canvas.getContext('2d');
         const img = new Image();
+        const baseMapCanvas = document.createElement('canvas');
+        const baseMapContext = baseMapCanvas.getContext('2d');
+        let baseMapKey = '';
 
         // Load image first
         img.onload = function() {
@@ -1076,40 +1079,45 @@
             drawMap();
         }
 
-        function drawMap() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            
-            // Draw black overlays to hide trail/lift text on map if enabled
-            if (hideMapText && textOverlays.length > 0) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 1.0)';
-                textOverlays.forEach((overlay, index) => {
-                    // Skip overlays that have been revealed by correct answers
-                    if (revealedOverlays.has(index)) {
-                        return;
-                    }
-                    
-                    ctx.save();
-                    
-                    // Apply rotation if specified
-                    if (overlay.rotation) {
+        function drawBaseMap() {
+            const key = `${canvas.width}:${canvas.height}:${canvasScale}:${hideMapText}:${[...revealedOverlays].join(',')}`;
+            if (baseMapKey !== key) {
+                baseMapCanvas.width = canvas.width;
+                baseMapCanvas.height = canvas.height;
+                baseMapContext.drawImage(img, 0, 0, canvas.width, canvas.height);
+                if (hideMapText) {
+                    textOverlays.forEach((overlay, index) => {
+                        if (revealedOverlays.has(index)) return;
+                        const radius = Math.min(6, overlay.width / 5, overlay.height / 5) * canvasScale;
                         const centerX = (overlay.x + overlay.width / 2) * canvasScale;
                         const centerY = (overlay.y + overlay.height / 2) * canvasScale;
-                        ctx.translate(centerX, centerY);
-                        ctx.rotate((overlay.rotation * Math.PI) / 180);
-                        ctx.translate(-centerX, -centerY);
-                    }
-                    
-                    ctx.fillRect(
-                        overlay.x * canvasScale,
-                        overlay.y * canvasScale,
-                        overlay.width * canvasScale,
-                        overlay.height * canvasScale
-                    );
-                    
-                    ctx.restore();
-                });
+                        baseMapContext.save();
+                        baseMapContext.translate(centerX, centerY);
+                        baseMapContext.rotate(((overlay.rotation || 0) * Math.PI) / 180);
+                        baseMapContext.fillStyle = '#edf2f4';
+                        baseMapContext.strokeStyle = '#aebec6';
+                        baseMapContext.lineWidth = canvasScale;
+                        baseMapContext.beginPath();
+                        baseMapContext.roundRect(
+                            -overlay.width * canvasScale / 2 - radius,
+                            -overlay.height * canvasScale / 2 - radius,
+                            overlay.width * canvasScale + radius * 2,
+                            overlay.height * canvasScale + radius * 2,
+                            radius
+                        );
+                        baseMapContext.fill();
+                        baseMapContext.stroke();
+                        baseMapContext.restore();
+                    });
+                }
+                baseMapKey = key;
             }
+            ctx.drawImage(baseMapCanvas, 0, 0);
+        }
+
+        function drawMap() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBaseMap();
             
             // Draw white boxes at all location coordinates
             locations.forEach((loc, index) => {
@@ -1420,7 +1428,7 @@
             }
             
             // Check if all locations completed - trigger celebration animation
-            if (completedIndices.size === locations.length && !celebrationActive) {
+            if (locations.length > 0 && completedIndices.size === locations.length && !celebrationActive) {
                 celebrationActive = true;
                 celebrationStartTime = Date.now();
                 // Initialize snowflakes
@@ -1864,19 +1872,21 @@
         }
 
         function updateUI() {
+            const instruction = document.querySelector('.instruction');
+            const allCompleted = locations.length > 0 && completedIndices.size === locations.length;
+            instruction.style.background = allCompleted ? '#d1fae5' : '';
+            instruction.style.borderColor = allCompleted ? '#10b981' : '';
             if (currentIndex < locations.length) {
                 document.getElementById('currentName').textContent = locations[currentIndex].name;
                 document.getElementById('instructionName').textContent = locations[currentIndex].name;
             } else {
-                document.getElementById('currentName').textContent = '✓ Complete!';
-                document.getElementById('instructionName').textContent = 'All locations learned';
-                document.querySelector('.instruction').style.background = '#d1fae5';
-                document.querySelector('.instruction').style.borderColor = '#10b981';
+                document.getElementById('currentName').textContent = allCompleted ? '✓ Complete!' : locations.length ? 'Review skipped locations' : 'No locations';
+                document.getElementById('instructionName').textContent = allCompleted ? 'All locations learned' : 'Select a skipped location to retry';
             }
 
             const completed = completedIndices.size;
             const remaining = locations.length - completed;
-            const percent = Math.round((completed / locations.length) * 100);
+            const percent = locations.length ? Math.round((completed / locations.length) * 100) : 0;
 
             document.getElementById('completedCount').textContent = completed;
             document.getElementById('remainingCount').textContent = remaining;
@@ -1893,75 +1903,38 @@
 
         function updateList() {
             const list = document.getElementById('namesList');
-            list.innerHTML = '';
-            // Use displayOrder to control the order items appear in the list
-            displayOrder.forEach(index => {
+            const visibleIndices = getVisibleLocationIndices();
+            const visibleSet = new Set(visibleIndices);
+            const existingItems = new Map([...list.children].map(item => [Number(item.dataset.locationIndex), item]));
+            existingItems.forEach((item, index) => {
+                if (!visibleSet.has(index)) item.remove();
+            });
+            visibleIndices.forEach((index, position) => {
                 const loc = locations[index];
-                const item = document.createElement('button');
-                item.type = 'button';
-                item.className = 'name-list-item';
-                
-                if (completedIndices.has(index)) {
-                    // Completed (correctly answered) - NOW CLICKABLE to zoom/view
-                    item.classList.add('completed');
-                    item.innerHTML = `✓ ${loc.name}`;
+                let item = existingItems.get(index);
+                if (!item) {
+                    item = document.createElement('button');
+                    item.type = 'button';
+                    item.dataset.locationIndex = index;
+                    item.textContent = loc.name;
                     item.style.cursor = 'pointer';
                     item.onclick = function() {
-                        // Allow clicking completed items to zoom to them
-                        highlightedLocationIndex = index; // Set which location to highlight
-                        if (autoZoomEnabled) {
-                            zoomToLocation(index);
+                        if (completedIndices.has(index)) {
+                            highlightedLocationIndex = index;
+                        } else {
+                            highlightedLocationIndex = null;
+                            currentIndex = index;
+                            skippedIndices.delete(index);
+                            updateUI();
                         }
-                        // Don't change currentIndex, just zoom to view
-                        drawMap();
-                    };
-                } else if (skippedIndices.has(index)) {
-                    // Skipped - clickable to jump back to it
-                    item.classList.add('pending');
-                    item.innerHTML = `⏭️ ${loc.name}`;
-                    item.style.cursor = 'pointer';
-                    item.onclick = function() {
-                        highlightedLocationIndex = null; // Reset to use currentIndex
-                        currentIndex = index;
-                        skippedIndices.delete(index); // Remove from skipped when retrying
-                        if (autoZoomEnabled) {
-                            zoomToLocation(index);
-                        }
-                        updateUI();
-                        drawMap();
-                    };
-                } else if (index === currentIndex) {
-                    // Current - clickable to stay on it
-                    item.classList.add('current');
-                    if (missedIndices.has(index)) item.classList.add('incorrect');
-                    item.innerHTML = `→ ${loc.name}`;
-                    item.style.cursor = 'pointer';
-                    item.onclick = function() {
-                        // Allow re-selecting current item
-                        highlightedLocationIndex = null; // Reset to use currentIndex
-                        if (autoZoomEnabled) {
-                            zoomToLocation(index);
-                        }
-                        updateUI();
-                        drawMap();
-                    };
-                } else {
-                    // Pending or not yet reached - make all clickable!
-                    item.classList.add('pending');
-                    item.innerHTML = loc.name;
-                    item.style.cursor = 'pointer';
-                    item.onclick = function() {
-                        highlightedLocationIndex = null; // Reset to use currentIndex
-                        currentIndex = index;
-                        if (autoZoomEnabled) {
-                            zoomToLocation(index);
-                        }
-                        updateUI();
+                        if (autoZoomEnabled) zoomToLocation(index);
                         drawMap();
                     };
                 }
-                
-                list.appendChild(item);
+                const state = completedIndices.has(index) ? 'completed' : index === currentIndex ? 'current' : 'pending';
+                const className = `name-list-item ${state}${index === currentIndex && missedIndices.has(index) ? ' incorrect' : ''}`;
+                if (item.className !== className) item.className = className;
+                if (list.children[position] !== item) list.insertBefore(item, list.children[position] || null);
             });
         }
 
@@ -2010,20 +1983,16 @@
 
         // Helper function to move to the next incomplete location in displayOrder
         function moveToNextLocation() {
-            // Find the current location's position in displayOrder
             const currentPosition = displayOrder.indexOf(currentIndex);
-            
-            // Start searching from the next position in displayOrder
-            for (let i = currentPosition + 1; i < displayOrder.length; i++) {
-                const locationIndex = displayOrder[i];
-                // Find first location that isn't completed or skipped
+            highlightedLocationIndex = null;
+            for (let offset = 1; offset <= displayOrder.length; offset++) {
+                const locationIndex = displayOrder[(currentPosition + offset) % displayOrder.length];
                 if (!completedIndices.has(locationIndex) && !skippedIndices.has(locationIndex)) {
                     currentIndex = locationIndex;
+                    if (autoZoomEnabled) zoomToLocation(currentIndex);
                     return;
                 }
             }
-            
-            // If no incomplete locations found after current position, we've reached the end
             currentIndex = locations.length;
         }
 
@@ -2100,32 +2069,26 @@
             }
         }
         
+        function getVisibleLocationIndices() {
+            const searchTerm = document.getElementById('locationSearch').value.trim().toLowerCase();
+            return displayOrder.filter(index => {
+                const location = locations[index];
+                const locationType = (location.type || '').replaceAll('-', ' ').toLowerCase();
+                return !searchTerm || location.name.toLowerCase().includes(searchTerm) || locationType.includes(searchTerm);
+            });
+        }
+
         function filterLocations() {
-            const searchTerm = document.getElementById('locationSearch').value.toLowerCase();
+            const searchTerm = document.getElementById('locationSearch').value.trim().toLowerCase();
             const searchResults = document.getElementById('searchResults');
             const clearBtn = document.getElementById('clearSearchBtn');
             clearBtn.hidden = !searchTerm;
-            
+            updateList();
             if (searchTerm === '') {
-                // Show all locations when search is empty
-                displayOrder = [...Array(locations.length).keys()];
-                updateList();
                 searchResults.textContent = '';
                 return;
             }
-            
-            // Filter locations based on search term
-            const matchingIndices = [];
-            locations.forEach((location, index) => {
-                const locationType = (location.type || '').replaceAll('-', ' ').toLowerCase();
-                if (location.name.toLowerCase().includes(searchTerm) || locationType.includes(searchTerm)) {
-                    matchingIndices.push(index);
-                }
-            });
-            
-            // Update display order to show only matching locations
-            displayOrder = matchingIndices;
-            updateList();
+            const matchingIndices = getVisibleLocationIndices();
             
             // Update search results info
             if (matchingIndices.length === 0) {
@@ -2154,7 +2117,7 @@
             }
             // Jump to first result on Enter key
             else if (event.key === 'Enter') {
-                const firstVisible = displayOrder[0];
+                const firstVisible = getVisibleLocationIndices()[0];
                 if (firstVisible !== undefined && autoZoomEnabled) {
                     zoomToLocation(firstVisible);
                     drawMap();
@@ -2370,8 +2333,9 @@
             
             // Calculate scroll position to center the location
             // Account for both canvas scale and zoom level
-            const scaledX = loc.x * canvasScale * zoomLevel;
-            const scaledY = loc.y * canvasScale * zoomLevel;
+            const bounds = canvas.getBoundingClientRect();
+            const scaledX = loc.x * canvasScale * bounds.width / canvas.width;
+            const scaledY = loc.y * canvasScale * bounds.height / canvas.height;
             
             const scrollX = scaledX - (mapWrapper.clientWidth / 2);
             const scrollY = scaledY - (mapWrapper.clientHeight / 2);

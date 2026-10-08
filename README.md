@@ -17,7 +17,8 @@ An interactive learning tool for memorizing the locations of all lifts, runs, lo
 - Matching difficulty icons plus semantic icons for lifts, lodges, base areas, landmarks, and facilities
 - Search, shuffle, labels, map-text visibility, auto-zoom, and map zoom controls
 - Correct, incorrect, skipped, streak, remaining, and accuracy tracking
-- Progress restored from local browser storage between visits
+- Progress retained across category changes during the current visit; reloading or returning to the page starts fresh
+- Opaque rounded map-text masks, with cached background rendering during animations
 - Mountain Host Tour route plus quick access to learning and safety resources
 - **Know the Code** opens the bundled [ski/snowboard responsibility-code image](images/responsibility-code.jpg) in a new tab
 - Responsive two-column desktop layout and mobile progress drawer
@@ -49,7 +50,7 @@ bbm/
 ├── Winter/                     # Winter map application
 │   ├── learn.html              # Main interactive winter map
 │   ├── modernization.css       # Responsive Winter layout and visual system
-│   ├── modernization.js        # Quiz navigation, persistence, and accessibility enhancements
+│   ├── modernization.js        # Quiz navigation, visit progress, and accessibility enhancements
 │   ├── location_manager.html   # Admin tool for locations, difficulties/types, overlays, and routes
 │   ├── bogus_basin_config.json # Location coordinates, run difficulties, and place types
 │   ├── text_overlays.json      # Text overlay rectangles

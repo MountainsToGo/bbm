@@ -24,8 +24,8 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 3. Get instant feedback: ✅ Correct or ❌ Incorrect
 
 ### 🎮 Controls
-- **Search Box**: Filter locations by name or type, such as chairlift, lodge, or food truck; press Enter to jump to the first result
-- **Category Selector**: Located below Search in the location panel; switch between the full mountain, lifts/carpets, all runs, places/facilities, or a specific run difficulty
+- **Search Box**: Filter locations by name or type without changing quiz or shuffle order; with Auto-Zoom enabled, press Enter to view the first result
+- **Category Selector**: Located below Search in the location panel; switch between the full mountain, lifts/carpets, all runs, places/facilities, or a specific run difficulty without losing answers from this visit
 - **Place Filters**: Narrow places/facilities to lodges/condominiums, base areas, summits/landmarks, or activities/services
 - **Difficulty Filters**: Practice Green, Blue, Diamond, or Double Diamond runs; the dropdown and run list use the matching official symbols
 - **Auto-Zoom**: Automatically zooms to each new location when enabled
@@ -34,14 +34,17 @@ Explore Bogus Basin with interactive maps for both winter and summer seasons.
 - **Reset Map**: Return to default view
 - **Skip**: Skip difficult locations and return later
 - **Scramble List**: Shuffle the location order
-- **Hide Map Text**: Cover trail/lift names with black overlays for advanced practice
+- **Hide Map Text**: Cover trail/lift names with opaque, rounded snow-gray masks for advanced practice; correct answers reveal matching names
 - **Know the Code**: Open the [ski/snowboard responsibility-code image](images/responsibility-code.jpg) in a new tab
 - **Mountain Host Tour**: Animated route tracing of the guided tour
 
 ### 📊 Progress Tracking
-- **Remaining**: Locations still to learn
-- **Complete %**: Overall progress
+- **Remaining**: Locations still to learn in the selected category, including skipped items
+- **Complete %**: Progress within the selected category
 - **Streak**: Consecutive correct answers
+- **Accuracy**: Correct answers as a percentage of attempts across categories during this visit
+- **Fresh Start**: Reloading or navigating away and returning starts a new quiz; Reset clears progress across categories
+- **Skipped Locations**: At the end of the unanswered list, select a skipped location to retry; the quiz is complete only when all locations in the category are answered
 
 ### ✅ Location List Colors
 - **Purple** = Current location to find

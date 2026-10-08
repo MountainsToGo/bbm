@@ -163,6 +163,7 @@ summary:focus-visible,
     font-family: Bahnschrift, "Aptos Display", sans-serif;
     font-size: 1.3rem;
     line-height: 1.15;
+    overflow-wrap: anywhere;
 }
 
 .stats {
